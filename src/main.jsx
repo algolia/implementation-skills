@@ -52,6 +52,11 @@ function initAnalytics() {
   document.head.appendChild(script);
 }
 
+// Prefix site-local URLs with Vite's base so subpath deploys work.
+function withBase(path) {
+  return path.startsWith('/') ? import.meta.env.BASE_URL.replace(/\/$/, '') + path : path;
+}
+
 function trackDownload(href, label) {
   if (typeof window.gtag !== 'function') return;
   window.gtag('event', 'bundle_download', {
@@ -959,8 +964,8 @@ function Header({ onGuide, theme, onToggleTheme }) {
 
   return (
     <header className="site-header">
-      <a className="brand" href="/" aria-label="Algolia Skills Library home">
-        <img src={isLight ? '/brand/Algolia-logo-blue.svg' : '/brand/Algolia-logo-white.svg'} alt="Algolia" />
+      <a className="brand" href={withBase('/')} aria-label="Algolia Skills Library home">
+        <img src={withBase(isLight ? '/brand/Algolia-logo-blue.svg' : '/brand/Algolia-logo-white.svg')} alt="Algolia" />
         <span />
         <strong>Skills Library</strong>
       </a>
@@ -1055,7 +1060,7 @@ function CompanionToolCard({ tool }) {
         </a>
       </div>
       {tool.downloadHref && (
-        <a className="companion-download" href={tool.downloadHref} download>
+        <a className="companion-download" href={withBase(tool.downloadHref)} download>
           <ArrowDownToLine size={16} />
           {tool.downloadLabel}
         </a>
@@ -1083,7 +1088,7 @@ function UseCaseBundles() {
                 <h3>{bundle.title}</h3>
               </div>
               <p>{bundle.description}</p>
-              <a className="bundle-guide-link" href={bundle.guideHref} target="_blank" rel="noreferrer">
+              <a className="bundle-guide-link" href={withBase(bundle.guideHref)} target="_blank" rel="noreferrer">
                 <BookOpen size={16} />
                 Read bundle guide
               </a>
@@ -1122,7 +1127,7 @@ function DownloadButton({ href, label, size }) {
   return (
     <a
       className={`download-button ${size === 'large' ? 'large' : ''}`}
-      href={href}
+      href={withBase(href)}
       download
       onClick={() => trackDownload(href, label)}
     >
@@ -1165,7 +1170,12 @@ function GuideModal({ onClose }) {
           </div>
         </div>
         <p className="guide-note">Customers still need current docs verification and access to their own Algolia app, source data, codebase, and analytics for production work.</p>
-        <a className="download-button large" href="/downloads/algolia-skills-library.zip" download>
+        <a
+          className="download-button large"
+          href={withBase('/downloads/algolia-skills-library.zip')}
+          download
+          onClick={() => trackDownload('/downloads/algolia-skills-library.zip', 'Download full library')}
+        >
           <ArrowDownToLine size={22} />
           Download full library
         </a>
