@@ -1,0 +1,22 @@
+node_modules/
+dist/
+
+# local-only internal docs — never publish
+CLAUDE-CODE-HANDOFF.md
+PR-HANDOFF.md
+PR-DESCRIPTION.md
+marketing/
+
+# nested clones — tracked in their own repos
+skills/
+algolia-implementation-skills-repo/
+internal-skills/
+ai-dev-hub/
+
+# generated download archives (rebuilt by `npm run package:downloads`)
+public/downloads/
+.DS_Store
+*.log
+.env
+.env.local
+.env.*.local
