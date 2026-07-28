@@ -12,9 +12,6 @@ skills/
 algolia-implementation-skills-repo/
 internal-skills/
 ai-dev-hub/
-
-# generated download archives (rebuilt by `npm run package:downloads`)
-public/downloads/
 .DS_Store
 *.log
 .env
