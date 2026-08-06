@@ -81,9 +81,13 @@ Use the Algolia skills library through the whole Algolia lens. Begin by clarifyi
 
 Extends Algolia MCP/CLI/official skills: install those official tools when the agent needs live account inspection or write actions, then use these skills as the customer-ready implementation workflow layer.
 
-For Codex, unzip the download and copy each `algolia-*` folder into `~/.codex/skills/`. Each copied folder should contain `SKILL.md` at its top level.
+These skills follow the open [Agent Skills specification](https://agentskills.io/specification), so one folder works across most tools. Unzip the download and copy each `algolia-*` folder into `.agents/skills/` in your project (or `~/.agents/skills/` for every project). That covers Codex, Cursor, GitHub Copilot, Gemini CLI, Antigravity and Devin Desktop (formerly Windsurf). Each copied folder must contain `SKILL.md` at its top level.
 
-For Claude, unzip the download and upload or import the complete `algolia-*` skill folder into the Claude skill or project area your workspace uses. Keep `SKILL.md` at the top level and keep the `references/` folder with it.
+Two tools need their own path: Claude Code reads `~/.claude/skills/` or `.claude/skills/` and does **not** read `.agents/skills/`; Kiro reads `.kiro/skills/`.
+
+For the Claude and ChatGPT apps, upload an **individual** skill ZIP (Customize → Skills in Claude, the Skills tab in ChatGPT) rather than copying folders. The uploader expects one skill folder at the ZIP root, so the full-library ZIP will be rejected.
+
+Note: the specification standardises the skill folder, not where each tool looks for it. `.agents/skills/` is the documented cross-tool location for Codex; the older `~/.codex/skills/` still loads for backward compatibility.
 
 See `artifacts/install-instructions.md` for a customer-facing install guide. The React site serves the same files from `public/artifacts/`.
 

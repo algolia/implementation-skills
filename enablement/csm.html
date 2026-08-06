@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Positioning the Implementation Skills — for CSMs and CSAs</title>
+<meta name="description" content="How to position the skills as Algolia configuration and optimization, not implementation.">
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap");
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  color-scheme:light;
+  --blue:#0052ff; --blue-2:#256bff; --cyan:#00a2ff;
+  --navy:#0b1526; --navy-2:#122a5c;
+  --text:#0b1526; --muted:#526078; --soft:#1d2b44;
+  --bg:#f5f8ff; --card:#ffffff;
+  --border:rgba(20,48,92,.16); --divider:rgba(20,48,92,.10);
+  --tag-text:#0b58d8; --tag-bg:rgba(0,82,255,.10); --tag-border:rgba(0,82,255,.26);
+  --ok-text:#08733f; --ok-bg:rgba(17,166,82,.10); --ok-border:rgba(17,166,82,.26);
+  --warn-bg:#fff7e8; --warn-border:#f0d9a8; --warn-text:#7a5410;
+  --shadow:0 22px 80px rgba(21,56,117,.13);
+  --shadow-sm:0 2px 10px rgba(21,56,117,.07);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Sora",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--blue); text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:940px; margin:0 auto; padding:0 28px}
+
+/* ---- header ---- */
+header.top{
+  background:
+    radial-gradient(circle at 88% 8%,rgba(0,162,255,.30),transparent 42%),
+    linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
+  color:#fff; padding:30px 0 26px;
+}
+header.top .eyebrow{
+  font-size:11.5px; font-weight:700; letter-spacing:.10em; text-transform:uppercase;
+  color:#7fb4ff; margin:0 0 9px;
+}
+header.top h1{font-size:31px; line-height:1.14; font-weight:800; margin:0 0 9px; letter-spacing:-.015em}
+header.top p.sub{margin:0; color:#a8c0e8; font-size:16px; max-width:58ch}
+header.top .hmeta{margin:16px 0 0; display:flex; flex-wrap:wrap; gap:7px}
+header.top .hmeta span{
+  font-size:12px; font-weight:600; padding:4px 11px; border-radius:999px;
+  background:rgba(255,255,255,.11); border:1px solid rgba(255,255,255,.18); color:#dce9ff;
+}
+.backlink{display:inline-block; margin:0 0 14px; font-size:13px; font-weight:600; color:#a8c0e8}
+.backlink:hover{color:#fff}
+
+main{padding:30px 0 64px}
+h2.step-h{font-size:22px; font-weight:800; letter-spacing:-.01em; margin:34px 0 4px; display:flex; align-items:center; gap:12px}
+h2.step-h .num{
+  flex:0 0 auto; display:grid; place-items:center; width:32px; height:32px; border-radius:10px;
+  background:linear-gradient(160deg,var(--blue),var(--blue-2)); color:#fff; font-size:15px; font-weight:800;
+}
+h2.plain{font-size:21px; font-weight:800; letter-spacing:-.01em; margin:0 0 6px}
+h3{font-size:14.5px; font-weight:700; color:var(--blue); margin:20px 0 7px}
+.lede{color:var(--muted); font-size:15px; margin:0 0 14px}
+.stepnote{color:var(--muted); font-size:14.5px; margin:0 0 12px; padding-left:44px}
+@media(max-width:600px){.stepnote{padding-left:0}}
+p{margin:0 0 11px}
+ul,ol{margin:0 0 11px; padding-left:21px}
+li{margin:4px 0}
+code{font-family:var(--mono); font-size:.87em; background:rgba(2,10,24,.06); padding:2px 6px; border-radius:5px; color:#123a80}
+
+/* ---- cards ---- */
+.card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin:12px 0; box-shadow:var(--shadow-sm)}
+.card > :last-child{margin-bottom:0}
+.card h4{margin:0 0 6px; font-size:15.5px; font-weight:700}
+.grid{display:grid; gap:12px; margin:12px 0}
+.grid.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:820px){.grid.g2{grid-template-columns:1fr}}
+
+/* ---- chips / callouts ---- */
+.chip{display:inline-block; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px;
+  background:var(--tag-bg); color:var(--tag-text); border:1px solid var(--tag-border); margin:0 5px 5px 0}
+.chip.ok{background:var(--ok-bg); color:var(--ok-text); border-color:var(--ok-border)}
+.chip.grey{background:rgba(9,35,80,.055); color:var(--muted); border-color:var(--divider)}
+.note{border-radius:12px; padding:12px 15px; margin:12px 0; font-size:13.5px;
+  background:var(--warn-bg); border:1px solid var(--warn-border); color:var(--warn-text)}
+.note.blue{background:rgba(0,82,255,.055); border-color:var(--tag-border); color:#123a80}
+.note.ok{background:var(--ok-bg); border-color:var(--ok-border); color:var(--ok-text)}
+.note > :last-child{margin-bottom:0}
+
+/* ---- prompt / code blocks ---- */
+.block{position:relative; margin:11px 0}
+.block .copy{position:absolute; top:9px; right:9px; z-index:2;
+  border:1px solid var(--border); background:#fff; color:var(--blue);
+  font-family:inherit; font-weight:700; font-size:11.5px; padding:5px 11px; border-radius:7px;
+  cursor:pointer; transition:background .15s var(--ease), transform .15s var(--ease)}
+.block .copy:hover{background:#eef3ff}
+.block .copy:active{transform:scale(.96)}
+.block .copy.done{background:var(--ok-bg); border-color:var(--ok-border); color:var(--ok-text)}
+.prompt{background:var(--card); border:1px solid var(--border); border-left:3px solid var(--blue);
+  border-radius:12px; padding:16px 92px 16px 18px; margin:0; white-space:pre-wrap;
+  font-family:inherit; font-size:14px; line-height:1.6; color:var(--soft)}
+.prompt.hero{box-shadow:0 10px 34px rgba(0,82,255,.12); border-left-width:4px}
+.term{background:#050b18; border:1px solid #1b2c4d; border-radius:12px;
+  padding:14px 92px 14px 16px; margin:0; overflow-x:auto;
+  font-family:var(--mono); font-size:12.5px; line-height:1.7; color:#cfe0ff}
+.term .c{color:#6f87b8}
+.term .p{color:#00c98a}
+.term .copy{background:rgba(255,255,255,.07); border-color:#2a3f68; color:#8fc2ff}
+.term .copy:hover{background:rgba(255,255,255,.14)}
+.cap{font-size:12.5px; color:var(--muted); margin:6px 0 0}
+
+/* ---- big download button ---- */
+a.dlbtn{display:inline-flex; align-items:center; gap:9px; margin:4px 0 0;
+  background:linear-gradient(160deg,var(--blue),var(--blue-2)); color:#fff;
+  font-weight:700; font-size:15px; padding:13px 22px; border-radius:12px;
+  box-shadow:0 14px 32px rgba(0,82,255,.26); transition:transform .16s var(--ease), box-shadow .16s var(--ease)}
+a.dlbtn:hover{text-decoration:none; transform:translateY(-2px); box-shadow:0 18px 40px rgba(0,82,255,.34)}
+a.dlbtn svg{flex:0 0 auto}
+
+/* ---- 3-step animation ---- */
+.flow{background:linear-gradient(135deg,var(--navy),var(--navy-2)); border-radius:16px;
+  padding:22px; margin:0 0 8px; overflow:hidden; box-shadow:var(--shadow)}
+.flow .rail{display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:stretch; gap:10px}
+@media(max-width:820px){.flow .rail{grid-template-columns:1fr; gap:12px} .flow .arrow{display:none}}
+.step{background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.14);
+  border-radius:13px; padding:14px 15px; position:relative; overflow:hidden;
+  animation:stepGlow 9s var(--ease) infinite}
+.step:nth-child(1){animation-delay:0s}
+.step:nth-child(3){animation-delay:3s}
+.step:nth-child(5){animation-delay:6s}
+@keyframes stepGlow{
+  0%,4%{background:rgba(255,255,255,.055); border-color:rgba(255,255,255,.14); transform:translateY(0)}
+  8%,30%{background:rgba(0,82,255,.28); border-color:var(--cyan); transform:translateY(-3px)}
+  36%,100%{background:rgba(255,255,255,.055); border-color:rgba(255,255,255,.14); transform:translateY(0)}}
+.step .n{font-family:var(--mono); font-size:10.5px; font-weight:800; letter-spacing:.06em; color:#7fb4ff; display:block; margin-bottom:6px}
+.step .t{color:#fff; font-weight:700; font-size:15px; display:block; margin-bottom:3px}
+.step .d{color:#a8c0e8; font-size:12.5px; display:block; line-height:1.5}
+.step .ico{position:absolute; top:12px; right:13px; opacity:.5}
+.arrow{align-self:center; color:#4a6ba8}
+.arrow svg{display:block}
+.arrow.a1{animation:dash 9s linear infinite; animation-delay:1.6s}
+.arrow.a2{animation:dash 9s linear infinite; animation-delay:4.6s}
+@keyframes dash{0%,10%{color:#4a6ba8}14%,26%{color:var(--cyan)}30%,100%{color:#4a6ba8}}
+.flow .out{margin:14px 0 0; background:rgba(2,8,20,.55); border:1px solid rgba(255,255,255,.12);
+  border-radius:11px; padding:12px 14px; font-family:var(--mono); font-size:11.5px; color:#9fb8e0}
+.flow .out .ln{display:block; opacity:0; animation:lnIn 9s var(--ease) infinite}
+.flow .out .ln:nth-child(1){animation-delay:6.2s}
+.flow .out .ln:nth-child(2){animation-delay:6.7s}
+.flow .out .ln:nth-child(3){animation-delay:7.2s}
+.flow .out .ln:nth-child(4){animation-delay:7.7s}
+@keyframes lnIn{0%{opacity:0; transform:translateX(-6px)}6%,30%{opacity:1; transform:translateX(0)}36%,100%{opacity:0; transform:translateX(-6px)}}
+.flow .out .ck{color:#00c98a; font-weight:700}
+@media(prefers-reduced-motion:reduce){
+  .step,.arrow.a1,.arrow.a2,.flow .out .ln{animation:none!important}
+  .flow .out .ln{opacity:1}
+  .step{background:rgba(0,82,255,.16); border-color:rgba(255,255,255,.22)}}
+
+/* ---- tool tabs ---- */
+.tabs{margin:12px 0}
+.tabs .tabbar{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 -1px}
+.tabs .tabbar button{font-family:inherit; font-size:13px; font-weight:600; cursor:pointer;
+  padding:8px 14px; border-radius:10px 10px 0 0; border:1px solid var(--border);
+  border-bottom-color:transparent; background:rgba(255,255,255,.6); color:var(--soft);
+  transition:background .15s var(--ease), color .15s var(--ease)}
+.tabs .tabbar button:hover{background:#fff}
+.tabs .tabbar button[aria-selected="true"]{background:var(--blue); border-color:var(--blue); color:#fff}
+.tabs .panels{background:var(--card); border:1px solid var(--border);
+  border-radius:0 14px 14px 14px; padding:18px 20px; box-shadow:var(--shadow-sm)}
+.tabs [role="tabpanel"]{display:none}
+.tabs [role="tabpanel"].on{display:block}
+.tabs [role="tabpanel"] > :first-child{margin-top:0}
+.tabs [role="tabpanel"] > :last-child{margin-bottom:0}
+ol.steps{list-style:none; padding:0; margin:0; counter-reset:s}
+ol.steps > li{counter-increment:s; position:relative; padding:0 0 13px 38px; margin:0 0 0 13px; border-left:2px solid var(--divider)}
+ol.steps > li:last-child{border-left-color:transparent; padding-bottom:0}
+ol.steps > li::before{content:counter(s); position:absolute; left:-14px; top:-2px;
+  width:25px; height:25px; border-radius:8px; display:grid; place-items:center;
+  background:var(--card); border:1.5px solid var(--blue); color:var(--blue); font-size:11.5px; font-weight:800}
+ol.steps > li > :first-child{margin-top:0}
+ol.steps > li > :last-child{margin-bottom:0}
+
+/* ---- collapsed details ---- */
+.moreband{margin:44px 0 0; padding:22px 0 0; border-top:1px solid var(--border)}
+.moreband > .mh{font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 12px}
+details.more{background:var(--card); border:1px solid var(--border); border-radius:12px; margin:9px 0; box-shadow:var(--shadow-sm)}
+details.more > summary{cursor:pointer; padding:14px 18px; font-weight:700; font-size:14.5px;
+  list-style:none; display:flex; align-items:center; justify-content:space-between; gap:14px}
+details.more > summary::-webkit-details-marker{display:none}
+details.more > summary::marker{content:""}
+details.more > summary::after{content:"+"; color:var(--blue); font-weight:800; font-size:19px; line-height:1; flex:0 0 auto}
+details.more[open] > summary::after{content:"\2013"}
+details.more > summary:hover{color:var(--blue)}
+details.more[open] > summary{border-bottom:1px solid var(--divider)}
+details.more .db{padding:16px 18px 18px}
+details.more .db > :first-child{margin-top:0}
+details.more .db > :last-child{margin-bottom:0}
+details.more .db h3:first-child{margin-top:0}
+
+/* ---- tables ---- */
+table{border-collapse:collapse; width:100%; font-size:13.5px}
+th,td{text-align:left; padding:9px 11px; border-bottom:1px solid var(--divider); vertical-align:top}
+th{color:var(--muted); font-weight:700; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+.card.tbl{padding:5px 9px}
+
+/* ---- role picker (hub) ---- */
+.roles{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:16px 0}
+@media(max-width:820px){.roles{grid-template-columns:1fr}}
+a.role{display:block; background:var(--card); border:1px solid var(--border); border-radius:16px;
+  padding:20px 21px; color:inherit; box-shadow:var(--shadow-sm);
+  transition:transform .18s var(--ease), box-shadow .18s var(--ease), border-color .18s var(--ease)}
+a.role:hover{text-decoration:none; transform:translateY(-3px); border-color:var(--blue); box-shadow:0 18px 44px rgba(21,56,117,.16)}
+a.role .rt{display:block; font-size:18px; font-weight:800; margin:0 0 4px; letter-spacing:-.01em}
+a.role .rw{display:block; font-size:13.5px; color:var(--muted); margin:0 0 11px; line-height:1.5}
+a.role .go{font-size:13px; font-weight:700; color:var(--blue)}
+a.role .go::after{content:" \2192"; transition:margin .18s var(--ease)}
+a.role:hover .go::after{margin-left:4px}
+
+/* ---- footer ---- */
+footer{border-top:1px solid var(--border); padding:24px 0 40px; font-size:13px; color:var(--muted)}
+footer .wrap{display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between}
+footer a{font-weight:600}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="backlink" href="index.html">&larr; All versions</a>
+    <p class="eyebrow">For CSMs &amp;amp; CSAs</p>
+    <h1>Optimize the Algolia they already own</h1>
+    <p class="sub">Position it as configuration and tuning, send the quick start, run the audit on a call.</p>
+    <div class="hmeta"><span>Config &amp;amp; optimization angle</span><span>Copy written for you</span></div>
+  </div>
+</header>
+<main><div class="wrap">
+<div class="flow"><div class="rail"><div class="step"><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9fc4ff" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 11l5 5 5-5M4 20h16"/></svg></span><span class="n">STEP 01</span><span class="t">Position it</span><span class="d">Configuration they already own, never revisited.</span></div><div class="arrow a1"><svg width="28" height="14" viewBox="0 0 28 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 7h22M18 2l5 5-5 5"/></svg></div><div class="step"><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9fc4ff" stroke-width="2" stroke-linecap="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></span><span class="n">STEP 02</span><span class="t">Hand it over</span><span class="d">Send the quick start. Copy is written below.</span></div><div class="arrow a2"><svg width="28" height="14" viewBox="0 0 28 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 7h22M18 2l5 5-5 5"/></svg></div><div class="step"><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9fc4ff" stroke-width="2" stroke-linecap="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></span><span class="n">STEP 03</span><span class="t">Make it land</span><span class="d">Run the config audit on a call. Work the list.</span></div></div><div class="out"><span class="ln"><span class="ck">✓</span> Every index setting reviewed against their actual use case</span><span class="ln"><span class="ck">✓</span> Capabilities on their plan that were never switched on</span><span class="ln"><span class="ck">✓</span> Ranked by impact against effort</span><span class="ln"><span class="ck">✓</span> A tuning list their engineers can act on this sprint</span></div></div><h2 class="step-h"><span class="num">1</span>Position it</h2><p class="stepnote">The frame is configuration, not implementation. Nothing to rebuild — dials to turn on what's already running.</p><div class="block"><button class="copy" type="button">Copy prompt</button><pre class="prompt hero">Your Algolia instance is running. The question is whether it's configured to do what you're paying for.
+
+Most of the levers that decide search quality are settings, not code — searchable attributes and their order, custom ranking, facets, synonyms, query rules, sort replicas, merchandising, no-results handling. They get set once during implementation and then nobody revisits them, because knowing which one to change requires knowing Algolia deeply.
+
+Algolia's official skills fix that. Your team drops them into whatever AI tool they already use and it becomes able to audit and tune your configuration — tell you which settings are working against you, which capabilities on your plan aren't switched on, and what order to fix them in.
+
+Free, MIT licensed, about ten minutes.</pre></div><p class="cap">Your reference version. Two sentences of it is plenty on a live call.</p><h3>The optimization levers worth naming</h3><p>These are settings, not code. Knowing which one is wrong is the hard part, and that's exactly what the skills supply.</p><div class="card tbl"><table><tr><th>Setting</th><th>What goes wrong</th><th>Say it like this</th></tr><tr><td><strong>Searchable attributes and their order</strong></td><td>Everything marked searchable, or ordered arbitrarily, so titles don't outrank descriptions.</td><td>“Your search can't tell a product name from a footnote.”</td></tr><tr><td><strong>Custom ranking</strong></td><td>Left at default, so popularity, margin and stock never influence results.</td><td>“Nothing tells Algolia which of two equally-matching products you'd rather sell.”</td></tr><tr><td><strong>Facets</strong></td><td>Never configured, or configured on fields nobody filters by.</td><td>“Your customers can't narrow down, so they leave instead.”</td></tr><tr><td><strong>Synonyms</strong></td><td>Empty, so their industry's vocabulary returns nothing.</td><td>“When someone searches your customers' words instead of yours, they get zero results.”</td></tr><tr><td><strong>Query rules and merchandising</strong></td><td>Unused, so campaigns and promotions can't be reflected in search.</td><td>“Merchandising is happening everywhere except the place people actually look.”</td></tr><tr><td><strong>Sort replicas</strong></td><td>Missing, so there's no price-low-to-high that respects relevance.</td><td>“Sorting and relevance are fighting each other.”</td></tr><tr><td><strong>No-results handling</strong></td><td>Dead end instead of a recovery path.</td><td>“Every zero-result search is a customer you've lost silently.”</td></tr><tr><td><strong>Events</strong></td><td>Not sent, which gates personalization, Recommend, Dynamic Re-Ranking and NeuralSearch.</td><td>“The AI features on your plan have nothing to learn from.”</td></tr></table></div><h3>What to lead with, by account</h3><div class="card tbl"><table><tr><th>If the account…</th><th>Lead with</th></tr><tr><td><strong>Hasn't touched settings since launch</strong></td><td>“Your config was tuned for the catalogue you had then, not the one you have now.”</td></tr><tr><td><strong>Has flat or declining search conversion</strong></td><td>“Before you rebuild anything, it's worth checking whether the ranking is actually expressing your priorities.”</td></tr><tr><td><strong>Complains about result quality</strong></td><td>“That's usually four or five settings, not a platform problem. This finds which ones.”</td></tr><tr><td><strong>Pays for AI features they don't use</strong></td><td>“Those need configuration and behavioural data. This maps what's missing and in what order.”</td></tr><tr><td><strong>Has grown catalogue or entered a new market</strong></td><td>“Config that worked at your old scale often stops working. Worth a re-tune.”</td></tr><tr><td><strong>Is about to ask for a rebuild</strong></td><td>“Let's rule out configuration first — it's days of work rather than a quarter.”</td></tr></table></div><div class="note "><strong>Say:</strong> “tune what you already own”, “configuration, not a rebuild”, “settings working against you”, “capabilities on your plan that aren't switched on”. <strong>Don't say:</strong> data contract, event taxonomy, indexing contract, lifecycle. That's builder vocabulary and it hands the conversation to someone else.</div><h2 class="step-h"><span class="num">2</span>Hand it over</h2><p class="stepnote">Send them the customer quick start — no internal language in it.</p><p><a class="dlbtn" href="customer.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3v12M7 11l5 5 5-5M4 20h16"/></svg>Open the customer quick start</a></p><p class="cap">Or send the library directly: <a href="https://community.algolia.com/implementation-skills/">https://community.algolia.com/implementation-skills/</a></p><h3>Email</h3><div class="block"><button class="copy" type="button">Copy prompt</button><pre class="prompt">Subject: Tuning your Algolia config — ten minutes, free
+
+Hi &lt;name&gt;,
+
+Something worth ten minutes of your team's time, and there's nothing attached to it.
+
+Most of what determines Algolia search quality is configuration rather than code — which attributes are searchable and in what order, custom ranking, facets, synonyms, query rules, sort replicas, merchandising. Those usually get set during the original implementation and then stay untouched, because knowing which dial to turn takes real Algolia depth.
+
+Algolia has published a set of official AI skills that give your team that depth on demand. They install into whatever AI assistant your engineers already use, and it can then audit your configuration and tell you what's working against you, what capabilities on your plan aren't turned on, and what to fix first.
+
+Free, MIT licensed, ten minutes: &lt;link&gt;
+
+Happy to run it with your team on our next call.
+
+&lt;you&gt;</pre></div><p class="cap">Replace <code>&lt;link&gt;</code> with the quick start URL. Put it in your own voice.</p><h3>On a call</h3><div class="block"><button class="copy" type="button">Copy prompt</button><pre class="prompt">Before we wrap — when did anyone last look at your Algolia configuration itself? Not the code, the settings: searchable attributes, ranking, facets, synonyms, rules.
+
+[if "not since launch" — the common answer] That's worth an hour. Algolia published official AI skills that let your team's AI assistant audit the configuration and tell you which settings are working against you. Free, ten minutes to install. Want me to send it?
+
+[if they have a search team] Then you'll probably find it useful as a second opinion — it produces an evidence-based config review your team can argue with.</pre></div><h3>When to bring it up</h3><ul><li><strong>Any account that hasn't reviewed settings since go-live.</strong> That's most of them.</li><li><strong>Four to six weeks before a QBR</strong>, so there's a tuning list to walk through.</li><li><strong>When they raise result quality</strong> — before it becomes a platform complaint.</li><li><strong>When catalogue size, locales or markets have changed</strong> since launch.</li><li><strong>Before they ask for a rebuild.</strong> Configuration is the cheaper answer and often the right one.</li><li><strong>When they ask about personalization, Recommend or NeuralSearch</strong> and you suspect the config and events aren't there.</li></ul><h2 class="step-h"><span class="num">3</span>Make it land</h2><p class="stepnote">Sending a link rarely works alone. Run the config audit with them, live, and leave with a ranked list.</p><div class="block"><button class="copy" type="button">Copy prompt</button><pre class="prompt hero">Audit our Algolia configuration and tell us what to optimize.
+
+Go through our index settings: searchable attributes and their order, custom ranking and tie-breaking, facets and their display, synonyms, query rules and merchandising, sort replicas, typo tolerance, and no-results handling. For each one, tell us what's currently set, whether it's serving our use case, and what you'd change.
+
+Then check which capabilities on our plan aren't configured at all — personalization, Dynamic Re-Ranking, Recommend, NeuralSearch, A/B testing — and what's blocking each.
+
+Rank everything by impact against effort. For anything you can't verify without access to our account, say "not verified" rather than assuming.</pre></div><p class="cap">Written for <strong>the customer</strong> to paste in their own tool while you're both on the call. Note the “we” — it's their audit.</p><h3>Then work the output with them</h3><ul><li>Ask which finding <strong>surprised them</strong>. That's your real agenda item.</li><li>Push for the <strong>top three by impact-over-effort</strong>. A list of twenty gets ignored.</li><li>Anything marked <strong>“not verified”</strong> is your specific, warm reason to bring in an SE.</li><li>If <strong>events are the blocker</strong>, that's the QBR headline: every AI feature on their plan is inert until it's fixed.</li><li>Get <strong>an owner and a date</strong> for the top item before the call ends.</li><li>Ask whether they've <strong>ever run an A/B test</strong> on a config change. Usually not — and that's how the next one gets proven.</li></ul><div class="moreband"><p class="mh">If you want more</p><details class="more"><summary>Objections you'll hear</summary><div class="db"><div class="card tbl"><table><tr><th>They say</th><th>You say</th></tr><tr><td>“We don't have engineering time for this.”</td><td>“Most of these are settings changes, not code. The audit is ten minutes and tells you which three are worth an afternoon.”</td></tr><tr><td>“Is this an official Algolia product?”</td><td>“Yes — it's in Algolia's official skills repo, built and used by our own engineers. Open source and MIT licensed, so your team can read every line before installing it.”</td></tr><tr><td>“We already tuned it at launch.”</td><td>“Right — for the catalogue and traffic you had then. Config that fit two years ago usually doesn't fit now.”</td></tr><tr><td>“Our search is fine.”</td><td>“Might well be. Ten minutes either confirms that or finds something. Both are useful to know.”</td></tr><tr><td>“Won't changing settings break things?”</td><td>“That's why the audit ranks by effort and risk, and why we'd A/B test anything meaningful. Nothing changes just from running it.”</td></tr><tr><td>“Isn't this you selling us more Algolia?”</td><td>“It's free and it's mostly about switching on what you already pay for. If it finds nothing, that's a good result.”</td></tr></table></div></div></details><details class="more"><summary>When not to recommend it</summary><div class="db"><ul><li><strong>The relationship is strained over reliability or billing.</strong> Fix that first; a tool recommendation reads as deflection.</li><li><strong>Nobody on their side uses an AI coding assistant.</strong> The value is conditional on that.</li><li><strong>They have a mature search team with their own tuning practice.</strong> Offer it as a second opinion, not as guidance.</li><li><strong>Mid-escalation.</strong> Wait.</li><li><strong>They expect it to change settings for them.</strong> It produces recommendations and touches nothing unless their team connects the MCP or CLI. Be clear or you'll create a false expectation.</li></ul></div></details><details class="more"><summary>Prep your own view before a QBR</summary><div class="db"><p>Useful when you want a hypothesis before the customer has one. Install <code>algolia-discovery-planning.zip</code>, <code>algolia-index-configuration.zip</code> and <code>algolia-release-qa.zip</code> — the <a href="customer.html">customer quick start</a> has the install steps, they're identical.</p><div class="block"><button class="copy" type="button">Copy prompt</button><pre class="prompt">Help me work out what's likely misconfigured in this customer's Algolia setup.
+
+Context: &lt;paste what you know — their use case, plan, what they've built, complaints they've raised, anything from the last QBR&gt;
+
+Walk through the configuration levers that usually go wrong: searchable attributes and their order, custom ranking, facets, synonyms, query rules and merchandising, sort replicas, typo tolerance, no-results handling. For each, tell me what a well-configured version looks like for their use case and what the likely gap is.
+
+Then tell me which capabilities on their plan probably aren't switched on, and what typically blocks each. Ask me what you need to know, and mark clearly which conclusions need an SE to confirm before I raise them.</pre></div><div class="note "><strong>This is a hypothesis, not a finding.</strong> Without account access the agent is reasoning from what you told it. Validate anything technical with an SE before the customer hears it.</div></div></details><details class="more"><summary>Guardrails</summary><div class="db"><ul><li><strong>It's official</strong> — the skills live in Algolia's official <code>algolia/skills</code> repo and our own engineers use them. No need to hedge. Open source and MIT licensed, so their team can read every line.</li><li><strong>Never paste customer credentials, API keys or exported records</strong> into a chat. Live account access is an SE with <code>algolia-mcp</code> — not a copy-paste.</li><li><strong>Recommendations aren't changes.</strong> Nothing touches their configuration unless their team wires up the MCP or CLI themselves.</li><li><strong>Don't promise a result from a settings change.</strong> Anything meaningful should be A/B tested, and that's their call.</li><li><strong>Loop in the SE before the second technical conversation.</strong> The audit opens the door; the tuning is theirs.</li></ul></div></details></div>
+</div></main>
+<footer><div class="wrap">
+  <div>Algolia Implementation Skills &middot; MIT licensed</div>
+  <div><a href="https://community.algolia.com/implementation-skills/">Library</a> &middot; <a href="https://github.com/algolia/skills">Official Algolia skills</a> &middot; <a href="https://www.algolia.com/doc/guides/get-started/build-with-ai/">Build with AI</a></div>
+</div></footer>
+<script>
+document.querySelectorAll('.block .copy').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var src = btn.parentElement.querySelector('pre');
+    if(!src) return;
+    var txt = src.innerText.replace(/ /g,' ');
+    // Terminal blocks show a "$ " prompt marker. Strip it so the copy pastes
+    // straight into a shell instead of running a command called "$".
+    if(src.classList.contains('term')){
+      txt = txt.split('\n').map(function(l){ return l.replace(/^\s*\$\s/,''); }).join('\n');
+    }
+    txt = txt.trim();
+    var done = function(){
+      var old = btn.getAttribute('data-label') || btn.textContent;
+      btn.setAttribute('data-label', old);
+      btn.textContent = 'Copied ✓'; btn.classList.add('done');
+      setTimeout(function(){ btn.textContent = old; btn.classList.remove('done'); }, 1700);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done, function(){ fallback(txt, done); });
+    } else { fallback(txt, done); }
+  });
+});
+function fallback(txt, cb){
+  var ta = document.createElement('textarea');
+  ta.value = txt; ta.setAttribute('readonly','');
+  ta.style.position='fixed'; ta.style.top='-1000px';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); cb(); } catch(e){}
+  document.body.removeChild(ta);
+}
+
+document.querySelectorAll('.tabs').forEach(function(group){
+  var btns = Array.prototype.slice.call(group.querySelectorAll('.tabbar button'));
+  var pans = Array.prototype.slice.call(group.querySelectorAll('[role="tabpanel"]'));
+  function show(i, focus){
+    btns.forEach(function(b,j){
+      b.setAttribute('aria-selected', j===i ? 'true' : 'false');
+      b.tabIndex = j===i ? 0 : -1;
+    });
+    pans.forEach(function(p,j){ p.classList.toggle('on', j===i); });
+    if(focus) btns[i].focus();
+    try { localStorage.setItem('alg-tool-tab', btns[i].dataset.tool); } catch(e){}
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click', function(){ show(i, false); });
+    b.addEventListener('keydown', function(e){
+      var d = e.key==='ArrowRight' ? 1 : e.key==='ArrowLeft' ? -1 : 0;
+      if(!d) return;
+      e.preventDefault();
+      show((i + d + btns.length) % btns.length, true);
+    });
+  });
+  var want = null;
+  if(location.hash.indexOf('#tool-')===0) want = location.hash.replace('#tool-','');
+  if(!want){ try { want = localStorage.getItem('alg-tool-tab'); } catch(e){} }
+  var idx = 0;
+  if(want){ btns.forEach(function(b,j){ if(b.dataset.tool===want) idx = j; }); }
+  show(idx, false);
+});
+</script>
+</body>
+</html>

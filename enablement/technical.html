@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Positioning the Implementation Skills — for SEs, support and ICs</title>
+<meta name="description" content="How to position the skills in an engagement, install them in the customer's environment, and hand over.">
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap");
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  color-scheme:light;
+  --blue:#0052ff; --blue-2:#256bff; --cyan:#00a2ff;
+  --navy:#0b1526; --navy-2:#122a5c;
+  --text:#0b1526; --muted:#526078; --soft:#1d2b44;
+  --bg:#f5f8ff; --card:#ffffff;
+  --border:rgba(20,48,92,.16); --divider:rgba(20,48,92,.10);
+  --tag-text:#0b58d8; --tag-bg:rgba(0,82,255,.10); --tag-border:rgba(0,82,255,.26);
+  --ok-text:#08733f; --ok-bg:rgba(17,166,82,.10); --ok-border:rgba(17,166,82,.26);
+  --warn-bg:#fff7e8; --warn-border:#f0d9a8; --warn-text:#7a5410;
+  --shadow:0 22px 80px rgba(21,56,117,.13);
+  --shadow-sm:0 2px 10px rgba(21,56,117,.07);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Sora",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--blue); text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:940px; margin:0 auto; padding:0 28px}
+
+/* ---- header ---- */
+header.top{
+  background:
+    radial-gradient(circle at 88% 8%,rgba(0,162,255,.30),transparent 42%),
+    linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
+  color:#fff; padding:30px 0 26px;
+}
+header.top .eyebrow{
+  font-size:11.5px; font-weight:700; letter-spacing:.10em; text-transform:uppercase;
+  color:#7fb4ff; margin:0 0 9px;
+}
+header.top h1{font-size:31px; line-height:1.14; font-weight:800; margin:0 0 9px; letter-spacing:-.015em}
+header.top p.sub{margin:0; color:#a8c0e8; font-size:16px; max-width:58ch}
+header.top .hmeta{margin:16px 0 0; display:flex; flex-wrap:wrap; gap:7px}
+header.top .hmeta span{
+  font-size:12px; font-weight:600; padding:4px 11px; border-radius:999px;
+  background:rgba(255,255,255,.11); border:1px solid rgba(255,255,255,.18); color:#dce9ff;
+}
+.backlink{display:inline-block; margin:0 0 14px; font-size:13px; font-weight:600; color:#a8c0e8}
+.backlink:hover{color:#fff}
+
+main{padding:30px 0 64px}
+h2.step-h{font-size:22px; font-weight:800; letter-spacing:-.01em; margin:34px 0 4px; display:flex; align-items:center; gap:12px}
+h2.step-h .num{
+  flex:0 0 auto; display:grid; place-items:center; width:32px; height:32px; border-radius:10px;
+  background:linear-gradient(160deg,var(--blue),var(--blue-2)); color:#fff; font-size:15px; font-weight:800;
+}
+h2.plain{font-size:21px; font-weight:800; letter-spacing:-.01em; margin:0 0 6px}
+h3{font-size:14.5px; font-weight:700; color:var(--blue); margin:20px 0 7px}
+.lede{color:var(--muted); font-size:15px; margin:0 0 14px}
+.stepnote{color:var(--muted); font-size:14.5px; margin:0 0 12px; padding-left:44px}
+@media(max-width:600px){.stepnote{padding-left:0}}
+p{margin:0 0 11px}
+ul,ol{margin:0 0 11px; padding-left:21px}
+li{margin:4px 0}
+code{font-family:var(--mono); font-size:.87em; background:rgba(2,10,24,.06); padding:2px 6px; border-radius:5px; color:#123a80}
+
+/* ---- cards ---- */
+.card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin:12px 0; box-shadow:var(--shadow-sm)}
+.card > :last-child{margin-bottom:0}
+.card h4{margin:0 0 6px; font-size:15.5px; font-weight:700}
+.grid{display:grid; gap:12px; margin:12px 0}
+.grid.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:820px){.grid.g2{grid-template-columns:1fr}}
+
+/* ---- chips / callouts ---- */
+.chip{display:inline-block; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px;
+  background:var(--tag-bg); color:var(--tag-text); border:1px solid var(--tag-border); margin:0 5px 5px 0}
+.chip.ok{background:var(--ok-bg); color:var(--ok-text); border-color:var(--ok-border)}
+.chip.grey{background:rgba(9,35,80,.055); color:var(--muted); border-color:var(--divider)}
+.note{border-radius:12px; padding:12px 15px; margin:12px 0; font-size:13.5px;
+  background:var(--warn-bg); border:1px solid var(--warn-border); color:var(--warn-text)}
+.note.blue{background:rgba(0,82,255,.055); border-color:var(--tag-border); color:#123a80}
+.note.ok{background:var(--ok-bg); border-color:var(--ok-border); color:var(--ok-text)}
+.note > :last-child{margin-bottom:0}
+
+/* ---- prompt / code blocks ---- */
+.block{position:relative; margin:11px 0}
+.block .copy{position:absolute; top:9px; right:9px; z-index:2;
+  border:1px solid var(--border); background:#fff; color:var(--blue);
+  font-family:inherit; font-weight:700; font-size:11.5px; padding:5px 11px; border-radius:7px;
+  cursor:pointer; transition:background .15s var(--ease), transform .15s var(--ease)}
+.block .copy:hover{background:#eef3ff}
+.block .copy:active{transform:scale(.96)}
+.block .copy.done{background:var(--ok-bg); border-color:var(--ok-border); color:var(--ok-text)}
+.prompt{background:var(--card); border:1px solid var(--border); border-left:3px solid var(--blue);
+  border-radius:12px; padding:16px 92px 16px 18px; margin:0; white-space:pre-wrap;
+  font-family:inherit; font-size:14px; line-height:1.6; color:var(--soft)}
+.prompt.hero{box-shadow:0 10px 34px rgba(0,82,255,.12); border-left-width:4px}
+.term{background:#050b18; border:1px solid #1b2c4d; border-radius:12px;
+  padding:14px 92px 14px 16px; margin:0; overflow-x:auto;
+  font-family:var(--mono); font-size:12.5px; line-height:1.7; color:#cfe0ff}
+.term .c{color:#6f87b8}
+.term .p{color:#00c98a}
+.term .copy{background:rgba(255,255,255,.07); border-color:#2a3f68; color:#8fc2ff}
+.term .copy:hover{background:rgba(255,255,255,.14)}
+.cap{font-size:12.5px; color:var(--muted); margin:6px 0 0}
+
+/* ---- big download button ---- */
+a.dlbtn{display:inline-flex; align-items:center; gap:9px; margin:4px 0 0;
+  background:linear-gradient(160deg,var(--blue),var(--blue-2)); color:#fff;
+  font-weight:700; font-size:15px; padding:13px 22px; border-radius:12px;
+  box-shadow:0 14px 32px rgba(0,82,255,.26); transition:transform .16s var(--ease), box-shadow .16s var(--ease)}
+a.dlbtn:hover{text-decoration:none; transform:translateY(-2px); box-shadow:0 18px 40px rgba(0,82,255,.34)}
+a.dlbtn svg{flex:0 0 auto}
+
+/* ---- 3-step animation ---- */
+.flow{background:linear-gradient(135deg,var(--navy),var(--navy-2)); border-radius:16px;
+  padding:22px; margin:0 0 8px; overflow:hidden; box-shadow:var(--shadow)}
+.flow .rail{display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:stretch; gap:10px}
+@media(max-width:820px){.flow .rail{grid-template-columns:1fr; gap:12px} .flow .arrow{display:none}}
+.step{background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.14);
+  border-radius:13px; padding:14px 15px; position:relative; overflow:hidden;
+  animation:stepGlow 9s var(--ease) infinite}
+.step:nth-child(1){animation-delay:0s}
+.step:nth-child(3){animation-delay:3s}
+.step:nth-child(5){animation-delay:6s}
+@keyframes stepGlow{
+  0%,4%{background:rgba(255,255,255,.055); border-color:rgba(255,255,255,.14); transform:translateY(0)}
+  8%,30%{background:rgba(0,82,255,.28); border-color:var(--cyan); transform:translateY(-3px)}
+  36%,100%{background:rgba(255,255,255,.055); border-color:rgba(255,255,255,.14); transform:translateY(0)}}
+.step .n{font-family:var(--mono); font-size:10.5px; font-weight:800; letter-spacing:.06em; color:#7fb4ff; display:block; margin-bottom:6px}
+.step .t{color:#fff; font-weight:700; font-size:15px; display:block; margin-bottom:3px}
+.step .d{color:#a8c0e8; font-size:12.5px; display:block; line-height:1.5}
+.step .ico{position:absolute; top:12px; right:13px; opacity:.5}
+.arrow{align-self:center; color:#4a6ba8}
+.arrow svg{display:block}
+.arrow.a1{animation:dash 9s linear infinite; animation-delay:1.6s}
+.arrow.a2{animation:dash 9s linear infinite; animation-delay:4.6s}
+@keyframes dash{0%,10%{color:#4a6ba8}14%,26%{color:var(--cyan)}30%,100%{color:#4a6ba8}}
+.flow .out{margin:14px 0 0; background:rgba(2,8,20,.55); border:1px solid rgba(255,255,255,.12);
+  border-radius:11px; padding:12px 14px; font-family:var(--mono); font-size:11.5px; color:#9fb8e0}
+.flow .out .ln{display:block; opacity:0; animation:lnIn 9s var(--ease) infinite}
+.flow .out .ln:nth-child(1){animation-delay:6.2s}
+.flow .out .ln:nth-child(2){animation-delay:6.7s}
+.flow .out .ln:nth-child(3){animation-delay:7.2s}
+.flow .out .ln:nth-child(4){animation-delay:7.7s}
+@keyframes lnIn{0%{opacity:0; transform:translateX(-6px)}6%,30%{opacity:1; transform:translateX(0)}36%,100%{opacity:0; transform:translateX(-6px)}}
+.flow .out .ck{color:#00c98a; font-weight:700}
+@media(prefers-reduced-motion:reduce){
+  .step,.arrow.a1,.arrow.a2,.flow .out .ln{animation:none!important}
+  .flow .out .ln{opacity:1}
+  .step{background:rgba(0,82,255,.16); border-color:rgba(255,255,255,.22)}}
+
+/* ---- tool tabs ---- */
+.tabs{margin:12px 0}
+.tabs .tabbar{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 -1px}
+.tabs .tabbar button{font-family:inherit; font-size:13px; font-weight:600; cursor:pointer;
+  padding:8px 14px; border-radius:10px 10px 0 0; border:1px solid var(--border);
+  border-bottom-color:transparent; background:rgba(255,255,255,.6); color:var(--soft);
+  transition:background .15s var(--ease), color .15s var(--ease)}
+.tabs .tabbar button:hover{background:#fff}
+.tabs .tabbar button[aria-selected="true"]{background:var(--blue); border-color:var(--blue); color:#fff}
+.tabs .panels{background:var(--card); border:1px solid var(--border);
+  border-radius:0 14px 14px 14px; padding:18px 20px; box-shadow:var(--shadow-sm)}
+.tabs [role="tabpanel"]{display:none}
+.tabs [role="tabpanel"].on{display:block}
+.tabs [role="tabpanel"] > :first-child{margin-top:0}
+.tabs [role="tabpanel"] > :last-child{margin-bottom:0}
+ol.steps{list-style:none; padding:0; margin:0; counter-reset:s}
+ol.steps > li{counter-increment:s; position:relative; padding:0 0 13px 38px; margin:0 0 0 13px; border-left:2px solid var(--divider)}
+ol.steps > li:last-child{border-left-color:transparent; padding-bottom:0}
+ol.steps > li::before{content:counter(s); position:absolute; left:-14px; top:-2px;
+  width:25px; height:25px; border-radius:8px; display:grid; place-items:center;
+  background:var(--card); border:1.5px solid var(--blue); color:var(--blue); font-size:11.5px; font-weight:800}
+ol.steps > li > :first-child{margin-top:0}
+ol.steps > li > :last-child{margin-bottom:0}
+
+/* ---- collapsed details ---- */
+.moreband{margin:44px 0 0; padding:22px 0 0; border-top:1px solid var(--border)}
+.moreband > .mh{font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 12px}
+details.more{background:var(--card); border:1px solid var(--border); border-radius:12px; margin:9px 0; box-shadow:var(--shadow-sm)}
+details.more > summary{cursor:pointer; padding:14px 18px; font-weight:700; font-size:14.5px;
+  list-style:none; display:flex; align-items:center; justify-content:space-between; gap:14px}
+details.more > summary::-webkit-details-marker{display:none}
+details.more > summary::marker{content:""}
+details.more > summary::after{content:"+"; color:var(--blue); font-weight:800; font-size:19px; line-height:1; flex:0 0 auto}
+details.more[open] > summary::after{content:"\2013"}
+details.more > summary:hover{color:var(--blue)}
+details.more[open] > summary{border-bottom:1px solid var(--divider)}
+details.more .db{padding:16px 18px 18px}
+details.more .db > :first-child{margin-top:0}
+details.more .db > :last-child{margin-bottom:0}
+details.more .db h3:first-child{margin-top:0}
+
+/* ---- tables ---- */
+table{border-collapse:collapse; width:100%; font-size:13.5px}
+th,td{text-align:left; padding:9px 11px; border-bottom:1px solid var(--divider); vertical-align:top}
+th{color:var(--muted); font-weight:700; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+.card.tbl{padding:5px 9px}
+
+/* ---- role picker (hub) ---- */
+.roles{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:16px 0}
+@media(max-width:820px){.roles{grid-template-columns:1fr}}
+a.role{display:block; background:var(--card); border:1px solid var(--border); border-radius:16px;
+  padding:20px 21px; color:inherit; box-shadow:var(--shadow-sm);
+  transition:transform .18s var(--ease), box-shadow .18s var(--ease), border-color .18s var(--ease)}
+a.role:hover{text-decoration:none; transform:translateY(-3px); border-color:var(--blue); box-shadow:0 18px 44px rgba(21,56,117,.16)}
+a.role .rt{display:block; font-size:18px; font-weight:800; margin:0 0 4px; letter-spacing:-.01em}
+a.role .rw{display:block; font-size:13.5px; color:var(--muted); margin:0 0 11px; line-height:1.5}
+a.role .go{font-size:13px; font-weight:700; color:var(--blue)}
+a.role .go::after{content:" \2192"; transition:margin .18s var(--ease)}
+a.role:hover .go::after{margin-left:4px}
+
+/* ---- footer ---- */
+footer{border-top:1px solid var(--border); padding:24px 0 40px; font-size:13px; color:var(--muted)}
+footer .wrap{display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between}
+footer a{font-weight:600}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="backlink" href="index.html">&larr; All versions</a>
+    <p class="eyebrow">For SEs, support &amp;amp; implementation consultants</p>
+    <h1>Set your customers up so it sticks</h1>
+    <p class="sub">Position it to their engineers, commit it to their repo, hand over with a live demo.</p>
+    <div class="hmeta"><span>Engineer-credible framing</span><span>7 tools covered</span></div>
+  </div>
+</header>
+<main><div class="wrap">
+<div class="flow"><div class="rail"><div class="step"><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9fc4ff" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 11l5 5 5-5M4 20h16"/></svg></span><span class="n">STEP 01</span><span class="t">Position it</span><span class="d">Engineer-credible framing. No magic claims.</span></div><div class="arrow a1"><svg width="28" height="14" viewBox="0 0 28 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 7h22M18 2l5 5-5 5"/></svg></div><div class="step"><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9fc4ff" stroke-width="2" stroke-linecap="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></span><span class="n">STEP 02</span><span class="t">Install in their environment</span><span class="d">Committed to their repo, not your laptop.</span></div><div class="arrow a2"><svg width="28" height="14" viewBox="0 0 28 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 7h22M18 2l5 5-5 5"/></svg></div><div class="step"><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9fc4ff" stroke-width="2" stroke-linecap="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></span><span class="n">STEP 03</span><span class="t">Hand over</span><span class="d">One live prompt, then leave the artifacts behind.</span></div></div><div class="out"><span class="ln"><span class="ck">✓</span> Their repo carries the skills and the standing rule</span><span class="ln"><span class="ck">✓</span> Their agent asks before it builds, for every engineer</span><span class="ln"><span class="ck">✓</span> MCP scoped to a non-production app</span><span class="ln"><span class="ck">✓</span> Artifacts in their tickets, not your chat history</span></div></div><h2 class="step-h"><span class="num">1</span>Position it to their engineers</h2><p class="stepnote">Engineers reject tools that overclaim. Lead with the boundaries, not the benefits.</p><div class="block"><button class="copy" type="button">Copy prompt</button><pre class="prompt hero">Your team's AI assistant can write InstantSearch faster than either of us. What it can't do is know that grouping variants the wrong way will cost you a re-index, or that dropping queryID breaks attribution silently rather than loudly.
+
+These are eleven open-source skills that give it that judgment. They're procedural, not magic: the agent maps the request across the lifecycle, locks the data contract and event taxonomy before any UI exists, records assumptions with owners instead of inventing answers, and won't mark a phase done without validation evidence.
+
+Every live account operation routes to the official Algolia MCP and CLI. The skills don't touch your data — they decide what to ask and in what order.
+
+MIT licensed. Read every line before you install it.</pre></div><p class="cap">Your reference framing. The last line matters — inviting audit is what earns trust here.</p><h3>Why engineers accept it</h3><ul><li><strong>It's procedural, not predictive.</strong> It changes what the agent asks and in what order — nothing hidden.</li><li><strong>It has explicit boundaries.</strong> Each skill carries <code>do NOT use for X</code> and routes live operations to the official CLI and MCP.</li><li><strong>It's readable.</strong> Eleven <code>SKILL.md</code> files, MIT licensed, no build step, no telemetry.</li><li><strong>It's removable.</strong> Delete the folder and their setup is exactly as before.</li><li><strong>It produces artifacts they'd have had to write anyway</strong> — indexing contract, event taxonomy, QA matrix.</li></ul><h3>What to emphasise, by engagement</h3><div class="card tbl"><table><tr><th>Engagement</th><th>Emphasise</th></tr><tr><td><strong>Greenfield build</strong></td><td>Phase ordering. Data and events before UI is the difference between a launch and a re-index.</td></tr><tr><td><strong>Migration or replatform</strong></td><td>The indexing contract as a written artifact both sides can review before anything moves.</td></tr><tr><td><strong>Underperforming search</strong></td><td>Release QA against what exists, and honest “not verified” rather than a clean bill of health.</td></tr><tr><td><strong>AI feature rollout</strong></td><td>Event readiness as a hard gate. NeuralSearch and personalization can't learn from data that isn't there.</td></tr><tr><td><strong>Support-driven cleanup</strong></td><td>The evidence matrix — something they can attach to a ticket instead of arguing about.</td></tr></table></div><h2 class="step-h"><span class="num">2</span>Install it in their environment</h2><p class="stepnote">Commit it into their repo so every engineer and every agent session gets it. Don't leave it on your laptop.</p><div class="block"><button class="copy" type="button">Copy</button><pre class="term"><span class="c"># in the customer's repo — .agents/skills covers most tools at once</span>
+<span class="p">$</span> unzip algolia-skills-library.zip -d /tmp/alg
+<span class="p">$</span> mkdir -p .agents/skills &amp;&amp; cp -R /tmp/alg/algolia-* .agents/skills/
+
+<span class="c"># Claude Code doesn't read .agents/skills — add a copy</span>
+<span class="p">$</span> mkdir -p .claude/skills &amp;&amp; cp -R /tmp/alg/algolia-* .claude/skills/
+
+<span class="p">$</span> git add .agents/skills .claude/skills &amp;&amp; git commit -m 'Add Algolia implementation skills'</pre></div><p class="cap">Committing them means the skills are versioned with the code and survive your engagement ending.</p><h3>Add the standing rule to their AGENTS.md</h3><p>Each skill carries tight <code>do NOT use for X</code> boundaries so they don't collide. That raises precision but lowers recall — left alone, a model fires one skill and misses the rest of the suite. This backstops it:</p><div class="block"><button class="copy" type="button">Copy prompt</button><pre class="prompt">For any non-trivial Algolia work, start with algolia-discovery-planning even if the task looks already scoped or names one feature. Enumerate the in-scope phases up front and state which skill owns each and in what order. Load each in-scope skill for its phase and apply it — don't stop at the first matching skill, and don't substitute your own knowledge for a skill that applies. If you deliberately skip a phase, say so and why. Report which skills ran and what each changed.</pre></div><p class="cap">Paste into <code>AGENTS.md</code> at their repo root, or <code>CLAUDE.md</code> for Claude Code. Both are read automatically.</p><h3>Scope MCP to a non-production app</h3><div class="block"><button class="copy" type="button">Copy</button><pre class="term"><span class="p">$</span> claude mcp add --transport http algolia https://mcp.algolia.com/mcp</pre></div><div class="note "><strong>Do this with their credentials, on their machine, pointed at a non-production app.</strong> These skills make an agent cautious, but an agent with write access to a production index is still an agent with write access to a production index.</div><h3>Their team's tool</h3><p>Pick whatever they actually use — the install target differs.</p><div class="tabs"><div class="tabbar" role="tablist"><button type="button" role="tab" data-tool="claude-code" aria-controls="tech-claude-code" aria-selected="false" tabindex="-1">Claude Code</button><button type="button" role="tab" data-tool="cursor" aria-controls="tech-cursor" aria-selected="false" tabindex="-1">Cursor</button><button type="button" role="tab" data-tool="codex" aria-controls="tech-codex" aria-selected="false" tabindex="-1">Codex</button><button type="button" role="tab" data-tool="copilot" aria-controls="tech-copilot" aria-selected="false" tabindex="-1">Copilot / VS Code</button><button type="button" role="tab" data-tool="windsurf" aria-controls="tech-windsurf" aria-selected="false" tabindex="-1">Windsurf / Devin</button><button type="button" role="tab" data-tool="claude-desktop" aria-controls="tech-claude-desktop" aria-selected="false" tabindex="-1">Claude app</button><button type="button" role="tab" data-tool="other" aria-controls="tech-other" aria-selected="false" tabindex="-1">Anything else</button></div><div class="panels"><div role="tabpanel" id="tech-claude-code" aria-label="Claude Code"><p>Copy folders. Don't upload.</p><div class="block"><button class="copy" type="button">Copy</button><pre class="term"><span class="p">$</span> unzip ~/Downloads/algolia-skills-library.zip -d /tmp/alg
+<span class="p">$</span> mkdir -p ~/.claude/skills
+<span class="p">$</span> cp -R /tmp/alg/algolia-* ~/.claude/skills/</pre></div><p class="cap">Use <code>.claude/skills/</code> inside a repo instead, to scope the skills to one project.</p><p>Then in a session: <code>/algolia-discovery-planning</code></p><div class="note "><strong>Don't use <code>npx skills add</code> for Claude Code.</strong> It installs to <code>~/.agents/skills/</code>, which Claude Code doesn't read.</div></div><div role="tabpanel" id="tech-cursor" aria-label="Cursor"><p>Native since Cursor 2.4. It also reads Claude and Codex skill folders, so an existing install often needs nothing.</p><div class="block"><button class="copy" type="button">Copy</button><pre class="term"><span class="p">$</span> unzip ~/Downloads/algolia-skills-library.zip -d /tmp/alg
+<span class="p">$</span> mkdir -p .cursor/skills
+<span class="p">$</span> cp -R /tmp/alg/algolia-* .cursor/skills/</pre></div><p>Then: <code>/algolia-discovery-planning</code>, or <code>@algolia-discovery-planning</code> to attach as context.</p><div class="note ">Use <code>.cursor/skills/</code>, <strong>not</strong> <code>.cursor/rules/</code>. Rules need a <code>.mdc</code> extension and a <code>.md</code> there is silently ignored.</div></div><div role="tabpanel" id="tech-codex" aria-label="Codex"><p>Codex CLI and the ChatGPT desktop app both read <code>.agents/skills/</code>.</p><div class="block"><button class="copy" type="button">Copy</button><pre class="term"><span class="p">$</span> unzip ~/Downloads/algolia-skills-library.zip -d /tmp/alg
+<span class="p">$</span> mkdir -p .agents/skills
+<span class="p">$</span> cp -R /tmp/alg/algolia-* .agents/skills/</pre></div><p class="cap">Or <code>~/.agents/skills/</code> to make them available in every project.</p><p>Then: <code>/skills</code> to list, <code>$algolia-discovery-planning</code> to invoke.</p><div class="note "><strong><code>~/.codex/skills/</code> no longer works</strong> — it was replaced by <code>.agents/skills/</code>. Move the folders if you followed older instructions.</div><div class="note blue">Codex caps its startup skill list around <strong>8,000 characters</strong> and silently drops the rest. Install only the skills you need now.</div></div><div role="tabpanel" id="tech-copilot" aria-label="Copilot / VS Code"><p>GA in VS Code 1.108+.</p><div class="block"><button class="copy" type="button">Copy</button><pre class="term"><span class="p">$</span> unzip ~/Downloads/algolia-skills-library.zip -d /tmp/alg
+<span class="p">$</span> mkdir -p .github/skills
+<span class="p">$</span> cp -R /tmp/alg/algolia-* .github/skills/</pre></div><p class="cap">Copilot also reads <code>.claude/skills/</code> and <code>.agents/skills/</code> in the workspace.</p><p>Then: <code>/algolia-discovery-planning</code>, optionally with context — <code>/algolia-release-qa for the checkout page</code>.</p></div><div role="tabpanel" id="tech-windsurf" aria-label="Windsurf / Devin"><p>Windsurf is now <strong>Devin Desktop</strong>. It ships two agents — Cascade and Devin Local — and <code>.windsurf/skills/</code> works in both.</p><div class="block"><button class="copy" type="button">Copy</button><pre class="term"><span class="p">$</span> unzip ~/Downloads/algolia-skills-library.zip -d /tmp/alg
+<span class="p">$</span> mkdir -p .windsurf/skills
+<span class="p">$</span> cp -R /tmp/alg/algolia-* .windsurf/skills/</pre></div><p>Then: <code>@algolia-discovery-planning</code> in Cascade, <code>/algolia-discovery-planning</code> in Devin Local.</p></div><div role="tabpanel" id="tech-claude-desktop" aria-label="Claude app"><p>No terminal. About three minutes.</p><ol class="steps"><li><p>Claude → <strong>Settings → Capabilities</strong> → turn on <strong>Code execution and file creation</strong>. The Skills section is hidden until you do.</p></li><li><p>Download the ZIPs. <strong>Don't unzip them.</strong></p><p><code>algolia-discovery-planning.zip</code></p></li><li><p>Go to <strong>Customize → Skills</strong> (<a href="https://claude.ai/customize/skills">claude.ai/customize/skills</a>).</p></li><li><p><strong>+ → Create skill → Upload a skill.</strong> One ZIP at a time.</p></li><li><p>Type <code>/</code> in the message box. You should see <code>/algolia-discovery-planning</code>.</p></li></ol><div class="note ">Upload the <strong>individual</strong> skill ZIPs, not <code>algolia-skills-library.zip</code> — the uploader takes one skill at a time. If a ZIP is rejected, unzip it and re-zip just the <code>algolia-…</code> folder (right-click → Compress).</div></div><div role="tabpanel" id="tech-other" aria-label="Anything else"><p>These follow the open <a href="https://agentskills.io/specification">Agent Skills spec</a>, which about 45 tools now implement. Try the universal path first:</p><div class="block"><button class="copy" type="button">Copy</button><pre class="term"><span class="p">$</span> mkdir -p .agents/skills
+<span class="p">$</span> cp -R /tmp/alg/algolia-* .agents/skills/</pre></div><div class="note ok"><strong>One folder covers most tools.</strong> <code>.agents/skills/</code> works in Codex, ChatGPT desktop, Copilot, Cursor, Gemini CLI, Antigravity and Windsurf. Only three need their own copy: Claude Code (<code>~/.claude/skills/</code>), Kiro (<code>.kiro/skills/</code>), and the ZIP-upload surfaces (Claude app, ChatGPT web).</div><details class="more"><summary>Gemini CLI, Antigravity, Kiro specifics</summary><div class="db"><h3>Gemini CLI</h3><div class="block"><button class="copy" type="button">Copy</button><pre class="term"><span class="p">$</span> gemini skills install https://github.com/algolia/implementation-skills
+&gt; /skills list</pre></div><p>It asks for consent before activating a skill. That's expected.</p><h3>Antigravity</h3><p>Workspace <code>.agents/skills/</code>. Google's docs disagree on the global path — use the workspace one.</p><h3>Kiro</h3><p><code>.kiro/skills/</code> — Kiro is the one holdout that doesn't read <code>.agents/skills/</code>.</p></div></details></div></div></div><div class="note ok"><strong>It worked if</strong> the skill shows up in your tool's skill list, and your first prompt comes back <em>asking you questions</em> instead of writing code.</div><h2 class="step-h"><span class="num">3</span>Hand over with one live prompt</h2><p class="stepnote">The demo is the handover. Watching it ask questions instead of guessing is what converts a sceptic.</p><div class="block"><button class="copy" type="button">Copy prompt</button><pre class="prompt hero">Use the Algolia Discovery Planning skill to scope this before implementing anything.
+
+Context: &lt;the thing the customer's team actually wants to build next&gt;
+
+Map the request across the whole lifecycle and tell us which phases are in scope and in what order. Then work through them — lock the data contract and event taxonomy before any UI exists. Where a decision is provisional, keep moving but record the assumption, the owner, the risk, and the validation follow-up.
+
+Produce the indexing contract, the event taxonomy, and the release QA plan as artifacts.</pre></div><p class="cap">Run this <strong>with their team</strong>, on their next real piece of work — not a toy example.</p><h3>Leave behind</h3><ul><li>The <a href="customer.html">customer quick start</a> so new joiners can self-serve.</li><li>The <strong>artifacts from the demo</strong> — indexing contract, event taxonomy, QA plan — in their tracker, not in a chat log.</li><li><strong>Who owns each open assumption</strong>, written down.</li><li>A named person on their side who'll keep the standing rule in <code>AGENTS.md</code> when it gets refactored.</li></ul><div class="moreband"><p class="mh">If you want more</p><details class="more"><summary>Prompts to leave with their team</summary><div class="db"><h3>Fix the event foundation</h3><div class="block"><button class="copy" type="button">Copy prompt</button><pre class="prompt">Use the Algolia Events &amp; Insights skill to design the smallest event setup that would make our analytics trustworthy.
+
+Start from what we already send, not a blank slate. We need the userToken strategy, the click and conversion taxonomy, where queryID / objectID / position / index must be preserved through the funnel, who owns each emission point, deduplication, and how each event gets validated end to end.
+
+Flag every place our current setup would silently attribute to the wrong query or drop a queryID.</pre></div><p class="cap">The highest-leverage one. Broken attribution silently invalidates everything downstream.</p><h3>Pre-release QA</h3><div class="block"><button class="copy" type="button">Copy prompt</button><pre class="prompt">Use the Algolia Release QA skill to audit this before we ship and produce an evidence matrix.
+
+For every check: what you verified, how, the evidence, and whether it passes, fails, or can't be determined. Do not mark anything as passing because the code looks right — say "not verified" instead.
+
+Then rank the failures by blast radius: what breaks for users, what silently corrupts analytics, and what blocks an AI feature we already pay for.</pre></div></div></details><details class="more"><summary>What good output looks like</summary><div class="db"><p>Tell them what to expect, so they can tell when it's misfiring.</p><ul><li><strong>Phases enumerated up front</strong>, with which skill owns each. Greenfield should run data modeling → index configuration → UI → events → release QA.</li><li><strong>“Not verified” used honestly.</strong> An audit that passes everything without account access is describing the code, not reality.</li><li><strong>Assumptions carry an owner and a validation step</strong>, not just a caveat.</li><li><strong>Artifacts, not prose.</strong></li><li><strong>Skipped phases stated with a reason.</strong> Silence means it forgot — re-prompt naming the skill.</li></ul></div></details><details class="more"><summary>Troubleshooting their setup</summary><div class="db"><div class="card tbl"><table><tr><th>Symptom</th><th>Fix</th></tr><tr><td>Agent ignores the skills</td><td>Wrong folder for that tool, or <code>SKILL.md</code> isn't at the top of the skill folder. Unzipping often doubles the folder — check for <code>algolia-events-insights/algolia-events-insights/SKILL.md</code>.</td></tr><tr><td>Claude rejected the ZIP</td><td>Upload individual skill ZIPs, not the full library. Still rejected? Unzip and re-zip just the <code>algolia-…</code> folder.</td></tr><tr><td>No Skills section in Claude</td><td>Turn on <strong>Settings → Capabilities → Code execution and file creation</strong> first.</td></tr><tr><td>Some skills load, others don't</td><td>Codex caps its startup list near 8,000 characters and drops the rest. Install fewer.</td></tr><tr><td>It writes code without asking anything</td><td>The discovery skill didn't trigger. Name it: <code>/algolia-discovery-planning</code>.</td></tr><tr><td><code>npx skills add</code> didn't work in Claude Code</td><td>It writes to <code>~/.agents/skills/</code>, which Claude Code doesn't read. Copy to <code>~/.claude/skills/</code> or use <code>/plugin marketplace add</code>.</td></tr><tr><td>Codex can't find them after older docs</td><td><code>~/.codex/skills/</code> was replaced by <code>.agents/skills/</code>. Move the folders.</td></tr><tr><td>Skill loads but references are ignored</td><td>In Copilot, <code>references/</code> files only load if a relative Markdown link in <code>SKILL.md</code> points at them.</td></tr><tr><td>New skills dir not picked up mid-session</td><td>Claude Code needs a restart if you create a top-level <code>.claude/skills/</code> that didn't exist at session start.</td></tr><tr><td>Works for you, not for their team</td><td>You installed to a personal dir. Commit to the repo instead.</td></tr></table></div></div></details><details class="more"><summary>When not to recommend it</summary><div class="db"><ul><li><strong>They have a mature search team with their own standards.</strong> Offer it as a peer artifact to compare against, not as guidance.</li><li><strong>Nobody uses an AI assistant.</strong> The value is entirely conditional on that.</li><li><strong>They want a guarantee.</strong> It improves the odds and produces evidence; it doesn't certify anything.</li><li><strong>Their agent has production write access and no review process.</strong> Fix that first.</li><li><strong>Mid-incident.</strong> Wait.</li></ul></div></details><details class="more"><summary>Using it for your own work</summary><div class="db"><p>Same install, your own machine — see the <a href="customer.html">customer quick start</a>. The prompts above work unchanged; swap “we” and “our” for the customer's name.</p></div></details></div>
+</div></main>
+<footer><div class="wrap">
+  <div>Algolia Implementation Skills &middot; MIT licensed</div>
+  <div><a href="https://community.algolia.com/implementation-skills/">Library</a> &middot; <a href="https://github.com/algolia/skills">Official Algolia skills</a> &middot; <a href="https://www.algolia.com/doc/guides/get-started/build-with-ai/">Build with AI</a></div>
+</div></footer>
+<script>
+document.querySelectorAll('.block .copy').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var src = btn.parentElement.querySelector('pre');
+    if(!src) return;
+    var txt = src.innerText.replace(/ /g,' ');
+    // Terminal blocks show a "$ " prompt marker. Strip it so the copy pastes
+    // straight into a shell instead of running a command called "$".
+    if(src.classList.contains('term')){
+      txt = txt.split('\n').map(function(l){ return l.replace(/^\s*\$\s/,''); }).join('\n');
+    }
+    txt = txt.trim();
+    var done = function(){
+      var old = btn.getAttribute('data-label') || btn.textContent;
+      btn.setAttribute('data-label', old);
+      btn.textContent = 'Copied ✓'; btn.classList.add('done');
+      setTimeout(function(){ btn.textContent = old; btn.classList.remove('done'); }, 1700);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done, function(){ fallback(txt, done); });
+    } else { fallback(txt, done); }
+  });
+});
+function fallback(txt, cb){
+  var ta = document.createElement('textarea');
+  ta.value = txt; ta.setAttribute('readonly','');
+  ta.style.position='fixed'; ta.style.top='-1000px';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); cb(); } catch(e){}
+  document.body.removeChild(ta);
+}
+
+document.querySelectorAll('.tabs').forEach(function(group){
+  var btns = Array.prototype.slice.call(group.querySelectorAll('.tabbar button'));
+  var pans = Array.prototype.slice.call(group.querySelectorAll('[role="tabpanel"]'));
+  function show(i, focus){
+    btns.forEach(function(b,j){
+      b.setAttribute('aria-selected', j===i ? 'true' : 'false');
+      b.tabIndex = j===i ? 0 : -1;
+    });
+    pans.forEach(function(p,j){ p.classList.toggle('on', j===i); });
+    if(focus) btns[i].focus();
+    try { localStorage.setItem('alg-tool-tab', btns[i].dataset.tool); } catch(e){}
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click', function(){ show(i, false); });
+    b.addEventListener('keydown', function(e){
+      var d = e.key==='ArrowRight' ? 1 : e.key==='ArrowLeft' ? -1 : 0;
+      if(!d) return;
+      e.preventDefault();
+      show((i + d + btns.length) % btns.length, true);
+    });
+  });
+  var want = null;
+  if(location.hash.indexOf('#tool-')===0) want = location.hash.replace('#tool-','');
+  if(!want){ try { want = localStorage.getItem('alg-tool-tab'); } catch(e){} }
+  var idx = 0;
+  if(want){ btns.forEach(function(b,j){ if(b.dataset.tool===want) idx = j; }); }
+  show(idx, false);
+});
+</script>
+</body>
+</html>
