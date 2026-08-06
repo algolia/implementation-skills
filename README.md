@@ -97,9 +97,9 @@ Install these official Algolia tools with the implementation bundles so agents c
 
 | Tool | Use it for | Install or setup |
 | --- | --- | --- |
-| Algolia Productivity MCP | Live analytics, index inspection, recommendations, and account-aware reviews. | `claude mcp add --transport http algolia https://mcp.algolia.com/mcp` |
-| Algolia CLI | Index, settings, rules, synonyms, records, and operational account tasks. | `brew install algolia/algolia-cli/algolia` on macOS, or use the official CLI setup guide for Linux and other platforms. |
-| Official Algolia skills | Official Algolia MCP, CLI, algobot, InstantSearch, and core tooling workflows. | `npx skills add https://github.com/algolia/skills` |
+| Algolia Productivity MCP | Live analytics, index inspection, recommendations, and account-aware reviews for your own account. | `claude mcp add --transport http algolia https://mcp.algolia.com/mcp`, then `/mcp` to authorize by browser sign-in. For customer-facing agents use app-scoped Public MCP instead; there is no local/npx server. |
+| Algolia CLI | Index, settings, rules, synonyms, records, and operational account tasks. | `brew install algolia` on macOS, `npx @algolia/cli` anywhere, or the official setup guide for Linux and Windows. |
+| Official Algolia skills | Official Algolia MCP, CLI, algobot, Crawler, InstantSearch, and core tooling workflows. | `/plugin marketplace add algolia/skills` then `/plugin install algolia-implementation@algolia-skills` in Claude Code; `npx skills add https://github.com/algolia/skills` elsewhere. |
 
 See `artifacts/repo-integration-strategy.md` for the recommended separate-repo and merge-into-official-repo options.
 

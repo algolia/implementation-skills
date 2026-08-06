@@ -563,7 +563,7 @@ const companionTools = [
   {
     id: 'algolia-productivity-mcp',
     title: 'Algolia Productivity MCP',
-    description: 'Live Algolia context for analytics, index inspection, recommendations, and account-aware reviews.',
+    description: 'Live Algolia context for analytics, index inspection, recommendations, and account-aware reviews. Authorize with /mcp after adding it — browser sign-in, no API key to paste. For customer-facing agents use app-scoped Public MCP instead.',
     icon: Bot,
     command: 'claude mcp add --transport http algolia https://mcp.algolia.com/mcp',
     commandLabel: 'Claude Code setup',
@@ -575,7 +575,7 @@ const companionTools = [
     title: 'Algolia CLI',
     description: 'Terminal access for index, settings, rules, synonyms, records, and operational account tasks.',
     icon: Terminal,
-    command: 'brew install algolia/algolia-cli/algolia',
+    command: 'brew install algolia',
     commandLabel: 'macOS install',
     href: 'https://www.algolia.com/doc/guides/get-started/build-with-ai/#install-the-algolia-cli',
     action: 'Open CLI setup'
@@ -583,10 +583,10 @@ const companionTools = [
   {
     id: 'official-algolia-skills',
     title: 'Official Algolia skills',
-    description: 'Official Algolia agent skills for MCP, CLI, algobot, InstantSearch, and core tooling workflows.',
+    description: 'Official Algolia agent skills for MCP, CLI, algobot, Crawler, InstantSearch, and core tooling workflows. This suite ships there too, as the algolia-implementation plugin.',
     icon: Library,
-    command: 'npx skills add https://github.com/algolia/skills',
-    commandLabel: 'Skill installer',
+    command: '/plugin marketplace add algolia/skills',
+    commandLabel: 'Claude Code install',
     href: 'https://github.com/algolia/skills',
     action: 'Open skills repo'
   }
@@ -877,17 +877,10 @@ function App() {
         <main>
           <section className="hero-section" aria-labelledby="page-title">
             <div className="hero-copy">
-              <div>
-                <h1 id="page-title">Algolia Implementation Skills</h1>
-                <p>
-                  Agent skills for planning, building, and validating Algolia implementations through the whole Algolia lens: data and events first, then relevance, UI, AI readiness, and launch QA.
-                </p>
-                <p className="hero-meta">Updated July 23, 2026</p>
-              </div>
-              <div className="hero-actions" aria-label="Primary actions">
-                <DownloadButton href="/downloads/algolia-skills-library.zip" label="Download library" size="large" />
-                <p>New build: Search Implementation. Unclear scope or migration: Discovery Planning. Existing build audit: Release QA.</p>
-              </div>
+              <h1 id="page-title">Algolia Implementation Skills</h1>
+              <p>
+                Agent skills for planning, building, and validating Algolia implementations through the whole Algolia lens: data and events first, then relevance, UI, AI readiness, and launch QA.
+              </p>
             </div>
           </section>
 

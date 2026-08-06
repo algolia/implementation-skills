@@ -352,10 +352,6 @@ main {
 
 .hero-copy {
   width: 100%;
-  display: grid;
-  grid-template-columns: minmax(260px, 1fr) auto;
-  gap: 18px 28px;
-  align-items: end;
 }
 
 h1,
@@ -383,16 +379,9 @@ h1 {
   white-space: nowrap;
 }
 
-.hero-meta {
-  margin: 12px 0 0;
-  color: var(--tag-text);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0;
-}
 
 .hero-copy p {
-  max-width: 560px;
+  max-width: 90ch;
   margin-bottom: 0;
   color: var(--muted);
   font-size: 17px;
@@ -530,24 +519,7 @@ nav button:focus-visible,
   scroll-margin-top: 96px;
 }
 
-.hero-actions {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  flex-wrap: wrap;
-}
 
-.hero-actions p {
-  width: 100%;
-  max-width: 260px;
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.35;
-  text-align: right;
-}
 
 .bundle-section {
   margin: 28px 0 58px;
@@ -1341,21 +1313,9 @@ h2 {
     padding: 24px 0 14px;
   }
 
-  .hero-copy {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
 
   #page-title {
     white-space: normal;
-  }
-
-  .hero-actions {
-    justify-content: flex-start;
-  }
-
-  .hero-actions p {
-    text-align: left;
   }
 
   .section-heading {
@@ -1420,10 +1380,6 @@ h2 {
     font-size: 15px;
   }
 
-  .hero-meta {
-    font-size: 11px;
-  }
-
   nav .download-button {
     min-height: 38px;
     width: auto;
@@ -1451,11 +1407,6 @@ h2 {
   .filter-control,
   .prompt-panel button {
     width: 100%;
-  }
-
-  .hero-actions {
-    display: grid;
-    grid-template-columns: 1fr;
   }
 
   .bundle-card {

@@ -94,12 +94,21 @@ Install these official Algolia tools with the implementation bundles when the ag
 
 | Tool | Use it for | Install or setup |
 | --- | --- | --- |
-| Algolia Productivity MCP | Live analytics, index inspection, recommendations, and account-aware reviews. | `claude mcp add --transport http algolia https://mcp.algolia.com/mcp` |
-| Algolia CLI | Index, settings, rules, synonyms, records, and operational account tasks. | `brew install algolia/algolia-cli/algolia` on macOS, or use the official CLI setup guide for Linux and other platforms. |
-| Official Algolia skills | Official Algolia MCP, CLI, algobot, InstantSearch, and core tooling workflows. | `npx skills add https://github.com/algolia/skills` |
+| Algolia Productivity MCP | Live analytics, index inspection, recommendations, and account-aware reviews for your own account. | `claude mcp add --transport http algolia https://mcp.algolia.com/mcp`, then `/mcp` in-session to authorize (browser sign-in, no API key to paste) |
+| Algolia CLI | Index, settings, rules, synonyms, records, and operational account tasks. | `brew install algolia` on macOS, `npx @algolia/cli` anywhere, or the official setup guide for Linux and Windows |
+| Official Algolia skills | Official Algolia MCP, CLI, algobot, Crawler, InstantSearch, and core tooling workflows — plus this suite. | `/plugin marketplace add algolia/skills` then `/plugin install algolia-implementation@algolia-skills` in Claude Code; `npx skills add https://github.com/algolia/skills` elsewhere |
+
+Two MCP servers exist and they are not interchangeable. **Productivity MCP** (above) is
+user-scoped, for your team working on your own account. **Public MCP** is
+application-scoped for customer-facing agents and uses a per-application endpoint
+(`https://{APP_ID}.algolia.net/mcp/1/{UNIQ_ID}/mcp`), where the Search API key's
+permissions are encoded in the URL. There is no local or `npx` MCP server — the
+former Node and Go implementations are gone, so remote HTTP is the only path.
 
 Official setup page: https://www.algolia.com/doc/guides/get-started/build-with-ai/
-Official skills repo: https://github.com/algolia/skills
+MCP overview: https://www.algolia.com/doc/guides/model-context-protocol
+Official skills repo: https://github.com/algolia/skills — this suite ships there as the
+`algolia-implementation` plugin.
 
 Repo integration strategy: `artifacts/repo-integration-strategy.md`
 

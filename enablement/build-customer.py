@@ -475,7 +475,7 @@ BODY = (
         "$ claude mcp add --transport http algolia https://mcp.algolia.com/mcp",
         "",
         "# indices, settings, rules, synonyms, records",
-        "$ brew install algolia/algolia-cli/algolia",
+        "$ brew install algolia",
     ])
     + '<div class="note">%s</div>' % md(
         "**Point it at a non-production app while you explore.** These skills make an agent "
