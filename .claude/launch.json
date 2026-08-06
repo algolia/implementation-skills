@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "comment": "Attach-only. This project lives under ~/Documents, which macOS TCC protects; the preview server cannot spawn a process there (getcwd/chdir return EPERM) until the app is granted Files and Folders access to Documents, or Full Disk Access, in System Settings > Privacy & Security. Until then run `npm run dev` yourself and this config attaches to it. Restore the spawning version below once the permission is granted.",
+      "name": "dev",
+      "url": "http://127.0.0.1:5173",
+      "port": 5173
+    },
+    {
+      "name": "dev-spawn",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
+    }
+  ]
+}

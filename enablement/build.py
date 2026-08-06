@@ -490,15 +490,15 @@ def t_claude_code():
 
 def t_codex():
     return (
-        p("Codex CLI and the ChatGPT desktop app both read `.agents/skills/`.")
+        p("Codex CLI and the Codex IDE extension read `.agents/skills/`.")
         + term([
             "$ unzip ~/Downloads/algolia-skills-library.zip -d /tmp/alg",
             "$ mkdir -p .agents/skills",
             "$ cp -R /tmp/alg/algolia-* .agents/skills/",
         ], cap="Or `~/.agents/skills/` to make them available in every project.")
         + p("Then: `/skills` to list, `$algolia-discovery-planning` to invoke.")
-        + note(md("**`~/.codex/skills/` no longer works** — it was replaced by `.agents/skills/`. Move the folders if you followed older instructions."))
-        + note(md("Codex caps its startup skill list around **8,000 characters** and silently drops the rest. Install only the skills you need now."), "blue")
+        + note(md("`.agents/skills/` is the documented cross-tool location, but **`~/.codex/skills/` still loads** for backward compatibility — you do not have to move existing folders."))
+        + note(md("Codex budgets its startup skill list to **2% of the model’s context window** (8,000 characters when that is unknown). Past that it shortens descriptions, then omits skills and warns you. Install only the skills you need now."), "blue")
     )
 
 
@@ -506,7 +506,7 @@ def t_chatgpt():
     return (
         p("Native Skills, GA on **Business, Enterprise, Healthcare and Edu**.")
         + steps([
-            p("Sidebar → **Plugins → Plugin Directory → Skills** ([chatgpt.com/skills](https://chatgpt.com/skills))."),
+            p("Sidebar → **Plugins → Plugin Directory → Skills**."),
             p("**Create → Upload from your computer.** One skill ZIP at a time."),
             p("Wait for the security scan. Uploads can come back **Needs Review**."),
         ])
@@ -534,7 +534,7 @@ def t_cursor():
 
 def t_copilot():
     return (
-        p("GA in VS Code 1.108+.")
+        p("GA in VS Code 1.109+ (1.108 shipped it as experimental).")
         + term([
             "$ unzip ~/Downloads/algolia-skills-library.zip -d /tmp/alg",
             "$ mkdir -p .github/skills",
@@ -546,7 +546,7 @@ def t_copilot():
 
 def t_windsurf():
     return (
-        p("Windsurf is now **Devin Desktop**. It ships two agents — Cascade and Devin Local — and `.windsurf/skills/` works in both.")
+        p("Windsurf is now **Devin Desktop**. It currently offers Cascade and the newer Devin Local agent, with Cascade being superseded. `.agents/skills/` is the recommended path; `.devin/skills/` and the legacy `.windsurf/skills/` also load.")
         + term([
             "$ unzip ~/Downloads/algolia-skills-library.zip -d /tmp/alg",
             "$ mkdir -p .windsurf/skills",
@@ -558,13 +558,13 @@ def t_windsurf():
 
 def t_other():
     return (
-        p("These follow the open [Agent Skills spec](https://agentskills.io/specification), which about 45 tools now implement. Try the universal path first:")
+        p("These follow the open [Agent Skills spec](https://agentskills.io/specification) — 44 products are listed on its client showcase, and that list is not exhaustive. The spec standardises the skill folder, not where each tool looks for it, so try the most widely read path first:")
         + term(["$ mkdir -p .agents/skills", "$ cp -R /tmp/alg/algolia-* .agents/skills/"])
-        + note(md("**One folder covers most tools.** `.agents/skills/` works in Codex, ChatGPT desktop, Copilot, Cursor, Gemini CLI, Antigravity and Windsurf. Only three need their own copy: Claude Code (`~/.claude/skills/`), Kiro (`.kiro/skills/`), and the ZIP-upload surfaces (Claude app, ChatGPT web)."), "ok")
+        + note(md("**One folder covers most tools.** `.agents/skills/` works in Codex, Copilot, Cursor, Gemini CLI, Antigravity and Devin Desktop. The exceptions: Claude Code (`~/.claude/skills/`), Kiro (`.kiro/skills/`), and the ZIP-upload surfaces (Claude app, ChatGPT web)."), "ok")
         + details(
             "Gemini CLI, Antigravity, Kiro specifics",
             "<h3>Gemini CLI</h3>"
-            + term(["$ gemini skills install https://github.com/algolia/implementation-skills", "> /skills list"])
+            + term(["$ gemini skills install https://github.com/algolia/skills", "> /skills list"])
             + p("It asks for consent before activating a skill. That's expected.")
             + "<h3>Antigravity</h3>"
             + p("Workspace `.agents/skills/`. Google's docs disagree on the global path — use the workspace one.")
@@ -606,7 +606,7 @@ TROUBLE = [
     ["Agent ignores the skills", "Wrong folder for that tool, or `SKILL.md` isn't at the top of the skill folder. Unzipping often doubles the folder — check for `algolia-events-insights/algolia-events-insights/SKILL.md`."],
     ["Claude rejected the ZIP", "Upload individual skill ZIPs, not the full library. Still rejected? Unzip and re-zip just the `algolia-…` folder."],
     ["No Skills section in Claude", "Turn on **Settings → Capabilities → Code execution and file creation** first."],
-    ["Some skills load, others don't", "Codex caps its startup list near 8,000 characters and drops the rest. Install fewer."],
+    ["Some skills load, others don't", "Codex budgets the startup list to 2% of the context window (8,000 characters if unknown), then trims descriptions and warns. Install fewer."],
     ["It writes code without asking anything", "The discovery skill didn't trigger. Name it: `/algolia-discovery-planning`."],
 ]
 
@@ -1176,7 +1176,7 @@ tech = (
                     TROUBLE
                     + [
                         ["`npx skills add` didn't work in Claude Code", "It writes to `~/.agents/skills/`, which Claude Code doesn't read. Copy to `~/.claude/skills/` or use `/plugin marketplace add`."],
-                        ["Codex can't find them after older docs", "`~/.codex/skills/` was replaced by `.agents/skills/`. Move the folders."],
+                        ["Codex can't find them after older docs", "`.agents/skills/` is the documented location now; `~/.codex/skills/` still loads too."],
                         ["Skill loads but references are ignored", "In Copilot, `references/` files only load if a relative Markdown link in `SKILL.md` points at them."],
                         ["New skills dir not picked up mid-session", "Claude Code needs a restart if you create a top-level `.claude/skills/` that didn't exist at session start."],
                         ["Works for you, not for their team", "You installed to a personal dir. Commit to the repo instead."],
@@ -1476,7 +1476,7 @@ cust = (
                     ["Tool", "For", "Install"],
                     [
                         ["**Algolia MCP**", "Live analytics, index inspection, account-aware review.", "`claude mcp add --transport http algolia https://mcp.algolia.com/mcp`"],
-                        ["**Algolia CLI**", "Indices, settings, rules, synonyms, records.", "`brew install algolia/algolia-cli/algolia`"],
+                        ["**Algolia CLI**", "Indices, settings, rules, synonyms, records.", "`brew install algolia`"],
                         ["**Official Algolia skills**", "Official MCP, CLI and InstantSearch workflows.", "`npx skills add https://github.com/algolia/skills`"],
                     ],
                 )
