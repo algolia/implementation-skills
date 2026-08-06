@@ -1,0 +1,16 @@
+{
+  "comment": "The skills this site packages. They live in the algolia/skills submodule at vendor/algolia-skills; that repo is the canonical home. TEMPORARY: the submodule is pinned to the chore/ui-library-currency commit (algolia/skills#34) rather than main, because the UI-library corrections in the shipped ZIPs are not on main yet. Once #34 merges, run `npm run skills:update` to move it back to main, then `npm run release:prepare` and commit.",
+  "skills": [
+    "algolia-agent-studio",
+    "algolia-autocomplete",
+    "algolia-data-modeling",
+    "algolia-discovery-planning",
+    "algolia-events-insights",
+    "algolia-index-configuration",
+    "algolia-instantsearch-ui",
+    "algolia-neuralsearch",
+    "algolia-release-qa",
+    "algolia-search-implementation",
+    "algolia-ui-libraries"
+  ]
+}

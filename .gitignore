@@ -7,7 +7,8 @@ PR-HANDOFF.md
 PR-DESCRIPTION.md
 marketing/
 
-# nested clones — tracked in their own repos
+# nested clones — tracked in their own repos.
+# Skill content comes from the algolia/skills submodule at vendor/algolia-skills.
 skills/
 algolia-implementation-skills-repo/
 internal-skills/

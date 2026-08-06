@@ -7,11 +7,12 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "sync:source": "node scripts/sync-source.mjs",
+    "skills:update": "git submodule update --remote vendor/algolia-skills",
+    "sync:artifacts": "node scripts/sync-artifacts.mjs",
     "package:downloads": "node scripts/package-downloads.mjs",
-    "validate:skills": "node algolia-implementation-skills-repo/scripts/validate-skills.mjs",
+    "validate:skills": "node scripts/validate-skills.mjs",
     "validate:packages": "node scripts/validate-packages.mjs",
-    "release:prepare": "npm run sync:source && npm run package:downloads && npm run validate:skills && npm run validate:packages && npm run build"
+    "release:prepare": "npm run sync:artifacts && npm run package:downloads && npm run validate:skills && npm run validate:packages && npm run build"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",

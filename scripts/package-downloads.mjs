@@ -5,12 +5,13 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const workspaceRoot = fileURLToPath(new URL('../', import.meta.url));
-const sourceRoot = join(workspaceRoot, 'algolia-implementation-skills-repo');
+// Skills come from the algolia/skills submodule (the canonical home). Artifacts,
+// the bundle guides and the packaged README live in this repo.
+const skillsRoot = join(workspaceRoot, 'vendor', 'algolia-skills', 'skills');
+const artifactsRoot = join(workspaceRoot, 'artifacts');
+const packagingRoot = join(workspaceRoot, 'packaging');
 const downloadsRoot = join(workspaceRoot, 'public', 'downloads');
-const skillIds = readdirSync(join(sourceRoot, 'skills'), { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
-  .sort();
+const skillIds = JSON.parse(readFileSync(join(packagingRoot, 'suite.json'), 'utf8')).skills.slice().sort();
 
 const commonArtifacts = [
   'start-here-prompt.md',
@@ -60,21 +61,21 @@ const bundles = [
 mkdirSync(downloadsRoot, { recursive: true });
 
 function copySkill(stage, skill) {
-  cpSync(join(sourceRoot, 'skills', skill), join(stage, skill), { recursive: true });
+  cpSync(join(skillsRoot, skill), join(stage, skill), { recursive: true });
 }
 
 function copyLicense(stage) {
-  cpSync(join(sourceRoot, 'LICENSE'), join(stage, 'LICENSE'));
+  cpSync(join(workspaceRoot, 'LICENSE'), join(stage, 'LICENSE'));
 }
 
 function copyArtifacts(stage, names = null) {
   const destination = join(stage, 'artifacts');
   mkdirSync(destination, { recursive: true });
   if (!names) {
-    cpSync(join(sourceRoot, 'artifacts'), destination, { recursive: true });
+    cpSync(artifactsRoot, destination, { recursive: true });
     return;
   }
-  for (const name of names) cpSync(join(sourceRoot, 'artifacts', name), join(destination, basename(name)));
+  for (const name of names) cpSync(join(artifactsRoot, name), join(destination, basename(name)));
 }
 
 function zipStage(stage, outputName) {
@@ -107,8 +108,8 @@ withStage((stage) => {
   for (const skill of skillIds) copySkill(stage, skill);
   copyArtifacts(stage);
   copyLicense(stage);
-  cpSync(join(sourceRoot, 'README.md'), join(stage, 'README.md'));
-  cpSync(join(sourceRoot, 'CLAUDE.md'), join(stage, 'CLAUDE.md'));
+  cpSync(join(packagingRoot, 'library-README.md'), join(stage, 'README.md'));
+  cpSync(join(workspaceRoot, 'CLAUDE.md'), join(stage, 'CLAUDE.md'));
   zipStage(stage, 'algolia-skills-library.zip');
 });
 
@@ -117,8 +118,8 @@ for (const bundle of bundles) {
     for (const skill of bundle.skills) copySkill(stage, skill);
     copyArtifacts(stage, bundle.artifacts);
     copyLicense(stage);
-    cpSync(join(sourceRoot, 'CLAUDE.md'), join(stage, 'CLAUDE.md'));
-    const guide = readFileSync(join(sourceRoot, 'artifacts', 'use-cases', bundle.guide), 'utf8');
+    cpSync(join(workspaceRoot, 'CLAUDE.md'), join(stage, 'CLAUDE.md'));
+    const guide = readFileSync(join(artifactsRoot, 'use-cases', bundle.guide), 'utf8');
     writeFileSync(join(stage, 'BUNDLE.md'), guide);
     zipStage(stage, `${bundle.id}-bundle.zip`);
   });

@@ -1,0 +1,4 @@
+[submodule "vendor/algolia-skills"]
+	path = vendor/algolia-skills
+	url = git@github.com:algolia/skills.git
+	branch = main

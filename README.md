@@ -57,7 +57,15 @@ When live Algolia app data, analytics, index inspection, settings changes, objec
 
 ## Source Of Truth
 
-The skills-only GitHub repo is the reviewable source package: `algolia-implementation-skills-repo/`. The top-level `algolia-*` folders and `artifacts/` folder in this workspace are site packaging mirrors used to build downloadable ZIPs. When editing skills or artifacts, update the source repo and sync the top-level packaging copies before rebuilding downloads to avoid drift.
+**Skill content lives in [algolia/skills](https://github.com/algolia/skills)** — the official repo, where this suite ships as the `algolia-implementation` plugin. This repo consumes it as a submodule at `vendor/algolia-skills` and never keeps its own copy, so skill content cannot drift from the official version. Edit skills by opening a PR against `algolia/skills`, then:
+
+```bash
+npm run skills:update && npm run release:prepare
+```
+
+Everything else the downloads need lives here: `artifacts/` (canonical, hand-edited; `public/artifacts/` is the served copy), `packaging/suite.json` (which skills this site packages), and `packaging/library-README.md` (bundled into the full-library ZIP).
+
+The retired `algolia/algolia-implementation-skills` repo was the pre-merge staging ground for the suite. It is archived; do not add content there.
 
 Customer start prompt:
 

@@ -4,12 +4,12 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const workspaceRoot = fileURLToPath(new URL('../', import.meta.url));
-const sourceRoot = join(workspaceRoot, 'algolia-implementation-skills-repo');
+const skillsRoot = join(workspaceRoot, 'vendor', 'algolia-skills', 'skills');
+const artifactsRoot = join(workspaceRoot, 'artifacts');
 const downloadsRoot = join(workspaceRoot, 'public', 'downloads');
-const skills = readdirSync(join(sourceRoot, 'skills'), { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
-  .sort();
+// Only the suite this site packages — vendor/algolia-skills holds the whole
+// upstream repo, most of which is not ours to ship.
+const skills = JSON.parse(readFileSync(join(workspaceRoot, 'packaging', 'suite.json'), 'utf8')).skills.slice().sort();
 const bundleGuides = new Map([
   ['ecommerce-search-bundle.zip', 'ecommerce-search.md'],
   ['b2b-catalog-bundle.zip', 'b2b-catalog.md'],
@@ -37,7 +37,7 @@ for (const skill of skills) {
     if (!listing.split('\n').includes(required)) failures.push(`${skill}.zip is missing ${required}`);
   }
   const archivedSkill = unzip(zip, `${skill}/SKILL.md`);
-  const sourceSkill = readFileSync(join(sourceRoot, 'skills', skill, 'SKILL.md'));
+  const sourceSkill = readFileSync(join(skillsRoot, skill, 'SKILL.md'));
   if (!archivedSkill.equals(sourceSkill)) failures.push(`${skill}.zip contains stale SKILL.md content`);
 }
 
@@ -59,7 +59,7 @@ for (const [zipName, guideName] of bundleGuides) {
     if (!listing.includes(required)) failures.push(`${zipName} is missing ${required}`);
   }
   const bundle = unzip(zip, 'BUNDLE.md');
-  const guide = readFileSync(join(sourceRoot, 'artifacts', 'use-cases', guideName));
+  const guide = readFileSync(join(artifactsRoot, 'use-cases', guideName));
   if (!bundle.equals(guide)) failures.push(`${zipName} contains stale BUNDLE.md content`);
   bundleContents.set(zipName, bundle.toString('utf8'));
 }
