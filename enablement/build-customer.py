@@ -507,6 +507,8 @@ STANDALONE = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Get started with the Algolia skills</title>
 <meta name="description" content="Download a ZIP, drop it into the AI tool you already use, paste one prompt. About ten minutes.">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#003dff">
 <style>body{{margin:0;background:var(--bg,#f5f8ff)}}
 {css}</style></head>
 <body class="alg">
