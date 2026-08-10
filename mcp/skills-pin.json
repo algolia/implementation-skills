@@ -1,0 +1,26 @@
+{
+  "comment": "The promoted commit of algolia/skills that this server serves. Customer-facing guidance goes through a review gate: bump `commit` deliberately once a change has been validated, never track main live. `suite` limits what is served; drop it to serve every skill in the repo.",
+  "repo": "algolia/skills",
+  "commit": "dc12547afaceb9fcf5a237ede9121a97bb6173dd",
+  "promotedAt": "2026-08-08",
+  "suite": [
+    "algolia-discovery-planning",
+    "algolia-search-implementation",
+    "algolia-data-modeling",
+    "algolia-index-configuration",
+    "algolia-ui-libraries",
+    "algolia-instantsearch-ui",
+    "algolia-autocomplete",
+    "algolia-events-insights",
+    "algolia-neuralsearch",
+    "algolia-agent-studio",
+    "algolia-release-qa",
+    "algolia-cli",
+    "algolia-mcp",
+    "algolia-quickstart",
+    "algolia-crawler",
+    "algolia-migration",
+    "algobot-cli",
+    "instantsearch"
+  ]
+}

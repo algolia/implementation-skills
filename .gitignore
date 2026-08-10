@@ -18,3 +18,4 @@ ai-dev-hub/
 .env
 .env.local
 .env.*.local
+mcp/node_modules/
