@@ -2,7 +2,7 @@
 
 Use the full library ZIP when you want every skill and artifact. Use an individual skill ZIP when you only need one workflow.
 
-Use these implementation skills as customer-ready extensions to Algolia MCP, the Algolia CLI, and official Algolia skills. MCP and CLI are the right layer for live account inspection, analytics, index operations, settings changes, rules, synonyms, and record imports. These skills add the workflow layer for asking the right questions, choosing the right path, interpreting tool output, and validating the work.
+Use these implementation skills as customer-ready extensions to Algolia MCP, the Algolia CLI, and official Algolia skills. Algolia MCP is the right layer for live account inspection and analytics, and is read-only. The Algolia CLI is the layer that changes things: index operations, settings, rules, synonyms, and record imports. These skills add the workflow layer for asking the right questions, choosing the right path, interpreting tool output, and validating the work.
 
 When installing the full library, orient the agent to the whole Algolia system. Data and events are the foundation: the data contract shapes what search can retrieve, rank, filter, display, and attribute; the event foundation shapes analytics, personalization, Recommend, Dynamic Re-Ranking, NeuralSearch evaluation, and Agent Studio feedback loops.
 

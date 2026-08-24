@@ -4,7 +4,7 @@ Codex/Claude-compatible implementation skill bundles that extend Algolia MCP, th
 
 This package is generally available and SME-reviewed.
 
-This library is the customer implementation layer for Algolia's agent tooling. Algolia MCP, the Algolia CLI, and official Algolia skills give agents live data, account actions, and official product workflows; these implementation skills make that tooling easier to apply by teaching agents how to ask better questions, sequence work, make safer assumptions, and produce validation artifacts before making implementation decisions.
+This library is the customer implementation layer for Algolia's agent tooling. Algolia MCP gives agents read-only access to live account data, the Algolia CLI performs the account actions, and official Algolia skills carry the product workflows; these implementation skills make that tooling easier to apply by teaching agents how to ask better questions, sequence work, make safer assumptions, and produce validation artifacts before making implementation decisions.
 
 When an agent downloads the full library, it should treat Algolia as a connected system, not a set of isolated tasks. Data modeling and event setup come first in that mental model because they shape how search behaves, how relevance can be tuned, how analytics can be trusted, and how AI features such as NeuralSearch, Dynamic Re-Ranking, Recommend, personalization, and Agent Studio can learn from user behavior.
 
@@ -53,7 +53,7 @@ Copy one or more skill folders into an agent skills directory, or invoke them di
 
 These skills are intentionally modular, but the library should be used through a whole-Algolia lens. For net-new search implementation requests, start with `algolia-search-implementation` so the data, events, index configuration, UI, and release QA decisions are visible in order. Start with `algolia-discovery-planning` when the request is broad or the implementation path is unclear, then route to the narrower implementation skill. Product-focused AI skills should still call into the foundation skills when data, events, relevance settings, UI integration, security, or release validation are prerequisites. Use `algolia-ui-libraries` as a living selector before implementation when the agent needs to choose a current frontend or mobile library.
 
-When live Algolia app data, analytics, index inspection, settings changes, object imports, rules, synonyms, or account actions are needed, use Algolia MCP, the Algolia CLI, or official Algolia skills for the live operation, then use these implementation skills to interpret the result, ask the next customer question, and validate the implementation path.
+When live account data is needed — analytics, index inspection, search results — use Algolia MCP, which is read-only. When something must actually change — settings, object imports, rules, synonyms, API keys — use the Algolia CLI, or official Algolia skills for a product-specific workflow. Then use these implementation skills to interpret the result, ask the next customer question, and validate the implementation path.
 
 ## Source Of Truth
 
@@ -87,7 +87,7 @@ Use the Algolia skills library through the whole Algolia lens. Begin by clarifyi
 
 ## Install
 
-Extends Algolia MCP/CLI/official skills: install those official tools when the agent needs live account inspection or write actions, then use these skills as the customer-ready implementation workflow layer.
+Extends Algolia MCP/CLI/official skills: install those official tools when the agent needs live account inspection (Algolia MCP, read-only) or write actions (Algolia CLI), then use these skills as the customer-ready implementation workflow layer.
 
 These skills follow the open [Agent Skills specification](https://agentskills.io/specification), so one folder works across most tools. Unzip the download and copy each `algolia-*` folder into `.agents/skills/` in your project (or `~/.agents/skills/` for every project). That covers Codex, Cursor, GitHub Copilot, Gemini CLI, Antigravity and Devin Desktop (formerly Windsurf). Each copied folder must contain `SKILL.md` at its top level.
 
@@ -102,6 +102,9 @@ See `artifacts/install-instructions.md` for a customer-facing install guide. The
 ## Works With Official Algolia Tools
 
 Install these official Algolia tools with the implementation bundles so agents can move from customer context to live inspection, account operations, official workflows, and validation:
+
+Algolia Productivity MCP reads; the Algolia CLI writes. Reaching for the MCP to
+change something is the common wrong turn.
 
 | Tool | Use it for | Install or setup |
 | --- | --- | --- |
