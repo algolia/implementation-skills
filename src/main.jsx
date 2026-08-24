@@ -998,6 +998,21 @@ function App() {
     localStorage.setItem('algolia-skills-theme', theme);
   }, [theme]);
 
+  // The browser tries its own anchor jump before React has rendered anything, so
+  // it finds no element and gives up. Redo it once the target exists — the quick
+  // start's troubleshooting links here as /#feedback.
+  useEffect(() => {
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    const target = document.getElementById(id);
+    if (!target) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // One frame, so the first paint has settled before measuring.
+    requestAnimationFrame(() => {
+      target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    });
+  }, []);
+
   // Runs on load for a returning visitor who already accepted, and immediately
   // when someone accepts. Never for a decline, and never before a choice.
   useEffect(() => {
@@ -1442,7 +1457,7 @@ function FeedbackSection() {
   }
 
   return (
-    <section className="feedback-section" aria-labelledby="feedback-title">
+    <section className="feedback-section" id="feedback" aria-labelledby="feedback-title">
       <div className="feedback-copy">
         <h2 id="feedback-title">
           Tell us what to <em>build next</em>

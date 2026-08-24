@@ -442,7 +442,14 @@ BODY = (
         "then omits skills and warns you. Install just the ones you need.",
         "**It writes code without asking anything.** Name the skill explicitly: `/algolia-discovery-planning`.",
     ])
-    + "</ul></div></details>"
+    + "</ul>"
+    # Somewhere to go when none of the above helped — otherwise the list just
+    # ends and the reader is stuck.
+    + '<div class="note ok">%s</div>' % md(
+        "**Still stuck, or hit something not listed here?** [Tell us what happened](%s#feedback) "
+        "— it goes to the people maintaining these skills, and it is how this list gets "
+        "longer." % LIB)
+    + "</div></details>"
 )
 
 FOOT = ('<footer class="foot">%s</footer>' % md(
