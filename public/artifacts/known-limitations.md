@@ -2,7 +2,7 @@
 
 These skills guide Algolia implementation work by extending official Algolia tooling with customer context, planning, and validation behavior. They do not replace customer access, current docs, or production validation.
 
-Use Algolia MCP, the Algolia CLI, or official Algolia skills when an agent needs live account inspection, analytics, index operations, settings changes, rules, synonyms, object imports, or other account actions. Then use these implementation skills to interpret what was found, make customer-safe decisions, and produce validation artifacts.
+Use Algolia MCP when an agent needs live account inspection or analytics — it is read-only. Use the Algolia CLI, or official Algolia skills, for anything that changes the account: index operations, settings changes, rules, synonyms, object imports, API keys. Then use these implementation skills to interpret what was found, make customer-safe decisions, and produce validation artifacts.
 
 ## What The Skills Can Do
 

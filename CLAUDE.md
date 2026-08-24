@@ -35,5 +35,6 @@ so orchestration does not depend on any single description triggering.
 
 ## Live account operations
 
-Record/settings/key writes and live inspection go through the official
-`algolia-mcp` or `algolia-cli`, not these planning/validation skills.
+Live inspection — analytics, index and settings reads, search results — goes
+through `algolia-mcp`, which is **read-only**. Record, settings and key **writes**
+go through `algolia-cli`. Neither happens in these planning/validation skills.
