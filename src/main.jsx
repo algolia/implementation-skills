@@ -691,36 +691,46 @@ const useCaseBundles = [
   }
 ];
 
+// Plain-language on purpose: this section is read by CSMs and AEs, not only
+// engineers. Each card answers "what does this let me do" before it shows a
+// command, and the command says which tool it is for rather than assuming
+// Claude Code.
 const companionTools = [
   {
     id: 'algolia-productivity-mcp',
     title: 'Algolia Productivity MCP',
-    description: 'Live Algolia context for analytics, index inspection, recommendations, and account-aware reviews. Authorize with /mcp after adding it — browser sign-in, no API key to paste. For customer-facing agents use app-scoped Public MCP instead.',
+    eyebrow: 'See your real account',
+    description: 'Lets your AI assistant look at your actual Algolia account — your searches, your settings, what people click — instead of guessing from what you describe.',
+    note: 'Reading and analysis only — it looks, it does not touch anything. Signs in through your browser, no API key to copy.',
     icon: Bot,
     command: 'claude mcp add --transport http algolia https://mcp.algolia.com/mcp',
-    commandLabel: 'Claude Code setup',
+    commandFor: 'For Claude Code. Other tools are in the setup guide.',
     href: 'https://www.algolia.com/doc/guides/get-started/build-with-ai/#install-the-algolia-productivity-mcp',
-    action: 'Open MCP setup'
+    action: 'Setup guide'
   },
   {
     id: 'algolia-cli',
     title: 'Algolia CLI',
-    description: 'Terminal access for index, settings, rules, synonyms, records, and operational account tasks.',
+    eyebrow: 'Make the changes',
+    description: 'Applies the changes: settings, records, synonyms, rules. The MCP above shows you what is wrong; this is what fixes it.',
+    note: 'For engineers, or anyone comfortable in a terminal.',
     icon: Terminal,
     command: 'brew install algolia',
-    commandLabel: 'macOS install',
+    commandFor: 'For macOS. Windows and Linux are in the setup guide.',
     href: 'https://www.algolia.com/doc/guides/get-started/build-with-ai/#install-the-algolia-cli',
-    action: 'Open CLI setup'
+    action: 'Setup guide'
   },
   {
     id: 'official-algolia-skills',
     title: 'Official Algolia skills',
-    description: 'Official Algolia agent skills for MCP, CLI, algobot, Crawler, InstantSearch, and core tooling workflows. This suite ships there too, as the algolia-implementation plugin.',
+    eyebrow: 'The wider set',
+    description: 'Every official Algolia skill, covering the Crawler, InstantSearch, chat agents and more. The eleven skills on this page are part of it.',
+    note: 'Already have the library above? You have these eleven either way.',
     icon: Library,
     command: '/plugin marketplace add algolia/skills',
-    commandLabel: 'Claude Code install',
+    commandFor: 'For Claude Code. Other tools are covered in the repo.',
     href: 'https://github.com/algolia/skills',
-    action: 'Open skills repo'
+    action: 'Open the repo'
   }
 ];
 
@@ -1163,7 +1173,7 @@ function WorksBestWith() {
       <div className="section-heading compact-heading">
         <div>
           <h2 id="companion-title">Works with official Algolia tools</h2>
-          <p>Install official tooling separately when agents need live account access, official workflows, or framework-specific implementation details.</p>
+          <p>All optional. Add these when you want your AI assistant to see your real Algolia account, or to make the changes for you rather than just telling you what to change.</p>
         </div>
       </div>
       <div className="companion-grid">
@@ -1202,16 +1212,18 @@ function CompanionToolCard({ tool }) {
       <div className="companion-card-header">
         <span><Icon size={22} /></span>
         <div>
-          <p>{tool.commandLabel}</p>
+          <p>{tool.eyebrow}</p>
           <h3>{tool.title}</h3>
         </div>
       </div>
       <p>{tool.description}</p>
+      <p className="companion-note">{tool.note}</p>
       <code>{tool.command}</code>
+      <p className="companion-command-for">{tool.commandFor}</p>
       <div className="companion-actions">
         <button type="button" onClick={copyCommand}>
           {copied ? <Check size={16} /> : <Copy size={16} />}
-          {copied ? 'Copied' : 'Copy install'}
+          {copied ? 'Copied' : 'Copy command'}
         </button>
         <a href={tool.href} target="_blank" rel="noreferrer">
           {tool.action} <ExternalLink size={15} />
