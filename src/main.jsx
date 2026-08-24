@@ -49,8 +49,64 @@ import './styles.css';
 // retroactive.
 const GA_MEASUREMENT_ID = 'G-SR64HVSLY6';
 
+// ---------- consent ----------
+// Analytics must not run until someone has said yes: GA sets cookies, this is a
+// public page, and visitors are in scope for GDPR. So `initAnalytics` is called
+// from the consent banner, never on load.
+//
+// This is deliberately a single yes/no for one analytics tag, not a
+// general-purpose CMP. algolia.com runs OneTrust for that job. If this site ever
+// carries more third-party tags, move it there rather than growing this.
+const CONSENT_KEY = 'algolia-skills-consent';
+
+// Bump when what is being consented to changes, which re-asks everyone. Their
+// old answer no longer covers the new thing.
+const CONSENT_VERSION = 1;
+
+function readConsent() {
+  try {
+    const raw = localStorage.getItem(CONSENT_KEY);
+    if (!raw) return null;
+    const saved = JSON.parse(raw);
+    if (saved.version !== CONSENT_VERSION) return null;
+    return saved.choice === 'granted' ? 'granted' : 'denied';
+  } catch {
+    // Private mode or a wiped profile: treat an unreadable answer as no answer.
+    return null;
+  }
+}
+
+function clearConsent() {
+  try {
+    localStorage.removeItem(CONSENT_KEY);
+  } catch {
+    // Ignored; state is reset in memory regardless.
+  }
+}
+
+function writeConsent(choice) {
+  try {
+    localStorage.setItem(CONSENT_KEY, JSON.stringify({
+      choice,
+      version: CONSENT_VERSION,
+      at: new Date().toISOString()
+    }));
+  } catch {
+    // Nothing we can do; the banner will simply ask again next visit.
+  }
+}
+
+// Google's documented opt-out flag. gtag checks it on every call, so a
+// withdrawal stops collection immediately instead of at the next page load. The
+// cookies already set live on the GA domain and cannot be removed from here.
+function disableAnalytics() {
+  window[`ga-disable-${GA_MEASUREMENT_ID}`] = true;
+}
+
 function initAnalytics() {
   if (GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') return;
+  if (window.__gaStarted) return;
+  window.__gaStarted = true;
   window.dataLayer = window.dataLayer || [];
   window.gtag = function gtag() {
     window.dataLayer.push(arguments);
@@ -925,11 +981,37 @@ function App() {
   const [guideOpen, setGuideOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [theme, setTheme] = useState(() => localStorage.getItem('algolia-skills-theme') || 'light');
+  const [consent, setConsent] = useState(readConsent);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem('algolia-skills-theme', theme);
   }, [theme]);
+
+  // Runs on load for a returning visitor who already accepted, and immediately
+  // when someone accepts. Never for a decline, and never before a choice.
+  useEffect(() => {
+    if (consent === 'granted') {
+      window[`ga-disable-${GA_MEASUREMENT_ID}`] = false;
+      initAnalytics();
+    } else if (consent === 'denied') {
+      disableAnalytics();
+    }
+  }, [consent]);
+
+  function chooseConsent(choice) {
+    writeConsent(choice);
+    setConsent(choice);
+  }
+
+  // Re-opening the banner discards the stored answer, so leaving without
+  // choosing again means being asked next visit rather than silently keeping a
+  // decision the person was in the middle of changing.
+  function reopenConsent() {
+    clearConsent();
+    disableAnalytics();
+    setConsent(null);
+  }
 
   const visiblePackages = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -1026,7 +1108,9 @@ function App() {
 
           <FeedbackSection />
         </main>
+        <SiteFooter consent={consent} onReopen={reopenConsent} />
       </div>
+      {consent === null && <CookieBanner onChoose={chooseConsent} />}
       {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} />}
       {selectedPackage && <PackageDetailsModal pkg={selectedPackage} onClose={() => setSelectedPackage(null)} />}
     </>
@@ -1423,6 +1507,61 @@ function FeedbackSection() {
   );
 }
 
+// Bottom banner. Non-blocking on purpose: it does not trap focus or cover the
+// page, because nothing here needs consent to be read — only to be measured.
+// Accept and Decline are given identical weight, which is a requirement, not a
+// style choice: a prominent Accept beside a buried Decline is not a free choice.
+function CookieBanner({ onChoose }) {
+  return (
+    <div className="consent-banner" role="region" aria-label="Cookie choices">
+      <div className="consent-copy">
+        <strong>Can we count visits?</strong>
+        <p>
+          We would like Google Analytics to see which skills get downloaded, so we know what to
+          work on. It sets cookies. Nothing on this page needs them, and declining changes
+          nothing about what you can read or download.{' '}
+          <a href="https://www.algolia.com/policies/privacy" target="_blank" rel="noreferrer">
+            Privacy policy <ExternalLink size={13} />
+          </a>
+        </p>
+      </div>
+      <div className="consent-actions">
+        <button type="button" className="consent-button" onClick={() => onChoose('denied')}>
+          Decline
+        </button>
+        <button type="button" className="consent-button" onClick={() => onChoose('granted')}>
+          Accept
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Gives the page a footer it never had, and — more to the point — somewhere to
+// change your mind. Consent you cannot withdraw is not consent.
+function SiteFooter({ consent, onReopen }) {
+  const label = consent === 'granted' ? 'Analytics on' : 'Analytics off';
+  return (
+    <footer className="site-footer">
+      <span>
+        Algolia Implementation Skills — MIT licensed. Part of the official{' '}
+        <a href="https://github.com/algolia/skills" target="_blank" rel="noreferrer">
+          Algolia skills <ExternalLink size={13} />
+        </a>
+      </span>
+      <span className="site-footer-right">
+        <a href="https://www.algolia.com/policies/privacy" target="_blank" rel="noreferrer">
+          Privacy <ExternalLink size={13} />
+        </a>
+        <button type="button" className="consent-link" onClick={onReopen}>
+          Cookie preferences
+          <span className="consent-state">{label}</span>
+        </button>
+      </span>
+    </footer>
+  );
+}
+
 function GuideModal({ onClose }) {
   useEffect(() => {
     function handleKeyDown(event) {
@@ -1586,5 +1725,4 @@ function DetailBlock({ title, items }) {
   );
 }
 
-initAnalytics();
 createRoot(document.getElementById('root')).render(<App />);
