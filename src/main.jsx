@@ -79,16 +79,20 @@ function trackDownload(href, label) {
 
 // ---------- feedback ----------
 // The site is static, so feedback goes to a Google Form rather than an endpoint
-// of our own. Answers travel as prefill params: the form opens in a new tab with
-// the thumb and the note already filled in, so all that's left is Submit.
+// of our own. It is POSTed in the background, so nobody is ever sent to the raw
+// Google Form — that experience is the whole thing this avoids.
 //
 // FEEDBACK_FORM_ID is the *published* id from the form's Send > link
-// (/forms/d/e/<id>/viewform) — not the id in the /edit URL. The entry ids come
-// from the form's "Get pre-filled link". Both are set up in
-// enablement/feedback-form.md.
+// (/forms/d/e/<id>/viewform), not the id in the /edit URL. The entry ids come
+// from the form's "Get pre-filled link". See enablement/feedback-form.md.
 //
-// Any id left as a PASTE_ placeholder is skipped rather than sent as a junk
-// param, so a partly-built form degrades instead of breaking.
+// Two form settings SILENTLY break this, because a no-cors POST cannot read the
+// response back. Both were verified against the live form:
+//   * "Collect email addresses" — adds a required Email field. Without an
+//     `emailAddress` param every POST is rejected 400.
+//   * marking any question Required — same failure for a submission that omits
+//     it, e.g. a row thumb that carries no note.
+// Keep email collection off and every question optional.
 const FEEDBACK_FORM_ID = '1FAIpQLSdXcr1qSItx0wyXzAWfVfTYssU1aJgaF4RMkuCitgAKl6qq5g';
 const FEEDBACK_ENTRY = {
   vote: 'entry.931205562',   // Q1 "How's it working out?" — multiple choice
@@ -96,12 +100,10 @@ const FEEDBACK_ENTRY = {
   idea: 'entry.1544401237'   // Q3 "What would make it better?" — paragraph
 };
 
-// Must match the Q1 option text character for character, or the prefill is
-// dropped and Q1 arrives blank.
+// Must match the Q1 option text character for character, or Google discards the
+// answer and Q1 arrives blank.
 const VOTE_ANSWERS = { up: 'Working well', down: 'Needs work' };
 
-// Keep the note well inside the ~2000-char practical URL ceiling; the textarea
-// enforces the same limit so nothing is silently truncated on submit.
 const IDEA_MAX = 1200;
 
 const isSet = (value) => !value.includes('PASTE_');
@@ -113,20 +115,29 @@ const feedbackReady = isSet(FEEDBACK_FORM_ID);
 // collecting votes nobody can attribute to a skill.
 const rowVoteReady = feedbackReady && isSet(FEEDBACK_ENTRY.about);
 
-function feedbackUrl({ vote, about, idea = '' }) {
-  const params = new URLSearchParams({ usp: 'pp_url' });
+// `no-cors` is what lets a static page post cross-origin to Google without a
+// preflight, and the trade is that the response is opaque: a 400 is
+// indistinguishable from a 200 here. So this resolves for anything the server
+// answered and rejects only on a genuine network failure — which is why the
+// payload correctness above is verified out-of-band rather than trusted.
+async function submitFeedback({ vote, about, idea = '' }) {
+  const body = new URLSearchParams();
   const add = (entry, value) => {
-    if (value && isSet(entry)) params.set(entry, value);
+    if (value && isSet(entry)) body.set(entry, value);
   };
   add(FEEDBACK_ENTRY.vote, vote && VOTE_ANSWERS[vote]);
   add(FEEDBACK_ENTRY.about, about);
   add(FEEDBACK_ENTRY.idea, idea.trim().slice(0, IDEA_MAX));
-  return `https://docs.google.com/forms/d/e/${FEEDBACK_FORM_ID}/viewform?${params}`;
+
+  await fetch(`https://docs.google.com/forms/d/e/${FEEDBACK_FORM_ID}/formResponse`, {
+    method: 'POST',
+    mode: 'no-cors',
+    body
+  });
 }
 
-// Votes are only counted once someone submits the form. Mirroring them as a GA4
-// event means the click itself is never lost — a no-op until GA_MEASUREMENT_ID
-// is set to a real property.
+// Mirrored to GA4 so a vote is still counted if the Google POST is ever
+// rejected — a no-op until GA_MEASUREMENT_ID is set to a real property.
 function trackFeedback(vote, about) {
   if (typeof window.gtag !== 'function') return;
   window.gtag('event', 'feedback_vote', { vote, feedback_about: about });
@@ -1249,17 +1260,37 @@ function DownloadButton({ href, label, size }) {
 }
 
 // Quiet per-skill vote, so it's visible which of the skills actually land.
-// Either thumb opens the form with the vote and the skill name already filled in.
+// Posts in place — no navigation, no Google Form.
 function RowVote({ about }) {
-  const [vote, setVote] = useState(null);
+  const [state, setState] = useState('idle');
 
   if (!rowVoteReady) return null;
 
-  if (vote) {
+  async function vote(choice) {
+    if (state === 'sending' || state === 'sent') return;
+    setState('sending');
+    trackFeedback(choice, about);
+    try {
+      await submitFeedback({ vote: choice, about });
+      setState('sent');
+    } catch {
+      setState('error');
+    }
+  }
+
+  if (state === 'sent') {
     return (
       <p className="row-vote is-sent" role="status">
         <Check size={13} />
-        Thanks — one more click in the tab that opened.
+        Thanks — noted.
+      </p>
+    );
+  }
+
+  if (state === 'error') {
+    return (
+      <p className="row-vote is-error" role="status">
+        Didn't send — check your connection.
       </p>
     );
   }
@@ -1270,39 +1301,49 @@ function RowVote({ about }) {
       {['up', 'down'].map((choice) => {
         const Icon = choice === 'up' ? ThumbsUp : ThumbsDown;
         return (
-          <a
+          <button
             key={choice}
+            type="button"
             className={`row-vote-button ${choice}`}
-            href={feedbackUrl({ vote: choice, about, idea: '' })}
-            target="_blank"
-            rel="noreferrer"
+            disabled={state === 'sending'}
             aria-label={
               choice === 'up'
-                ? `${about} is working well — send feedback`
-                : `${about} needs work — send feedback`
+                ? `${about} is working well`
+                : `${about} needs work`
             }
-            onClick={() => {
-              trackFeedback(choice, about);
-              setVote(choice);
-            }}
+            onClick={() => vote(choice)}
           >
             <Icon size={14} />
-          </a>
+          </button>
         );
       })}
     </p>
   );
 }
 
-// Page-end feedback block. Nothing is posted from here — the note is handed to
-// the Google Form as prefill, so no personal data is collected by this site. If
-// you want a name or email against a submission, ask for it in the form itself.
+// Page-end feedback block. Submits in the background, so nobody leaves the page
+// and nobody sees the Google Form. This page never asks for a name or an email:
+// keep "Collect email addresses" off in the form, or every POST is rejected.
 function FeedbackSection() {
   const [vote, setVote] = useState(null);
   const [idea, setIdea] = useState('');
-  const [sent, setSent] = useState(false);
+  const [state, setState] = useState('idle');
 
   if (!feedbackReady) return null;
+
+  const nothingToSend = !vote && !idea.trim();
+
+  async function send() {
+    if (state === 'sending' || nothingToSend) return;
+    setState('sending');
+    if (vote) trackFeedback(vote, 'The site overall');
+    try {
+      await submitFeedback({ vote, about: 'The site overall', idea });
+      setState('sent');
+    } catch {
+      setState('error');
+    }
+  }
 
   return (
     <section className="feedback-section" aria-labelledby="feedback-title">
@@ -1316,67 +1357,68 @@ function FeedbackSection() {
         </p>
         <p className="feedback-meta">
           <Lightbulb size={14} />
-          Opens the form with your answers already filled in — all that's left is Submit.
+          Anonymous, and it stays on this page. No sign-in, no email.
         </p>
       </div>
 
-      <div className="feedback-card">
-        <fieldset className="feedback-vote">
-          <legend>How's it working out?</legend>
-          <div className="feedback-vote-buttons">
-            {[
-              { choice: 'up', Icon: ThumbsUp, label: 'Working well' },
-              { choice: 'down', Icon: ThumbsDown, label: 'Needs work' }
-            ].map(({ choice, Icon, label }) => (
-              <button
-                key={choice}
-                type="button"
-                className={`feedback-vote-button ${choice} ${vote === choice ? 'is-active' : ''}`}
-                aria-pressed={vote === choice}
-                onClick={() => setVote((current) => (current === choice ? null : choice))}
-              >
-                <Icon size={17} />
-                {label}
-              </button>
-            ))}
-          </div>
-        </fieldset>
-
-        <label className="feedback-field">
-          <span>What would make it better?</span>
-          <textarea
-            value={idea}
-            maxLength={IDEA_MAX}
-            rows={3}
-            placeholder="An idea, a rough edge, a skill you wish existed…"
-            onChange={(event) => setIdea(event.target.value)}
-          />
-        </label>
-
-        <div className="feedback-actions">
-          <a
-            className="download-button feedback-submit"
-            href={feedbackUrl({ vote, about: 'The site overall', idea })}
-            target="_blank"
-            rel="noreferrer"
-            onClick={() => {
-              if (vote) trackFeedback(vote, 'The site overall');
-              setSent(true);
-            }}
-          >
-            <Send size={17} />
-            <span>Send feedback</span>
-          </a>
-          <span className="feedback-status" role="status">
-            {sent && (
-              <>
-                <Check size={14} />
-                Thanks — press Submit in the new tab to finish.
-              </>
-            )}
-          </span>
+      {state === 'sent' ? (
+        <div className="feedback-card is-done" role="status">
+          <span className="feedback-done-mark" aria-hidden="true"><Check size={22} /></span>
+          <strong>Thanks — that's landed.</strong>
+          <span>It goes straight to the people maintaining these skills.</span>
         </div>
-      </div>
+      ) : (
+        <div className="feedback-card">
+          <fieldset className="feedback-vote">
+            <legend>How's it working out?</legend>
+            <div className="feedback-vote-buttons">
+              {[
+                { choice: 'up', Icon: ThumbsUp, label: 'Working well' },
+                { choice: 'down', Icon: ThumbsDown, label: 'Needs work' }
+              ].map(({ choice, Icon, label }) => (
+                <button
+                  key={choice}
+                  type="button"
+                  className={`feedback-vote-button ${choice} ${vote === choice ? 'is-active' : ''}`}
+                  aria-pressed={vote === choice}
+                  onClick={() => setVote((current) => (current === choice ? null : choice))}
+                >
+                  <Icon size={17} />
+                  {label}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
+          <label className="feedback-field">
+            <span>What would make it better?</span>
+            <textarea
+              value={idea}
+              maxLength={IDEA_MAX}
+              rows={3}
+              placeholder="An idea, a rough edge, a skill you wish existed…"
+              onChange={(event) => setIdea(event.target.value)}
+            />
+          </label>
+
+          <div className="feedback-actions">
+            <button
+              type="button"
+              className="download-button feedback-submit"
+              onClick={send}
+              disabled={nothingToSend || state === 'sending'}
+            >
+              <Send size={17} />
+              <span>{state === 'sending' ? 'Sending…' : 'Send feedback'}</span>
+            </button>
+            <span className="feedback-status" role="status">
+              {state === 'error' && (
+                <>Didn't send — check your connection and try again.</>
+              )}
+            </span>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

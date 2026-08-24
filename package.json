@@ -12,7 +12,8 @@
     "package:downloads": "node scripts/package-downloads.mjs",
     "validate:skills": "node scripts/validate-skills.mjs",
     "validate:packages": "node scripts/validate-packages.mjs",
-    "release:prepare": "npm run sync:artifacts && npm run package:downloads && npm run validate:skills && npm run validate:packages && npm run build"
+    "validate:feedback": "node scripts/validate-feedback.mjs",
+    "release:prepare": "npm run sync:artifacts && npm run package:downloads && npm run validate:skills && npm run validate:packages && npm run validate:feedback && npm run build"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
