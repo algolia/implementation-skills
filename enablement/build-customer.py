@@ -29,8 +29,9 @@ CSS = r"""
   --ease:cubic-bezier(.22,.61,.36,1);
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
-.alg{color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
-  "Segoe UI",sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.alg{color:var(--text);font-family:"Sora",ui-sans-serif,system-ui,-apple-system,
+  BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased}
 .alg *{font-family:inherit}
 .wrap{max-width:900px;margin:0 auto;padding:0 26px}
 .alg a{color:var(--blue);text-decoration:none}
@@ -41,50 +42,24 @@ CSS = r"""
 .alg code{font-family:var(--mono);font-size:.87em;background:rgba(2,10,24,.06);
   padding:2px 6px;border-radius:5px;color:#123a80}
 
-/* header (standalone only) */
-header.top{background:radial-gradient(circle at 90% 6%,rgba(0,162,255,.28),transparent 44%),
-  linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;padding:32px 0 30px}
+/* site bar + hero (standalone only). Light, to match the skills site — this page
+   used to open on a dark navy band, which read as a different product. */
+.sitebar{border-bottom:1px solid var(--divider);background:rgba(255,255,255,.72)}
+.sitebar .wrap{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.sitebar .brand{display:inline-flex;align-items:center;gap:15px;min-width:0}
+.sitebar .brand:hover{text-decoration:none}
+.sitebar .brand img{width:128px;height:auto;display:block}
+.sitebar .brand .bar{width:1px;height:24px;background:var(--divider)}
+.sitebar .brand strong{font-size:16px;color:var(--text)}
+.sitebar .back{font-size:14px;font-weight:600;white-space:nowrap}
+header.top{padding:34px 0 2px}
 header.top .eyebrow{margin:0 0 9px;font-size:11.5px;font-weight:700;letter-spacing:.11em;
-  text-transform:uppercase;color:#7fb4ff}
-header.top h1{margin:0 0 10px;font-size:32px;line-height:1.14;font-weight:800;letter-spacing:-.015em}
-header.top p{margin:0;color:#a8c0e8;font-size:16.5px;max-width:58ch}
+  text-transform:uppercase;color:var(--blue)}
+header.top h1{margin:0 0 10px;font-size:34px;line-height:1.12;font-weight:800;letter-spacing:-.02em}
+header.top p{margin:0;color:var(--muted);font-size:16.5px;max-width:58ch}
 header.top .chips{margin:17px 0 0;display:flex;flex-wrap:wrap;gap:7px}
 header.top .chips span{font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;
-  background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.18);color:#dce9ff}
-
-/* promise */
-.promise{margin:0 0 6px;font-size:24px;font-weight:800;letter-spacing:-.015em;line-height:1.3}
-.promise em{font-style:normal;color:var(--blue)}
-.psub{margin:0 0 18px;color:var(--muted);font-size:16px;max-width:62ch}
-
-/* animated flow */
-.flow{background:linear-gradient(135deg,var(--navy),var(--navy-2));border-radius:18px;
-  padding:26px;box-shadow:0 20px 60px rgba(21,56,117,.15)}
-.rail{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch;gap:12px}
-@media(max-width:760px){.rail{grid-template-columns:1fr;gap:14px}.arrow{display:none}}
-.fstep{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:14px;
-  padding:17px 18px;position:relative;animation:glow 9s var(--ease) infinite}
-.fstep:nth-child(1){animation-delay:0s}
-.fstep:nth-child(3){animation-delay:3s}
-.fstep:nth-child(5){animation-delay:6s}
-@keyframes glow{
-  0%,4%{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14);transform:translateY(0)}
-  8%,30%{background:rgba(0,82,255,.30);border-color:var(--cyan);transform:translateY(-4px)}
-  36%,100%{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14);transform:translateY(0)}}
-.fstep .n{display:block;font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:.07em;
-  color:#7fb4ff;margin-bottom:8px}
-.fstep .t{display:block;color:#fff;font-weight:700;font-size:17px;margin-bottom:4px}
-.fstep .d{display:block;color:#a8c0e8;font-size:13.5px;line-height:1.5}
-.fstep .ico{position:absolute;top:15px;right:16px;opacity:.5}
-.arrow{align-self:center;color:#4a6ba8}
-.arrow svg{display:block}
-.arrow.a1{animation:dash 9s linear infinite;animation-delay:1.6s}
-.arrow.a2{animation:dash 9s linear infinite;animation-delay:4.6s}
-@keyframes dash{0%,10%{color:#4a6ba8}14%,26%{color:var(--cyan)}30%,100%{color:#4a6ba8}}
-.time{margin:16px 0 0;font-size:13px;color:#7fb4ff;text-align:center}
-@media(prefers-reduced-motion:reduce){
-  .fstep,.arrow.a1,.arrow.a2{animation:none!important}
-  .fstep{background:rgba(0,82,255,.16);border-color:rgba(255,255,255,.22)}}
+  background:rgba(0,82,255,.07);border:1px solid rgba(0,82,255,.18);color:#0b58d8}
 
 /* numbered steps */
 h2.sh{margin:40px 0 6px;font-size:22px;font-weight:800;letter-spacing:-.01em;
@@ -275,27 +250,6 @@ def mini(items):
     return '<ol class="mini">%s</ol>' % "".join("<li>%s</li>" % i for i in items)
 
 
-ICO = {
-    "dl": '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9fc4ff" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 11l5 5 5-5M4 20h16"/></svg>',
-    "drop": '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9fc4ff" stroke-width="2" stroke-linecap="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>',
-    "ask": '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9fc4ff" stroke-width="2" stroke-linecap="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>',
-}
-ARROW = ('<svg width="30" height="14" viewBox="0 0 30 14" fill="none" stroke="currentColor" '
-         'stroke-width="2" stroke-linecap="round"><path d="M1 7h24M20 2l5 5-5 5"/></svg>')
-
-FLOW = (
-    '<div class="flow"><div class="rail">'
-    '<div class="fstep"><span class="ico">{dl}</span><span class="n">STEP 01</span>'
-    '<span class="t">Download</span><span class="d">One ZIP from the skills library.</span></div>'
-    '<div class="arrow a1">{ar}</div>'
-    '<div class="fstep"><span class="ico">{drop}</span><span class="n">STEP 02</span>'
-    '<span class="t">Drop it in</span><span class="d">Into the AI tool you already use.</span></div>'
-    '<div class="arrow a2">{ar}</div>'
-    '<div class="fstep"><span class="ico">{ask}</span><span class="n">STEP 03</span>'
-    '<span class="t">Ask</span><span class="d">Paste one prompt. It asks you questions first.</span></div>'
-    '</div><p class="time">About ten minutes, start to finish.</p></div>'
-).format(dl=ICO["dl"], drop=ICO["drop"], ask=ICO["ask"], ar=ARROW)
-
 BTN_ICO = ('<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
            'stroke-width="2.2" stroke-linecap="round"><path d="M12 3v12M7 11l5 5 5-5M4 20h16"/></svg>')
 
@@ -387,22 +341,22 @@ def tabs():
 
 WHEN = [
     ("You're building something new",
-     "Use it before you write any code. Getting the data shape and events right up front is the whole game — retrofitting them is the expensive part.",
+     "Get the data shape and events right before any code. Retrofitting them is the expensive part.",
      "algolia-discovery-planning"),
     ("Your results feel wrong",
-     "Ranking, searchable attributes, facets, synonyms and rules are usually the cause. It reviews your settings against what you're actually trying to do.",
+     "Usually ranking, searchable attributes, facets, synonyms or rules — not the platform.",
      "algolia-index-configuration"),
     ("Your analytics don't add up",
-     "If click and conversion events aren't wired correctly, your dashboards are guessing — and so is every AI feature on your plan.",
+     "Without click and conversion events your dashboards are guessing, and so is every AI feature you pay for.",
      "algolia-events-insights"),
     ("You're about to launch",
-     "It audits what you've built and produces launch evidence, saying “not verified” rather than guessing when it can't confirm something.",
+     "Produces launch evidence, and says “not verified” rather than guessing.",
      "algolia-release-qa"),
     ("You're turning on AI features",
-     "NeuralSearch, personalization and Recommend need good records and trustworthy behavioural data. It checks whether you're ready first.",
+     "NeuralSearch, personalization and Recommend need good records and real behavioural data first.",
      "algolia-neuralsearch"),
     ("You're migrating or replatforming",
-     "It writes down the record shape, variants and objectID strategy as a contract both sides can review before anything moves.",
+     "Writes the record shape and objectID strategy as a contract both sides can review.",
      "algolia-data-modeling"),
 ]
 
@@ -419,21 +373,15 @@ Then recommend the next Algolia skill to use, the smallest useful first mileston
 
 # ------------------------------------------------------------------ body
 
+# The hero already says what this is and how long it takes, so the page opens
+# straight into step 1 rather than restating it twice more.
 BODY = (
-    '<p class="promise">%s</p>' % md("Three steps: <em>download, drop it in, ask</em>.")
-    + '<p class="psub">%s</p>' % md(
-        "Algolia's official skills make the AI tool your team already uses good at Algolia "
-        "specifically — so it asks the right questions instead of guessing. Free and MIT licensed.")
-    + FLOW
-
-    + '<h2 class="sh"><span class="num">1</span>Download</h2>'
+    '<h2 class="sh"><span class="num">1</span>Download</h2>'
     + '<p class="snote">%s</p>' % md(
         "Not sure which you need? Take the full library — the first skill works out the rest.")
     + '<p><a class="btn" href="%s">%sDownload the full library</a></p>' % (DL, BTN_ICO)
     + '<p class="cap">%s</p>' % md(
-        "`algolia-skills-library.zip` — all eleven skills. Individual skills and project-type "
-        "bundles (ecommerce, B2B catalog, marketplace, support knowledge base, AI shopping "
-        "assistant) are on the same page.")
+        "All eleven skills. Individual skills and project-type bundles are on the same page.")
 
     + '<h2 class="sh"><span class="num">2</span>Drop it in</h2>'
     + '<p class="snote">%s</p>' % md("Pick the tool your team already uses.")
@@ -447,13 +395,13 @@ BODY = (
         "Start with this whatever your situation. It works out which skill you actually need.")
     + prompt(START_PROMPT)
     + '<p class="cap">%s</p>' % md(
-        "Expect questions back before you get an answer. A good plan needs to know your catalogue, "
-        "what you measure today, and what your launch risk is.")
+        "Expect questions back before you get an answer. That is the point.")
 
     + '<h2 class="plain">When to use it</h2>'
+    # Short, but it has to be here: without it the skill name on each card is
+    # unexplained jargon, and a reader thinks they have to pick one.
     + '<p class="psub">%s</p>' % md(
-        "You don't need to know which skill to pick — the prompt above routes you. This is just so "
-        "you know when reaching for it is worth it.")
+        "The prompt above picks the skill for you. This is just what it covers.")
     + WHEN_HTML
 
     + '<details class="more"><summary>What good output looks like</summary><div class="db">'
@@ -511,14 +459,23 @@ STANDALONE = """<!doctype html>
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <meta name="theme-color" content="#003dff">
-<style>body{{margin:0;background:var(--bg,#f5f8ff)}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap">
+<style>body{{margin:0;background:
+  radial-gradient(circle at 68% 22%,rgba(0,82,255,.13),transparent 30%),
+  linear-gradient(135deg,#fff 0%,#f3f7ff 48%,#eaf1ff 100%)}}
 {css}</style></head>
 <body class="alg">
+<div class="sitebar"><div class="wrap">
+<a class="brand" href="{lib}"><img src="../brand/Algolia-logo-blue.svg" alt="Algolia"><span class="bar"></span><strong>Skills Library</strong></a>
+<a class="back" href="{lib}">All skills &rarr;</a>
+</div></div>
 <header class="top"><div class="wrap">
 <p class="eyebrow">Quick start</p>
 <h1>Make your AI tool good at Algolia</h1>
-<p>Download a ZIP, drop it into the tool your team already uses, paste one prompt. About ten minutes.</p>
-<div class="chips"><span>Free &middot; MIT licensed</span><span>Works with most AI tools</span></div>
+<p>Download a ZIP, drop it into the tool your team already uses, paste one prompt. About ten minutes, free and MIT licensed.</p>
+<div class="chips"><span>Works with most AI tools</span><span>No Algolia experience needed</span></div>
 </div></header>
 <main><div class="wrap">{body}{foot}</div></main>
 <script>{js}</script></body></html>
@@ -536,7 +493,6 @@ EMBED_EXTRA = """
 /* embed: no page chrome, inherit the host page's background */
 .alg-embed{background:transparent}
 .alg-embed .wrap{padding:0;max-width:none}
-.alg-embed .promise{font-size:22px}
 .alg-embed h2.sh{margin-top:34px}
 .alg-embed footer.foot{margin-top:36px}
 """
@@ -610,7 +566,7 @@ EMBED_KIT = "/implementation-skills/start/kit.js"
 open(os.path.join(OUT, KIT), "w", encoding="utf-8").write(JS.strip() + "\n")
 print("wrote %s/%s — %.1f KB" % (OUT, KIT, len(JS) / 1024))
 
-a = STANDALONE.format(css=CSS, js="", body=BODY, foot=FOOT)
+a = STANDALONE.format(css=CSS, js="", body=BODY, foot=FOOT, lib=LIB)
 a = a.replace("<script></script>", '<script src="%s"></script>' % KIT)
 open(os.path.join(OUT, "index.html"), "w", encoding="utf-8").write(a)
 print("wrote %s/index.html — %d visible words" % (OUT, words(a)))
