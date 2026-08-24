@@ -398,6 +398,10 @@ BODY = (
         "Expect questions back before you get an answer. That is the point.")
 
     + '<h2 class="plain">When to use it</h2>'
+    # Short, but it has to be here: without it the skill name on each card is
+    # unexplained jargon, and a reader thinks they have to pick one.
+    + '<p class="psub">%s</p>' % md(
+        "The prompt above picks the skill for you. This is just what it covers.")
     + WHEN_HTML
 
     + '<details class="more"><summary>What good output looks like</summary><div class="db">'
