@@ -18,16 +18,20 @@ import {
   Headphones,
   Layers3,
   Library,
+  Lightbulb,
   Monitor,
   Moon,
   Rocket,
   Search,
+  Send,
   ShieldCheck,
   ShoppingCart,
   Sparkles,
   Store,
   Sun,
   Terminal,
+  ThumbsDown,
+  ThumbsUp,
   WandSparkles,
   Waypoints,
   X,
@@ -36,8 +40,14 @@ import {
 import './styles.css';
 
 // GA4 measurement ID for the DCS-facing site. Downloads fire a
-// `bundle_download` event; leave as the placeholder to disable analytics.
-const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX';
+// `bundle_download` event and feedback thumbs a `feedback_vote` event; set this
+// back to 'G-XXXXXXXXXX' to disable analytics entirely.
+//
+// `file_name`, `link_url`, `button_label`, `vote` and `feedback_about` have to be
+// registered as event-scoped custom dimensions in GA4 (Admin > Data display >
+// Custom definitions) before they show up in reports — registration is not
+// retroactive.
+const GA_MEASUREMENT_ID = 'G-SR64HVSLY6';
 
 function initAnalytics() {
   if (GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') return;
@@ -65,6 +75,61 @@ function trackDownload(href, label) {
     link_url: href,
     button_label: label
   });
+}
+
+// ---------- feedback ----------
+// The site is static, so feedback goes to a Google Form rather than an endpoint
+// of our own. Answers travel as prefill params: the form opens in a new tab with
+// the thumb and the note already filled in, so all that's left is Submit.
+//
+// FEEDBACK_FORM_ID is the *published* id from the form's Send > link
+// (/forms/d/e/<id>/viewform) — not the id in the /edit URL. The entry ids come
+// from the form's "Get pre-filled link". Both are set up in
+// enablement/feedback-form.md.
+//
+// Any id left as a PASTE_ placeholder is skipped rather than sent as a junk
+// param, so a partly-built form degrades instead of breaking.
+const FEEDBACK_FORM_ID = '1FAIpQLSdXcr1qSItx0wyXzAWfVfTYssU1aJgaF4RMkuCitgAKl6qq5g';
+const FEEDBACK_ENTRY = {
+  vote: 'entry.931205562',   // Q1 "How's it working out?" — multiple choice
+  about: 'entry.1186007049', // Q2 "What's this about?" — short answer
+  idea: 'entry.1544401237'   // Q3 "What would make it better?" — paragraph
+};
+
+// Must match the Q1 option text character for character, or the prefill is
+// dropped and Q1 arrives blank.
+const VOTE_ANSWERS = { up: 'Working well', down: 'Needs work' };
+
+// Keep the note well inside the ~2000-char practical URL ceiling; the textarea
+// enforces the same limit so nothing is silently truncated on submit.
+const IDEA_MAX = 1200;
+
+const isSet = (value) => !value.includes('PASTE_');
+
+const feedbackReady = isSet(FEEDBACK_FORM_ID);
+
+// Without Q2 a per-skill vote is indistinguishable from a site-wide one, so the
+// row thumbs stay hidden until that question exists rather than quietly
+// collecting votes nobody can attribute to a skill.
+const rowVoteReady = feedbackReady && isSet(FEEDBACK_ENTRY.about);
+
+function feedbackUrl({ vote, about, idea = '' }) {
+  const params = new URLSearchParams({ usp: 'pp_url' });
+  const add = (entry, value) => {
+    if (value && isSet(entry)) params.set(entry, value);
+  };
+  add(FEEDBACK_ENTRY.vote, vote && VOTE_ANSWERS[vote]);
+  add(FEEDBACK_ENTRY.about, about);
+  add(FEEDBACK_ENTRY.idea, idea.trim().slice(0, IDEA_MAX));
+  return `https://docs.google.com/forms/d/e/${FEEDBACK_FORM_ID}/viewform?${params}`;
+}
+
+// Votes are only counted once someone submits the form. Mirroring them as a GA4
+// event means the click itself is never lost — a no-op until GA_MEASUREMENT_ID
+// is set to a real property.
+function trackFeedback(vote, about) {
+  if (typeof window.gtag !== 'function') return;
+  window.gtag('event', 'feedback_vote', { vote, feedback_about: about });
 }
 
 const packages = [
@@ -947,6 +1012,8 @@ function App() {
             <WorksBestWith />
             <UseCaseBundles onDetails={setSelectedPackage} />
           </section>
+
+          <FeedbackSection />
         </main>
       </div>
       {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} />}
@@ -1056,7 +1123,12 @@ function CompanionToolCard({ tool }) {
         </a>
       </div>
       {tool.downloadHref && (
-        <a className="companion-download" href={withBase(tool.downloadHref)} download>
+        <a
+          className="companion-download"
+          href={withBase(tool.downloadHref)}
+          download
+          onClick={() => trackDownload(tool.downloadHref, tool.downloadLabel)}
+        >
           <ArrowDownToLine size={16} />
           {tool.downloadLabel}
         </a>
@@ -1106,6 +1178,7 @@ function PackageRow({ pkg, index, onDetails }) {
         <div>
           <h3>{index + 1}. {pkg.title}</h3>
           <p>{pkg.description}</p>
+          <RowVote about={pkg.title} />
         </div>
       </div>
       <div className="package-actions">
@@ -1172,6 +1245,139 @@ function DownloadButton({ href, label, size }) {
       <ArrowDownToLine size={size === 'large' ? 22 : 18} />
       <span>{label}</span>
     </a>
+  );
+}
+
+// Quiet per-skill vote, so it's visible which of the skills actually land.
+// Either thumb opens the form with the vote and the skill name already filled in.
+function RowVote({ about }) {
+  const [vote, setVote] = useState(null);
+
+  if (!rowVoteReady) return null;
+
+  if (vote) {
+    return (
+      <p className="row-vote is-sent" role="status">
+        <Check size={13} />
+        Thanks — one more click in the tab that opened.
+      </p>
+    );
+  }
+
+  return (
+    <p className="row-vote">
+      <span className="row-vote-label">Useful?</span>
+      {['up', 'down'].map((choice) => {
+        const Icon = choice === 'up' ? ThumbsUp : ThumbsDown;
+        return (
+          <a
+            key={choice}
+            className={`row-vote-button ${choice}`}
+            href={feedbackUrl({ vote: choice, about, idea: '' })}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={
+              choice === 'up'
+                ? `${about} is working well — send feedback`
+                : `${about} needs work — send feedback`
+            }
+            onClick={() => {
+              trackFeedback(choice, about);
+              setVote(choice);
+            }}
+          >
+            <Icon size={14} />
+          </a>
+        );
+      })}
+    </p>
+  );
+}
+
+// Page-end feedback block. Nothing is posted from here — the note is handed to
+// the Google Form as prefill, so no personal data is collected by this site. If
+// you want a name or email against a submission, ask for it in the form itself.
+function FeedbackSection() {
+  const [vote, setVote] = useState(null);
+  const [idea, setIdea] = useState('');
+  const [sent, setSent] = useState(false);
+
+  if (!feedbackReady) return null;
+
+  return (
+    <section className="feedback-section" aria-labelledby="feedback-title">
+      <div className="feedback-copy">
+        <h2 id="feedback-title">
+          Tell us what to <em>build next</em>
+        </h2>
+        <p>
+          These skills get better on real feedback. A missing skill, a rough edge, a step that
+          didn't fit your stack — all of it is useful, and none of it needs to be polished.
+        </p>
+        <p className="feedback-meta">
+          <Lightbulb size={14} />
+          Opens the form with your answers already filled in — all that's left is Submit.
+        </p>
+      </div>
+
+      <div className="feedback-card">
+        <fieldset className="feedback-vote">
+          <legend>How's it working out?</legend>
+          <div className="feedback-vote-buttons">
+            {[
+              { choice: 'up', Icon: ThumbsUp, label: 'Working well' },
+              { choice: 'down', Icon: ThumbsDown, label: 'Needs work' }
+            ].map(({ choice, Icon, label }) => (
+              <button
+                key={choice}
+                type="button"
+                className={`feedback-vote-button ${choice} ${vote === choice ? 'is-active' : ''}`}
+                aria-pressed={vote === choice}
+                onClick={() => setVote((current) => (current === choice ? null : choice))}
+              >
+                <Icon size={17} />
+                {label}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+
+        <label className="feedback-field">
+          <span>What would make it better?</span>
+          <textarea
+            value={idea}
+            maxLength={IDEA_MAX}
+            rows={3}
+            placeholder="An idea, a rough edge, a skill you wish existed…"
+            onChange={(event) => setIdea(event.target.value)}
+          />
+        </label>
+
+        <div className="feedback-actions">
+          <a
+            className="download-button feedback-submit"
+            href={feedbackUrl({ vote, about: 'The site overall', idea })}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => {
+              if (vote) trackFeedback(vote, 'The site overall');
+              setSent(true);
+            }}
+          >
+            <Send size={17} />
+            <span>Send feedback</span>
+          </a>
+          <span className="feedback-status" role="status">
+            {sent && (
+              <>
+                <Check size={14} />
+                Thanks — press Submit in the new tab to finish.
+              </>
+            )}
+          </span>
+        </div>
+      </div>
+    </section>
   );
 }
 
