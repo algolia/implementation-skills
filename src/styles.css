@@ -989,7 +989,9 @@ h2 {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 10;
+  /* Above the consent banner (20): a dialog is the focused task, and the banner
+     drawing over it looks like a rendering bug. */
+  z-index: 30;
   display: grid;
   place-items: center;
   padding: 20px;
@@ -2040,4 +2042,172 @@ h2 {
   margin-top: -6px; /* sits with the code block, not a gap away from it */
   font-size: 11.5px;
   line-height: 1.4;
+}
+
+/* ---------- bundle guide modal ----------
+   Renders public/artifacts/use-cases/*.md in place of opening the raw file.
+   Each of the four sections becomes a titled card with an icon, so the eye has
+   somewhere to land instead of one long column of prose. */
+.guide-body {
+  margin-top: 18px;
+}
+
+.guide-lead {
+  margin: 0 0 18px;
+  max-width: 72ch;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.guide-sections {
+  display: grid;
+  gap: 12px;
+}
+
+.guide-section {
+  padding: 16px 18px;
+  border: 1px solid var(--chip-border);
+  border-radius: 12px;
+  background: var(--secondary-bg);
+}
+
+.guide-section-head {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 11px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.guide-section-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: var(--tag-text);
+  border: 1px solid var(--tag-border);
+  border-radius: 9px;
+  background: var(--tag-bg);
+}
+
+.guide-section h3 {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+.guide-section-hint {
+  margin: 1px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Two columns turns a five-item wall into something scannable. */
+.guide-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 22px;
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.guide-list li {
+  margin: 4px 0;
+  padding-left: 2px;
+}
+
+.guide-list li::marker {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.guide-section p {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.guide-section > :last-child,
+.guide-section p:last-child {
+  margin-bottom: 0;
+}
+
+.guide-section strong {
+  color: var(--text);
+}
+
+.guide-section code {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--code-bg);
+  color: var(--tag-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88em;
+}
+
+.guide-prompt pre {
+  margin: 0 0 11px;
+  padding: 14px 15px;
+  border: 1px solid var(--panel-border);
+  border-left: 3px solid var(--blue);
+  border-radius: 9px;
+  background: var(--subtle-bg);
+}
+
+/* Belt and braces: any fenced block that does not become a GuidePrompt still
+   has to wrap. Default `white-space: pre` on one long prompt line stretches the
+   modal to thousands of pixels and drags the two-column lists with it. */
+.guide-section pre {
+  margin: 0 0 11px;
+  overflow-x: auto;
+}
+
+.guide-section pre code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.guide-prompt pre code {
+  padding: 0;
+  background: none;
+  color: var(--soft);
+  font-size: 13px;
+  line-height: 1.6;
+  /* Prompts are prose, so wrap rather than scroll sideways. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.guide-prompt .secondary-button {
+  min-height: 38px;
+  padding: 0 15px;
+  font-size: 13.5px;
+}
+
+.guide-status {
+  color: var(--muted);
+}
+
+/* The card's guide link is a button now, so it needs the anchor's look back. */
+button.bundle-guide-link {
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+@media (max-width: 700px) {
+  .guide-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+[data-theme="dark"] .guide-list li::marker {
+  color: var(--blue-2);
 }

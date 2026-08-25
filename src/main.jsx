@@ -990,6 +990,7 @@ function App() {
   const [filter, setFilter] = useState('All');
   const [guideOpen, setGuideOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const [guideBundle, setGuideBundle] = useState(null);
   const [theme, setTheme] = useState(() => localStorage.getItem('algolia-skills-theme') || 'light');
   const [consent, setConsent] = useState(readConsent);
 
@@ -1128,7 +1129,7 @@ function App() {
             </div>
 
             <WorksBestWith />
-            <UseCaseBundles onDetails={setSelectedPackage} />
+            <UseCaseBundles onGuide={setGuideBundle} />
           </section>
 
           <FeedbackSection />
@@ -1138,6 +1139,7 @@ function App() {
       {consent === null && <CookieBanner onChoose={chooseConsent} />}
       {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} />}
       {selectedPackage && <PackageDetailsModal pkg={selectedPackage} onClose={() => setSelectedPackage(null)} />}
+      {guideBundle && <BundleGuideModal bundle={guideBundle} onClose={() => setGuideBundle(null)} />}
     </>
   );
 }
@@ -1259,7 +1261,7 @@ function CompanionToolCard({ tool }) {
   );
 }
 
-function UseCaseBundles() {
+function UseCaseBundles({ onGuide }) {
   return (
     <section className="bundle-section" aria-labelledby="bundle-title">
       <div className="section-heading compact-heading">
@@ -1278,10 +1280,10 @@ function UseCaseBundles() {
                 <h3>{bundle.title}</h3>
               </div>
               <p>{bundle.description}</p>
-              <a className="bundle-guide-link" href={withBase(bundle.guideHref)} target="_blank" rel="noreferrer">
+              <button className="bundle-guide-link" type="button" onClick={() => onGuide(bundle)}>
                 <BookOpen size={16} />
                 Read bundle guide
-              </a>
+              </button>
               <DownloadButton href={bundle.href} label="Download bundle" />
             </article>
           );
@@ -1586,6 +1588,262 @@ function SiteFooter({ consent, onReopen }) {
         </button>
       </span>
     </footer>
+  );
+}
+
+// The bundle guides are markdown files in public/artifacts/use-cases/. They used
+// to open as raw .md, which the browser shows as unstyled plain text.
+//
+// Deliberately not a full markdown library: these files use headings, ordered
+// and unordered lists, and fenced code, and nothing else. Bold, inline code and
+// links are handled too so a future edit does not render as literal asterisks.
+// Anything else falls through as plain text rather than breaking.
+function renderInline(text, keyPrefix) {
+  const out = [];
+  const pattern = /\*\*([^*]+)\*\*|`([^`]+)`|\[([^\]]+)\]\(([^)]+)\)/g;
+  let last = 0;
+  let match;
+  let i = 0;
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > last) out.push(text.slice(last, match.index));
+    const key = `${keyPrefix}-i${i++}`;
+    if (match[1]) out.push(<strong key={key}>{match[1]}</strong>);
+    else if (match[2]) out.push(<code key={key}>{match[2]}</code>);
+    else out.push(
+      <a key={key} href={match[4]} target="_blank" rel="noreferrer">{match[3]}</a>
+    );
+    last = pattern.lastIndex;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out;
+}
+
+// All five guides share the same four sections, so they get treated as a known
+// shape rather than arbitrary markdown: each becomes a titled card with an icon,
+// which gives the eye somewhere to land instead of one long column of prose.
+const GUIDE_SECTIONS = {
+  'Start Prompt': { icon: Sparkles, hint: 'Paste this to begin' },
+  'Priority Decisions': { icon: Waypoints, hint: 'Settle these first' },
+  'Required Outputs': { icon: Layers3, hint: 'What you should end up with' },
+  'Launch Gates': { icon: ShieldCheck, hint: "Don't ship until these pass" }
+};
+
+// Splits the file into a lead paragraph plus one entry per `##` heading. Content
+// under an unrecognised heading still renders, just without an icon.
+function parseGuide(source) {
+  const lines = source.replace(/\r\n/g, '\n').split('\n');
+  const lead = [];
+  const sections = [];
+  let current = null;
+  let i = 0;
+
+  const push = (line) => (current ? current.lines : lead).push(line);
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const heading = line.match(/^(#{1,6})\s+(.*)$/);
+
+    // The modal header already shows the bundle name, so a leading `# Title` is
+    // a duplicate of it.
+    if (heading && heading[1].length === 1) { i += 1; continue; }
+
+    if (heading) {
+      current = { title: heading[2], lines: [] };
+      sections.push(current);
+      i += 1;
+      continue;
+    }
+
+    // Fences are copied whole so a `##` inside one is not read as a heading.
+    if (line.trim().startsWith('```')) {
+      push(line);
+      i += 1;
+      while (i < lines.length && !lines[i].trim().startsWith('```')) { push(lines[i]); i += 1; }
+      if (i < lines.length) { push(lines[i]); i += 1; }
+      continue;
+    }
+
+    push(line);
+    i += 1;
+  }
+
+  return { lead: lead.join('\n').trim(), sections };
+}
+
+// Renders the body of one section: lists, fenced code and paragraphs.
+function renderBlocks(source, keyPrefix) {
+  const lines = source.replace(/\r\n/g, '\n').split('\n');
+  const blocks = [];
+  const ordered = /^\s*\d+\.\s+/;
+  const bullet = /^\s*[-*]\s+/;
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    if (!line.trim()) { i += 1; continue; }
+    const key = `${keyPrefix}-${blocks.length}`;
+
+    if (line.trim().startsWith('```')) {
+      const body = [];
+      i += 1;
+      while (i < lines.length && !lines[i].trim().startsWith('```')) { body.push(lines[i]); i += 1; }
+      i += 1;
+      blocks.push(<pre key={key}><code>{body.join('\n')}</code></pre>);
+      continue;
+    }
+
+    if (ordered.test(line) || bullet.test(line)) {
+      const isOrdered = ordered.test(line);
+      const re = isOrdered ? ordered : bullet;
+      const items = [];
+      while (i < lines.length && re.test(lines[i])) { items.push(lines[i].replace(re, '')); i += 1; }
+      const Tag = isOrdered ? 'ol' : 'ul';
+      blocks.push(
+        <Tag key={key} className="guide-list">
+          {items.map((item, n) => <li key={`${key}-${n}`}>{renderInline(item, `${key}-${n}`)}</li>)}
+        </Tag>
+      );
+      continue;
+    }
+
+    const para = [];
+    while (
+      i < lines.length && lines[i].trim() &&
+      !ordered.test(lines[i]) && !bullet.test(lines[i]) && !lines[i].trim().startsWith('```')
+    ) { para.push(lines[i].trim()); i += 1; }
+    blocks.push(<p key={key}>{renderInline(para.join(' '), key)}</p>);
+  }
+
+  return blocks;
+}
+
+// The prompt is the one thing here you act on, so it gets a copy button rather
+// than leaving people to hand-select sixty words.
+function GuidePrompt({ text }) {
+  const [copied, setCopied] = useState(false);
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand('copy');
+      document.body.removeChild(area);
+    }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1600);
+  }
+
+  return (
+    <div className="guide-prompt">
+      <pre><code>{text}</code></pre>
+      <button className="secondary-button" type="button" onClick={copy}>
+        {copied ? <Check size={16} /> : <Copy size={16} />}
+        {copied ? 'Copied' : 'Copy prompt'}
+      </button>
+    </div>
+  );
+}
+
+function GuideSection({ title, body, index }) {
+  const meta = GUIDE_SECTIONS[title];
+  const Icon = meta?.icon;
+  // Pull a lone fenced block out so it can carry a copy button. Trim first: the
+  // body starts with the newline that followed the heading, which an anchored
+  // match would not survive.
+  const fence = body.trim().match(/^```[^\n]*\n([\s\S]*?)\n?```$/);
+
+  return (
+    <section className="guide-section">
+      <div className="guide-section-head">
+        {Icon && <span className="guide-section-icon"><Icon size={17} /></span>}
+        <div>
+          <h3>{title}</h3>
+          {meta?.hint && <p className="guide-section-hint">{meta.hint}</p>}
+        </div>
+      </div>
+      {fence ? <GuidePrompt text={fence[1].trim()} /> : renderBlocks(body, `s${index}`)}
+    </section>
+  );
+}
+
+function BundleGuideModal({ bundle, onClose }) {
+  const Icon = bundle.icon;
+  const [state, setState] = useState('loading');
+  const [source, setSource] = useState('');
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') onClose();
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  useEffect(() => {
+    let live = true;
+    fetch(withBase(bundle.guideHref))
+      .then((res) => {
+        if (!res.ok) throw new Error(String(res.status));
+        return res.text();
+      })
+      .then((text) => { if (live) { setSource(text); setState('ready'); } })
+      .catch(() => { if (live) setState('error'); });
+    return () => { live = false; };
+  }, [bundle.guideHref]);
+
+  return (
+    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <section
+        className="details-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="bundle-guide-title"
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <button className="close-button" type="button" onClick={onClose} aria-label={`Close ${bundle.title} guide`}>
+          <X size={20} />
+        </button>
+        <div className="details-header">
+          <span className="package-icon blue"><Icon size={30} /></span>
+          <div>
+            <p className="details-eyebrow">Bundle guide</p>
+            <h2 id="bundle-guide-title">{bundle.title}</h2>
+          </div>
+        </div>
+        <div className="guide-body">
+          {state === 'loading' && <p className="guide-status">Loading the guide…</p>}
+          {state === 'error' && (
+            // A dead modal is worse than the raw file it replaced.
+            <p className="guide-status">
+              Couldn't load the guide.{' '}
+              <a href={withBase(bundle.guideHref)} target="_blank" rel="noreferrer">
+                Open the file directly
+              </a>.
+            </p>
+          )}
+          {state === 'ready' && (() => {
+            const guide = parseGuide(source);
+            return (
+              <>
+                {guide.lead && <p className="guide-lead">{renderInline(guide.lead, 'lead')}</p>}
+                <div className="guide-sections">
+                  {guide.sections.map((section, n) => (
+                    <GuideSection key={section.title} title={section.title} body={section.lines.join('\n')} index={n} />
+                  ))}
+                </div>
+              </>
+            );
+          })()}
+        </div>
+      </section>
+    </div>
   );
 }
 
