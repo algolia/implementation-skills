@@ -1623,10 +1623,15 @@ function renderInline(text, keyPrefix) {
 // which gives the eye somewhere to land instead of one long column of prose.
 const GUIDE_SECTIONS = {
   'Start Prompt': { icon: Sparkles, hint: 'Paste this to begin' },
-  'Priority Decisions': { icon: Waypoints, hint: 'Settle these first' },
-  'Required Outputs': { icon: Layers3, hint: 'What you should end up with' },
-  'Launch Gates': { icon: ShieldCheck, hint: "Don't ship until these pass" }
+  'Priority Decisions': { icon: Waypoints, hint: 'Settle these first' }
 };
+
+// The guide file is also shipped inside the bundle ZIP as BUNDLE.md, where it is
+// a working checklist read after downloading. The modal has a smaller job —
+// "should I download this" — so Required Outputs and Launch Gates are left to
+// BUNDLE.md rather than shown to someone who has not started yet. Anything not
+// listed here is skipped, so a new section does not silently appear.
+const MODAL_SECTIONS = Object.keys(GUIDE_SECTIONS);
 
 // Splits the file into a lead paragraph plus one entry per `##` heading. Content
 // under an unrecognised heading still renders, just without an icon.
@@ -1751,6 +1756,27 @@ function GuidePrompt({ text }) {
   );
 }
 
+// The one fact the modal was missing. The site already has the list; it just was
+// not shown anywhere.
+function GuideSkills({ skills }) {
+  return (
+    <section className="guide-section">
+      <div className="guide-section-head">
+        <span className="guide-section-icon"><Library size={17} /></span>
+        <div>
+          <h3>What's in it</h3>
+          <p className="guide-section-hint">{skills.length} skills, installed together</p>
+        </div>
+      </div>
+      <ul className="guide-chips">
+        {skills.map((id) => (
+          <li key={id}>{getPackageById(id)?.title || id}</li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function GuideSection({ title, body, index }) {
   const meta = GUIDE_SECTIONS[title];
   const Icon = meta?.icon;
@@ -1832,16 +1858,25 @@ function BundleGuideModal({ bundle, onClose }) {
             const guide = parseGuide(source);
             return (
               <>
-                {guide.lead && <p className="guide-lead">{renderInline(guide.lead, 'lead')}</p>}
+                <p className="guide-lead">{bundle.description}</p>
                 <div className="guide-sections">
-                  {guide.sections.map((section, n) => (
-                    <GuideSection key={section.title} title={section.title} body={section.lines.join('\n')} index={n} />
-                  ))}
+                  <GuideSkills skills={bundle.skills} />
+                  {guide.sections
+                    .filter((section) => MODAL_SECTIONS.includes(section.title))
+                    .map((section, n) => (
+                      <GuideSection key={section.title} title={section.title} body={section.lines.join('\n')} index={n} />
+                    ))}
                 </div>
               </>
             );
           })()}
         </div>
+        {state === 'ready' && (
+          <div className="guide-footer">
+            <DownloadButton href={bundle.href} label="Download bundle" />
+            <span>{bundle.skills.length} skills · MIT licensed</span>
+          </div>
+        )}
       </section>
     </div>
   );
