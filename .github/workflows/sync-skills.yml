@@ -1,0 +1,165 @@
+name: Sync skills from algolia/skills
+
+# Replaces the second PR you currently open by hand.
+#
+# When a skill changes, you PR `algolia/skills`. This repo then needs three
+# things moved onto that commit — the submodule the site builds from, the ZIPs
+# built out of it, and the MCP server's promoted pin. All three are mechanical,
+# so this does them and opens one pre-validated PR.
+#
+# It opens a PR rather than pushing to main on purpose. The MCP pin exists so an
+# unreviewed edit cannot reach a customer's project mid-session; auto-merging
+# would throw that away. Merging is one click, and the PR only exists if the
+# validators already passed.
+#
+# Runs daily, and on demand from the Actions tab.
+
+on:
+  schedule:
+    - cron: '0 8 * * 1-5' # weekday mornings, UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-skills
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Read where we are and where upstream is
+        id: state
+        run: |
+          CURRENT=$(git rev-parse HEAD:vendor/algolia-skills)
+          UPSTREAM=$(git ls-remote https://github.com/algolia/skills.git main | cut -f1)
+          PINNED=$(node -p "require('./mcp/skills-pin.json').commit")
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "upstream=$UPSTREAM" >> "$GITHUB_OUTPUT"
+          echo "pinned=$PINNED"   >> "$GITHUB_OUTPUT"
+          echo "short=${UPSTREAM:0:8}" >> "$GITHUB_OUTPUT"
+
+          if [ "$CURRENT" = "$UPSTREAM" ] && [ "$PINNED" = "$UPSTREAM" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Already on ${UPSTREAM:0:8} — nothing to do."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "site submodule : ${CURRENT:0:8}"
+            echo "mcp pin        : ${PINNED:0:8}"
+            echo "upstream main  : ${UPSTREAM:0:8}"
+          fi
+
+      # Only ever move to a commit that is on upstream main. The site was once
+      # pinned to an unmerged branch commit, which put the ZIPs customers
+      # download off the official record.
+      - name: Refuse a commit that is not on main
+        if: steps.state.outputs.changed == 'true'
+        run: |
+          git clone --quiet --filter=blob:none --no-checkout https://github.com/algolia/skills.git /tmp/skills
+          cd /tmp/skills
+          if ! git merge-base --is-ancestor "${{ steps.state.outputs.upstream }}" origin/main; then
+            echo "::error::${{ steps.state.outputs.short }} is not an ancestor of algolia/skills main. Refusing."
+            exit 1
+          fi
+          echo "${{ steps.state.outputs.short }} is on main."
+
+      - name: Move the site's submodule onto it
+        if: steps.state.outputs.changed == 'true'
+        run: |
+          git submodule update --remote vendor/algolia-skills
+          git -C vendor/algolia-skills checkout --quiet "${{ steps.state.outputs.upstream }}"
+
+      - name: Bump the MCP pin and refresh its offline fallback
+        if: steps.state.outputs.changed == 'true'
+        run: |
+          node -e "
+            const fs = require('node:fs');
+            const path = 'mcp/skills-pin.json';
+            const pin = JSON.parse(fs.readFileSync(path, 'utf8'));
+            pin.commit = '${{ steps.state.outputs.upstream }}';
+            pin.promotedAt = new Date().toISOString().slice(0, 10);
+            fs.writeFileSync(path, JSON.stringify(pin, null, 2) + '\n');
+          "
+          cd mcp && npm install --no-audit --no-fund && npm run vendor
+
+      - name: Rebuild the artifacts and download ZIPs
+        if: steps.state.outputs.changed == 'true'
+        run: |
+          npm run sync:artifacts
+          npm run package:downloads
+
+      # The gate. A broken or partial catalogue must not become a mergeable PR.
+      - name: Validate
+        if: steps.state.outputs.changed == 'true'
+        run: |
+          npm run validate:skills
+          npm run validate:packages
+          npm run validate:feedback
+          (cd mcp && npm test)
+          BASE_PATH=/implementation-skills/ npm run build -- --emptyOutDir
+
+      - name: Open the PR
+        if: steps.state.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="sync-skills/${{ steps.state.outputs.short }}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          rm -rf dist
+          git add vendor/algolia-skills mcp/skills-pin.json mcp/vendor artifacts public/artifacts public/downloads
+
+          if git diff --cached --quiet; then
+            echo "Upstream moved but nothing here changed — no PR needed."
+            exit 0
+          fi
+
+          git checkout -b "$BRANCH"
+          git commit --quiet -m "Sync skills to ${{ steps.state.outputs.short }}
+
+          Moves the site's submodule and the MCP's promoted pin onto
+          algolia/skills main, rebuilds the download ZIPs from it, and refreshes
+          the MCP's offline fallback.
+
+          Opened by .github/workflows/sync-skills.yml."
+
+          git push --quiet -u origin "$BRANCH"
+
+          gh pr create \
+            --title "Sync skills to ${{ steps.state.outputs.short }}" \
+            --body "$(cat <<BODY
+          Automated. Moves everything in this repo that carries a frozen copy of
+          \`algolia/skills\` onto \`main\`, so a skill update does not need a second
+          hand-written PR.
+
+          | | From | To |
+          | --- | --- | --- |
+          | Site submodule | \`${{ steps.state.outputs.current }}\` | \`${{ steps.state.outputs.upstream }}\` |
+          | MCP pin | \`${{ steps.state.outputs.pinned }}\` | \`${{ steps.state.outputs.upstream }}\` |
+
+          Also rebuilds the download ZIPs from the new submodule and refreshes the
+          MCP's offline fallback tarball.
+
+          **Already checked before this PR existed:** the target commit is an
+          ancestor of \`algolia/skills\` main, \`validate:skills\`,
+          \`validate:packages\`, \`validate:feedback\`, the MCP test suite, and the
+          deploy build. If any had failed there would be no PR.
+
+          Review the skill changes, then merge — merging deploys the site.
+          BODY
+          )"
