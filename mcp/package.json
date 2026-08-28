@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node src/http.js",
     "start:stdio": "node src/stdio.js",
-    "test": "node test/smoke.mjs"
+    "test": "node test/smoke.mjs",
+    "vendor": "node scripts/vendor-pin.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"

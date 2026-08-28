@@ -1,30 +1,27 @@
-# Skill support in the CLI onboarding wizard
+# Skills in the CLI onboarding wizard
 
-Notes for the Growth team. The wizard's instructions are hand-written and hard-coded, so
-updating them is manual and they drift from the skills. This is how to swap that out for
-skills as the source of truth, in the order the steps are actually worth doing.
+For the Growth team. The wizard's instructions are hand-written and hard-coded, so
+updating them is manual and they drift from the skills. This replaces them with skills as
+the source of truth.
 
-## Start here: can the wizard load skills natively?
+The wizard runs on a custom harness, so it cannot read a skills folder. It talks to an MCP
+server instead. That server is in this directory and is ready to deploy.
 
-If the wizard runs on Claude Code, the Agent SDK, or anything else that reads the
-[Agent Skills](https://agentskills.io/specification) format, **it does not need this MCP
-server**. Point it at the canonical repo and stop:
+## Connect
 
 ```bash
-/plugin marketplace add algolia/skills      # Claude Code
-npx skills add algolia/skills               # anything else
+claude mcp add --transport http algolia-skills https://<your-host>/mcp
 ```
 
-That is already evergreen: it resolves at install time against `algolia/skills`, which is
-the one canonical copy. Everything below is for the case where the harness cannot read a
-skills folder — a hosted agent with no filesystem, or a custom loop.
+Or run it locally first:
 
-Worth ten minutes to confirm before designing anything, because it decides the whole
-shape.
+```bash
+cd mcp
+npm install
+npm start                 # http://localhost:8787/mcp, health on :8787/health
+```
 
-## If it can't: the MCP server in this directory
-
-`algolia-skills-mcp` exists for exactly this consumer. Three tools:
+Three tools:
 
 | Tool | Returns | Cost |
 | --- | --- | --- |
@@ -32,74 +29,107 @@ shape.
 | `get_skill(name)` | That skill's full guidance | ~1.5–4k tokens |
 | `get_reference(name, path)` | One reference document | varies |
 
-```bash
-claude mcp add --transport http algolia-skills https://<your-host>/mcp
-```
-
-The granularity is the design, not an accident. The agent holds the catalogue once, then
-pays for depth only for the phase it is in. That is the progressive-disclosure model of
-the skills format, expressed as tool calls instead of a folder scan.
+The granularity is the design. The agent holds the catalogue once, then pays for depth
+only for the phase it is in — the progressive disclosure of the skills format, expressed
+as tool calls instead of a folder scan.
 
 **Whole files, never chunks.** Each skill carries explicit `Do NOT use for X` boundaries
-and a fixed phase order. A retrieval system that returns the middle of a skill strips the
+and a fixed phase order. A retrieval system returning the middle of a skill strips the
 boundary that stops skills colliding and the ordering that is most of the value. This is
-the main reason not to put a search index between the agent and the skills.
+why there is no search index between the agent and the skills.
 
-## Migrating the hard-coded instructions
+## The one thing you must add to the wizard's prompt
 
-Do not swap everything at once. The skills change *what the agent asks and in what order*,
-so the wizard's flow will visibly change.
+Skills are tightly scoped so they do not collide. That raises precision and lowers recall:
+left alone, a model fires one skill and misses the rest of the suite. This backstops it —
+without it the integration underperforms and it looks like the skills are at fault.
 
-1. **Pick one phase where the current instructions are thinnest.** Data modelling and
-   event setup are the usual candidates — they are the phases where a hand-written prompt
-   most often skips straight to code.
+> For any non-trivial Algolia work, start with `algolia-discovery-planning` even if the
+> task looks already scoped or names one feature. Enumerate the in-scope phases up front
+> and state which skill owns each and in what order. Load each in-scope skill for its
+> phase and apply it — don't stop at the first matching skill, and don't substitute your
+> own knowledge for a skill that applies. If you deliberately skip a phase, say so and
+> why. Report which skills ran and what each changed.
+
+## Replacing the hard-coded instructions
+
+Not all at once. Skills change *what the agent asks and in what order*, so the wizard's
+flow will visibly change.
+
+1. **Pick the phase where the current instructions are thinnest.** Data modelling and
+   event setup are the usual candidates — the phases where a hand-written prompt most
+   often skips straight to code.
 2. **Call `list_skills` at the start of a session** and let the agent route, rather than
-   hard-coding which skill to load. `algolia-discovery-planning` is the front door and
-   will name the phases and their order.
-3. **Add the standing rule** to the wizard's system prompt. Without it, a model reliably
-   fires one skill and misses the rest of the suite — the skills' tight `Do NOT` scoping
-   raises precision at the cost of recall:
+   hard-coding which skill to load.
+3. **Add the standing rule above** to the system prompt.
+4. **Delete the hand-written instructions for that phase** once the skill-driven path
+   behaves. Keeping both means two sources of truth and no way to tell which one ran.
+5. **Repeat per phase.** Keep hand-written instructions for anything the skills do not
+   cover — wizard mechanics, your own conventions. Skills are the Algolia layer, not the
+   whole wizard.
 
-   > For any non-trivial Algolia work, start with `algolia-discovery-planning` even if the
-   > task looks already scoped or names one feature. Enumerate the in-scope phases up
-   > front and state which skill owns each and in what order. Load each in-scope skill for
-   > its phase and apply it — don't stop at the first matching skill, and don't substitute
-   > your own knowledge for a skill that applies. If you deliberately skip a phase, say so
-   > and why.
+## What is guaranteed, and what is not
 
-4. **Delete the hand-written instructions for that phase** once the skill-driven path is
-   behaving. Leaving both means two sources of truth and no way to tell which one the
-   agent used.
-5. **Repeat per phase.** Keep the hand-written instructions for anything the skills do not
-   cover — wizard-specific mechanics, your own project conventions. Skills are the Algolia
-   layer, not the whole wizard.
+**Cold start cannot fail on GitHub being down.** The promoted commit's tarball is vendored
+at `vendor/skills-<commit>.tar.gz` and committed. Network first, vendored copy if that
+fails. Verified by simulating a codeload outage: 18 skills, correct content.
 
-## What "evergreen" actually means here
+**It refuses rather than degrading.** Three failure modes that would otherwise be silent
+now stop the process at boot, because every one of them would leave tool calls succeeding
+while the agent quietly lost guidance:
+
+- Network fetch hangs → 15s timeout, 3 attempts with backoff. A hung boot logs nothing
+  and never passes a health check, which is worse than failing.
+- Vendored copy is for a different commit → refused, not substituted. Serving an
+  unpromoted commit would break the review gate silently.
+- Archive parses to an empty or partial catalogue → refused, naming the missing skills.
+
+**What is not covered, deliberately:**
+
+- **No auth.** The content is public and MIT, so the question is who may call your
+  endpoint, not protecting the skills. Your call, and it depends where you deploy.
+- **No rate limiting.** Same reasoning.
+- **Pin latency.** See below. This is the one you must decide, not inherit.
+
+## The pin, and the decision it forces
+
+`skills-pin.json` serves a commit you promote, not `main`. That is deliberate for a
+customer-facing agent: an unreviewed edit to `main` should not reach a customer's project
+mid-session.
+
+**The tradeoff: a fix in `algolia/skills` does not reach the wizard until someone bumps the
+pin.** Rolling forward is:
+
+```bash
+# 1. edit skills-pin.json: set commit + promotedAt
+npm run vendor      # refresh the offline fallback for the new commit
+npm test
+# 2. deploy
+```
+
+Three options, pick one explicitly:
+
+- **Manual bump** (today). Safest, slowest. Needs a named owner or it rots — the pin was a
+  month stale when this was written.
+- **Scheduled auto-bump** gated on `npm test`. Good middle ground: the test suite catches a
+  broken or partial catalogue before it ships.
+- **Track `main`.** Fastest, and gives up the review gate. Reasonable only if
+  `algolia/skills` review is trusted for customer-facing output.
+
+## What "evergreen" actually means
 
 Worth being precise, because it is the load-bearing claim.
 
 Skills do **not** auto-sync from docs or Academy. They are hand-maintained markdown in
-`algolia/skills`. What makes them current is two things:
+`algolia/skills`. Two things keep them current:
 
 - **One canonical copy.** This repo consumes `algolia/skills` as a submodule and never
   keeps its own; `algolia/internal-skills` does the same at `public/`. A fix lands once.
 - **Live-lookup instructions.** The cached Academy pack carries an `updated_at`, and the
   skills tell the agent to fall back to `academy.algolia.com` and `algolia.com/doc` when
-  it is stale. The skill routes to current sources rather than embedding a copy of them.
+  it is stale. The skill routes to current sources rather than embedding a copy.
 
-So the wizard gets currency from sourcing plus routing, not from anything automatic. When
-someone updates a skill, the wizard picks it up on the next pin bump.
-
-## The review gate
-
-`skills-pin.json` pins a commit rather than tracking `main`. That is deliberate for a
-customer-facing agent: an unreviewed edit to `main` should not reach a customer's project
-mid-session. Rolling forward is a two-line change plus `npm test` — see the README.
-
-The tradeoff to be explicit about with Growth: **a fix in `algolia/skills` does not reach
-the wizard until someone bumps the pin.** If that latency is unacceptable, the honest
-options are a scheduled auto-bump with the test suite as the gate, or tracking `main` and
-accepting the risk. Do not leave it implicit.
+So currency comes from canonical sourcing plus routing, not from anything automatic.
 
 ## Not the skills website
 
@@ -108,15 +138,14 @@ serve `SKILL.md` at all — verified: no skill body text appears anywhere in the
 It publishes card descriptions, artifact templates and the ZIPs, and it consumes
 `algolia/skills` as a pinned submodule, so it is a snapshot too.
 
-Indexing that page — with DocSearch or anything else — gives an agent marketing copy
-where it needs procedure. Per-skill pages would be good for humans (deep links for Slack,
-the Hub, docs) but are the wrong data source for an agent: markdown → HTML → crawler →
+Indexing that page, with DocSearch or anything else, gives an agent marketing copy where
+it needs procedure. Per-skill pages would be good for humans — deep links for Slack, the
+Hub, docs — but are the wrong data source for an agent: markdown → HTML → crawler →
 chunks, to reach content that is already plain markdown at a public URL.
 
 ## Open questions for Growth
 
-- Which harness is the wizard on, and can it read a skills folder? Decides everything above.
-- How stale may the pin be before it matters to a customer?
-- Does the wizard need all 18 skills, or the implementation suite only? `suite` in
-  `skills-pin.json` limits what is exposed.
-- Who owns bumping the pin, and does it belong in the wizard's release process or this one?
+- Where does this deploy, and who may call it? Decides the auth question.
+- Which of the three pin options, and who owns bumping it?
+- All 18 skills, or the implementation suite only? `suite` in `skills-pin.json` limits what
+  is exposed.
