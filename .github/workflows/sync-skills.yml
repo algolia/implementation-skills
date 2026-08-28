@@ -1,23 +1,34 @@
 name: Sync skills from algolia/skills
 
-# Replaces the second PR you currently open by hand.
+# Replaces the follow-up PR that currently gets opened here by hand whenever one
+# of our skills changes in algolia/skills.
 #
-# When a skill changes, you PR `algolia/skills`. This repo then needs three
-# things moved onto that commit — the submodule the site builds from, the ZIPs
-# built out of it, and the MCP server's promoted pin. All three are mechanical,
-# so this does them and opens one pre-validated PR.
+# This never pushes to algolia/skills. It only ever opens a PR in this repo.
 #
-# It opens a PR rather than pushing to main on purpose. The MCP pin exists so an
-# unreviewed edit cannot reach a customer's project mid-session; auto-merging
-# would throw that away. Merging is one click, and the PR only exists if the
-# validators already passed.
+# It only acts when one of OUR skills changed — the list in packaging/suite.json.
+# algolia/skills is a shared repo, and a change to algolia-crawler or algobot-cli
+# is not our business; opening a PR here for it would be noise. (Real example:
+# between the site's old pin and main, the only changes were to algobot-cli and
+# algolia-crawler, and none of our eleven were touched.)
 #
-# Runs daily, and on demand from the Actions tab.
+# When one of ours does change we move to current main, which sweeps up everyone
+# else's changes for free. So the other skills stay current as a side effect
+# rather than on their own schedule. If you need them pulled through sooner, run
+# this from the Actions tab with "force" ticked.
+#
+# It opens a PR rather than pushing to main on purpose: the MCP pin exists so an
+# unreviewed edit cannot reach a customer's project mid-session. Merging is one
+# click, and the PR only exists if the validators already passed.
 
 on:
   schedule:
     - cron: '0 8 * * 1-5' # weekday mornings, UTC
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Sync even if none of our skills changed'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -42,50 +53,86 @@ jobs:
 
       - run: npm ci
 
-      - name: Read where we are and where upstream is
+      - name: Decide whether any of our skills changed
         id: state
+        shell: bash
         run: |
           CURRENT=$(git rev-parse HEAD:vendor/algolia-skills)
           UPSTREAM=$(git ls-remote https://github.com/algolia/skills.git main | cut -f1)
           PINNED=$(node -p "require('./mcp/skills-pin.json').commit")
-          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+
+          echo "current=$CURRENT"   >> "$GITHUB_OUTPUT"
           echo "upstream=$UPSTREAM" >> "$GITHUB_OUTPUT"
-          echo "pinned=$PINNED"   >> "$GITHUB_OUTPUT"
+          echo "pinned=$PINNED"     >> "$GITHUB_OUTPUT"
           echo "short=${UPSTREAM:0:8}" >> "$GITHUB_OUTPUT"
 
           if [ "$CURRENT" = "$UPSTREAM" ] && [ "$PINNED" = "$UPSTREAM" ]; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "Already on ${UPSTREAM:0:8} — nothing to do."
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "site submodule : ${CURRENT:0:8}"
-            echo "mcp pin        : ${PINNED:0:8}"
-            echo "upstream main  : ${UPSTREAM:0:8}"
+            echo "act=false" >> "$GITHUB_OUTPUT"
+            echo "Already on ${UPSTREAM:0:8}. Nothing to do."
+            exit 0
           fi
 
-      # Only ever move to a commit that is on upstream main. The site was once
-      # pinned to an unmerged branch commit, which put the ZIPs customers
-      # download off the official record.
-      - name: Refuse a commit that is not on main
-        if: steps.state.outputs.changed == 'true'
-        run: |
-          git clone --quiet --filter=blob:none --no-checkout https://github.com/algolia/skills.git /tmp/skills
-          cd /tmp/skills
-          if ! git merge-base --is-ancestor "${{ steps.state.outputs.upstream }}" origin/main; then
-            echo "::error::${{ steps.state.outputs.short }} is not an ancestor of algolia/skills main. Refusing."
+          # A blobless clone is enough for a path-scoped diff, and much smaller.
+          git clone --quiet --filter=blob:none --no-checkout \
+            https://github.com/algolia/skills.git /tmp/skills
+
+          # Never move to a commit that is not on main. The site was once pinned
+          # to an unmerged branch commit, which put the shipped ZIPs off the
+          # official record.
+          if ! git -C /tmp/skills merge-base --is-ancestor "$UPSTREAM" origin/main; then
+            echo "::error::${UPSTREAM:0:8} is not an ancestor of algolia/skills main. Refusing."
             exit 1
           fi
-          echo "${{ steps.state.outputs.short }} is on main."
 
-      - name: Move the site's submodule onto it
-        if: steps.state.outputs.changed == 'true'
+          # An array, not a space-joined string. `-- "$OWNED"` would pass the whole
+          # list as ONE pathspec, which matches nothing, so OURS would always be
+          # empty and this workflow would never fire. Keep the array.
+          #
+          # Read with a while-loop rather than `mapfile`, which is bash 4+ and so
+          # cannot be tested on a macOS bash 3.2 before pushing.
+          OWNED=()
+          while IFS= read -r skill; do
+            OWNED+=("skills/$skill")
+          done < <(node -p "require('./packaging/suite.json').skills.join('\n')")
+          echo "Scoping to ${#OWNED[@]} skills we own."
+
+          OURS=$(git -C /tmp/skills diff --name-only "$CURRENT" "$UPSTREAM" -- "${OWNED[@]}" || true)
+          THEIRS=$(git -C /tmp/skills diff --name-only "$CURRENT" "$UPSTREAM" || true)
+
+          {
+            echo '### Upstream moved'
+            echo "\`${CURRENT:0:8}\` → \`${UPSTREAM:0:8}\`"
+            echo
+            if [ -n "$OURS" ]; then
+              echo '**Our skills that changed:**'
+              echo '```'; echo "$OURS"; echo '```'
+            else
+              echo '_None of our skills changed._'
+            fi
+            if [ -n "$THEIRS" ]; then
+              echo '<details><summary>Everything that changed upstream</summary>'
+              echo; echo '```'; echo "$THEIRS"; echo '```'; echo '</details>'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ -z "$OURS" ] && [ "${{ inputs.force }}" != "true" ]; then
+            echo "act=false" >> "$GITHUB_OUTPUT"
+            echo "Upstream moved, but none of our skills changed. No PR."
+            exit 0
+          fi
+
+          echo "act=true" >> "$GITHUB_OUTPUT"
+          {
+            echo 'ours<<EOF'
+            if [ -n "$OURS" ]; then echo "$OURS"; else echo '(forced: none of ours changed)'; fi
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Move the site's submodule and the MCP pin onto it
+        if: steps.state.outputs.act == 'true'
         run: |
-          git submodule update --remote vendor/algolia-skills
+          git -C vendor/algolia-skills fetch --quiet origin main
           git -C vendor/algolia-skills checkout --quiet "${{ steps.state.outputs.upstream }}"
-
-      - name: Bump the MCP pin and refresh its offline fallback
-        if: steps.state.outputs.changed == 'true'
-        run: |
           node -e "
             const fs = require('node:fs');
             const path = 'mcp/skills-pin.json';
@@ -97,14 +144,14 @@ jobs:
           cd mcp && npm install --no-audit --no-fund && npm run vendor
 
       - name: Rebuild the artifacts and download ZIPs
-        if: steps.state.outputs.changed == 'true'
+        if: steps.state.outputs.act == 'true'
         run: |
           npm run sync:artifacts
           npm run package:downloads
 
       # The gate. A broken or partial catalogue must not become a mergeable PR.
       - name: Validate
-        if: steps.state.outputs.changed == 'true'
+        if: steps.state.outputs.act == 'true'
         run: |
           npm run validate:skills
           npm run validate:packages
@@ -113,7 +160,7 @@ jobs:
           BASE_PATH=/implementation-skills/ npm run build -- --emptyOutDir
 
       - name: Open the PR
-        if: steps.state.outputs.changed == 'true'
+        if: steps.state.outputs.act == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -122,44 +169,41 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           rm -rf dist
-          git add vendor/algolia-skills mcp/skills-pin.json mcp/vendor artifacts public/artifacts public/downloads
+          git add vendor/algolia-skills mcp/skills-pin.json mcp/vendor \
+                  artifacts public/artifacts public/downloads
 
           if git diff --cached --quiet; then
-            echo "Upstream moved but nothing here changed — no PR needed."
+            echo "Nothing to commit. No PR."
             exit 0
           fi
 
           git checkout -b "$BRANCH"
-          git commit --quiet -m "Sync skills to ${{ steps.state.outputs.short }}
-
-          Moves the site's submodule and the MCP's promoted pin onto
-          algolia/skills main, rebuilds the download ZIPs from it, and refreshes
-          the MCP's offline fallback.
-
-          Opened by .github/workflows/sync-skills.yml."
-
+          git commit --quiet -m "Sync skills to ${{ steps.state.outputs.short }}" \
+            -m "Moves the site's submodule and the MCP's promoted pin onto algolia/skills main, rebuilds the download ZIPs, and refreshes the MCP's offline fallback. Opened by .github/workflows/sync-skills.yml."
           git push --quiet -u origin "$BRANCH"
+
+          printf '%s\n' \
+            "Automated, and only opened because one of our skills changed upstream." \
+            "" \
+            "**Our skills that changed:**" \
+            '```' \
+            "${{ steps.state.outputs.ours }}" \
+            '```' \
+            "" \
+            "| | From | To |" \
+            "| --- | --- | --- |" \
+            "| Site submodule | \`${{ steps.state.outputs.current }}\` | \`${{ steps.state.outputs.upstream }}\` |" \
+            "| MCP pin | \`${{ steps.state.outputs.pinned }}\` | \`${{ steps.state.outputs.upstream }}\` |" \
+            "" \
+            "Also rebuilds the download ZIPs and the MCP's offline fallback." \
+            "" \
+            "Moving to current main also sweeps up other teams' skill changes, which is why the MCP does not need its own schedule." \
+            "" \
+            "**Checked before this PR existed:** the target is an ancestor of \`algolia/skills\` main, plus \`validate:skills\`, \`validate:packages\`, \`validate:feedback\`, the MCP test suite and the deploy build. If any had failed there would be no PR." \
+            "" \
+            "Review the skill changes, then merge — merging deploys the site." \
+            > /tmp/pr-body.md
 
           gh pr create \
             --title "Sync skills to ${{ steps.state.outputs.short }}" \
-            --body "$(cat <<BODY
-          Automated. Moves everything in this repo that carries a frozen copy of
-          \`algolia/skills\` onto \`main\`, so a skill update does not need a second
-          hand-written PR.
-
-          | | From | To |
-          | --- | --- | --- |
-          | Site submodule | \`${{ steps.state.outputs.current }}\` | \`${{ steps.state.outputs.upstream }}\` |
-          | MCP pin | \`${{ steps.state.outputs.pinned }}\` | \`${{ steps.state.outputs.upstream }}\` |
-
-          Also rebuilds the download ZIPs from the new submodule and refreshes the
-          MCP's offline fallback tarball.
-
-          **Already checked before this PR existed:** the target commit is an
-          ancestor of \`algolia/skills\` main, \`validate:skills\`,
-          \`validate:packages\`, \`validate:feedback\`, the MCP test suite, and the
-          deploy build. If any had failed there would be no PR.
-
-          Review the skill changes, then merge — merging deploys the site.
-          BODY
-          )"
+            --body-file /tmp/pr-body.md
