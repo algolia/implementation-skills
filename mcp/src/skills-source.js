@@ -1,5 +1,5 @@
 import { gunzipSync } from 'node:zlib';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -104,15 +104,75 @@ export class SkillsSource {
     return this.loading;
   }
 
-  async #fetch() {
+  /** Where a vendored copy of the promoted commit lives, if one was committed. */
+  get vendoredPath() {
+    return join(root, 'vendor', `skills-${this.pin.commit}.tar.gz`);
+  }
+
+  /**
+   * Downloads the promoted commit, with a timeout and retries.
+   *
+   * Without a timeout a hung connection to codeload hangs boot forever, which is
+   * worse than failing: the health check never comes up and nothing is logged.
+   */
+  async #download() {
     const { repo, commit } = this.pin;
     const url = `https://codeload.github.com/${repo}/tar.gz/${commit}`;
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Could not fetch ${repo}@${commit.slice(0, 8)}: ${response.status} ${response.statusText}`);
+    let lastError = null;
+
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      try {
+        const response = await fetch(url, { signal: AbortSignal.timeout(15_000) });
+        if (!response.ok) {
+          // 4xx will not fix itself — a wrong or unpushed commit, most likely.
+          if (response.status < 500) {
+            throw new Error(`${response.status} ${response.statusText} (is ${commit.slice(0, 8)} pushed?)`);
+          }
+          throw new Error(`${response.status} ${response.statusText}`);
+        }
+        return Buffer.from(await response.arrayBuffer());
+      } catch (error) {
+        lastError = error;
+        if (attempt < 3 && !/is .* pushed/.test(error.message)) {
+          await new Promise((resolve) => setTimeout(resolve, attempt * 500));
+        } else {
+          break;
+        }
+      }
     }
 
-    const files = readTarGz(Buffer.from(await response.arrayBuffer()));
+    throw new Error(`Could not fetch ${repo}@${commit.slice(0, 8)}: ${lastError?.message}`);
+  }
+
+  /**
+   * Reads the promoted commit's tarball: network first, then the vendored copy.
+   *
+   * The vendored file is only used when its filename carries the same commit as
+   * the pin. Serving a different commit than the one promoted would quietly
+   * break the review gate that skills-pin.json exists to enforce, so a stale
+   * vendored file is ignored rather than substituted.
+   */
+  async #read() {
+    try {
+      return await this.#download();
+    } catch (networkError) {
+      if (existsSync(this.vendoredPath)) {
+        console.warn(
+          `[algolia-skills-mcp] network fetch failed (${networkError.message}); ` +
+            `serving the vendored copy of ${this.pin.commit.slice(0, 8)}`
+        );
+        return readFileSync(this.vendoredPath);
+      }
+      throw new Error(
+        `${networkError.message}. No vendored fallback at vendor/skills-${this.pin.commit.slice(0, 8)}….tar.gz — ` +
+          'run `npm run vendor` and commit it so a cold start cannot depend on GitHub.'
+      );
+    }
+  }
+
+  async #fetch() {
+    const { repo, commit } = this.pin;
+    const files = readTarGz(await this.#read());
     const allow = this.pin.suite ? new Set(this.pin.suite) : null;
     const skills = new Map();
 
@@ -138,6 +198,22 @@ export class SkillsSource {
 
     // A directory without SKILL.md is not a skill.
     for (const [name, skill] of skills) if (!skill.body) skills.delete(name);
+
+    // An empty or partial catalogue is the dangerous failure: every tool call
+    // still succeeds, the agent just silently loses skills it should have had.
+    // Better to refuse to start.
+    if (skills.size === 0) {
+      throw new Error(`Parsed no skills from ${repo}@${commit.slice(0, 8)} — archive layout may have changed.`);
+    }
+    if (this.pin.suite) {
+      const missing = this.pin.suite.filter((name) => !skills.has(name));
+      if (missing.length) {
+        throw new Error(
+          `${repo}@${commit.slice(0, 8)} is missing skills listed in skills-pin.json: ${missing.join(', ')}. ` +
+            'Either the pin predates them or they were renamed — fix the pin or the suite list.'
+        );
+      }
+    }
 
     this.skills = skills;
     return skills;

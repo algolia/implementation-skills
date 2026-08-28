@@ -34,6 +34,10 @@ granularity, which works for a hosted agent with no skills folder to scan.
 
 Tool results are text. Nothing is written to disk, so this is safe in a sandbox.
 
+See [WIZARD-INTEGRATION.md](WIZARD-INTEGRATION.md) for how the CLI onboarding wizard
+would adopt this, including the case where it can read skills natively and does not need
+this server at all.
+
 ## Run it
 
 ```bash
@@ -41,6 +45,7 @@ npm install
 npm start                 # streamable HTTP on :8787/mcp, health on :8787/health
 npm run start:stdio       # stdio, for local testing
 npm test                  # drives the real MCP protocol over an in-memory transport
+npm run vendor            # refresh the offline fallback after bumping the pin
 ```
 
 Environment: `PORT` (default `8787`), `MCP_PATH` (default `/mcp`).
@@ -57,24 +62,30 @@ claude mcp add --transport http algolia-skills http://localhost:8787/mcp
 
 1. Confirm the change is merged to `algolia/skills` `main` and has been reviewed.
 2. Update `commit` (and `promotedAt`) in `skills-pin.json`.
-3. `npm test`, then deploy.
+3. `npm run vendor` to refresh the offline fallback for the new commit.
+4. `npm test`, then deploy.
 
 Every customer session picks it up on next start. Do not point `commit` at a branch name
 or at an unmerged PR — the review gate is the whole reason this file exists.
 
-> **Known gap at the current pin:** `dc12547` predates
-> [algolia/skills#34](https://github.com/algolia/skills/pull/34), so the
-> `algolia-ui-libraries` selector still understates Angular InstantSearch as "not
-> compatible with the latest Angular versions" rather than formally deprecated, and omits
-> SiteSearch and the Next.js App Router guidance. Bump the pin once #34 merges.
+The pin is currently `ded7ff3` (promoted 2026-08-28), which includes
+[algolia/skills#34](https://github.com/algolia/skills/pull/34) — so the
+`algolia-ui-libraries` selector correctly reports Angular InstantSearch as formally
+deprecated and covers SiteSearch and the Next.js App Router. Verified through the server,
+not just against GitHub: `get_reference` returns the corrected text.
 
 ## Notes for productionising
 
 - **Caching.** The promoted commit is immutable, so one fetch per process is enough and
   there is no invalidation problem. A long-lived process never re-fetches.
-- **Bundle a fallback.** Vendor the tarball into the image so a cold start cannot fail if
-  codeload is unreachable. `src/http.js` currently fails fast at boot instead, which is
-  the right default for a service behind a health check but not for a single instance.
+- **Offline fallback — done.** `npm run vendor` writes the promoted commit's tarball to
+  `vendor/skills-<commit>.tar.gz`, which is committed. The loader tries the network first
+  (15s timeout, 3 attempts) and falls back to that file, so a cold start cannot fail on
+  codeload being unreachable. Re-run `npm run vendor` whenever you bump the pin.
+- **Refuses rather than degrading — done.** A vendored copy for a different commit is
+  ignored, not substituted, so an unpromoted commit cannot leak past the review gate. An
+  empty or partial catalogue throws at boot, naming what is missing, because every tool
+  call would otherwise still succeed while the agent silently lost guidance.
 - **Auth.** There is none here. The content is public and MIT, so the decision is about
   who may call your endpoint, not about protecting the skills.
 - **Observability.** `list_skills`/`get_skill` calls are a useful signal for which parts
