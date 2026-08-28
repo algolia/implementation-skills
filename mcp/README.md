@@ -34,6 +34,10 @@ granularity, which works for a hosted agent with no skills folder to scan.
 
 Tool results are text. Nothing is written to disk, so this is safe in a sandbox.
 
+See [WIZARD-INTEGRATION.md](WIZARD-INTEGRATION.md) for how the CLI onboarding wizard
+would adopt this, including the case where it can read skills natively and does not need
+this server at all.
+
 ## Run it
 
 ```bash
@@ -62,11 +66,11 @@ claude mcp add --transport http algolia-skills http://localhost:8787/mcp
 Every customer session picks it up on next start. Do not point `commit` at a branch name
 or at an unmerged PR — the review gate is the whole reason this file exists.
 
-> **Known gap at the current pin:** `dc12547` predates
-> [algolia/skills#34](https://github.com/algolia/skills/pull/34), so the
-> `algolia-ui-libraries` selector still understates Angular InstantSearch as "not
-> compatible with the latest Angular versions" rather than formally deprecated, and omits
-> SiteSearch and the Next.js App Router guidance. Bump the pin once #34 merges.
+The pin is currently `ded7ff3` (promoted 2026-08-28), which includes
+[algolia/skills#34](https://github.com/algolia/skills/pull/34) — so the
+`algolia-ui-libraries` selector correctly reports Angular InstantSearch as formally
+deprecated and covers SiteSearch and the Next.js App Router. Verified through the server,
+not just against GitHub: `get_reference` returns the corrected text.
 
 ## Notes for productionising
 
