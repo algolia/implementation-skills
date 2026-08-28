@@ -1,5 +1,5 @@
 {
-  "comment": "The skills this site packages. They live in the algolia/skills submodule at vendor/algolia-skills; that repo is the canonical home. TEMPORARY: the submodule is pinned to the chore/ui-library-currency commit (algolia/skills#34) rather than main, because the UI-library corrections in the shipped ZIPs are not on main yet. Once #34 merges, run `npm run skills:update` to move it back to main, then `npm run release:prepare` and commit.",
+  "comment": "The skills this site packages, and the scope .github/workflows/sync-skills.yml watches: a change to any other skill in algolia/skills does not open a PR here. They live in the algolia/skills submodule at vendor/algolia-skills; that repo is the canonical home.",
   "skills": [
     "algolia-agent-studio",
     "algolia-autocomplete",
