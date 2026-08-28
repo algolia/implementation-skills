@@ -91,30 +91,31 @@ while the agent quietly lost guidance:
 - **No rate limiting.** Same reasoning.
 - **Pin latency.** See below. This is the one you must decide, not inherit.
 
-## The pin, and the decision it forces
+## The pin, and how it moves
 
-`skills-pin.json` serves a commit you promote, not `main`. That is deliberate for a
-customer-facing agent: an unreviewed edit to `main` should not reach a customer's project
+`skills-pin.json` serves a commit that has been promoted, not `main`. That is deliberate
+for a customer-facing agent: an unreviewed edit should not reach a customer's project
 mid-session.
 
-**The tradeoff: a fix in `algolia/skills` does not reach the wizard until someone bumps the
-pin.** Rolling forward is:
+It is no longer a manual chore. `.github/workflows/sync-skills.yml` watches the eleven
+skills in `packaging/suite.json`; when one changes upstream it bumps the pin, refreshes the
+offline fallback, rebuilds the download ZIPs and opens a PR. Merging that PR is the
+promotion step, so review is preserved without anyone having to remember.
+
+To roll forward by hand anyway:
 
 ```bash
-# 1. edit skills-pin.json: set commit + promotedAt
+# edit skills-pin.json: commit + promotedAt
 npm run vendor      # refresh the offline fallback for the new commit
 npm test
-# 2. deploy
 ```
 
-Three options, pick one explicitly:
+Two things to be explicit about with Growth:
 
-- **Manual bump** (today). Safest, slowest. Needs a named owner or it rots — the pin was a
-  month stale when this was written.
-- **Scheduled auto-bump** gated on `npm test`. Good middle ground: the test suite catches a
-  broken or partial catalogue before it ships.
-- **Track `main`.** Fastest, and gives up the review gate. Reasonable only if
-  `algolia/skills` review is trusted for customer-facing output.
+- The seven skills we do not own (CLI, MCP, Crawler, algobot, InstantSearch, migration,
+  quickstart) come along whenever one of ours changes. If none of ours change for a
+  stretch, those sit slightly behind. `workflow_dispatch` with `force` pulls them through.
+- Merging the sync PR deploys the site as well. That is one action promoting both.
 
 ## What "evergreen" actually means
 
