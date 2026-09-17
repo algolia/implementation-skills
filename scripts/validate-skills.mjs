@@ -70,9 +70,12 @@ for (const entry of readdirSync(skillsRoot, { withFileTypes: true }).filter((ite
   if (frontmatter.description.length > 1024) fail(skill, `description is ${frontmatter.description.length} characters; maximum is 1024`);
   if (/[<>]/.test(frontmatter.description)) fail(skill, 'description cannot contain angle brackets');
 
+  // The Codex/ChatGPT interface manifest is validated when present. Its absence
+  // is a warning rather than a failure: algolia/skills (the canonical repo) does
+  // not require it, and a skill without one still installs and runs everywhere.
   const agentFile = join(skillDir, 'agents', 'openai.yaml');
   if (!existsSync(agentFile)) {
-    fail(skill, 'agents/openai.yaml not found');
+    console.warn(`${skill}: agents/openai.yaml not found (Codex/ChatGPT interface metadata will be missing)`);
   } else {
     const agent = readFileSync(agentFile, 'utf8');
     const shortDescription = agent.match(/^\s+short_description:\s+"([^"]+)"$/m)?.[1];
