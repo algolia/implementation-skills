@@ -13,7 +13,8 @@
     "validate:skills": "node scripts/validate-skills.mjs",
     "validate:packages": "node scripts/validate-packages.mjs",
     "validate:feedback": "node scripts/validate-feedback.mjs",
-    "release:prepare": "npm run sync:artifacts && npm run package:downloads && npm run validate:skills && npm run validate:packages && npm run validate:feedback && npm run build"
+    "release:prepare": "npm run sync:artifacts && npm run benchmark:build && npm run package:downloads && npm run validate:skills && npm run validate:packages && npm run validate:feedback && npm run build",
+    "benchmark:build": "node scripts/build-benchmark.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",

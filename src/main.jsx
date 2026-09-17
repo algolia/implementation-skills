@@ -1187,6 +1187,7 @@ function Header({ onGuide, theme, onToggleTheme }) {
         <strong>Skills Library</strong>
       </a>
       <nav aria-label="Primary navigation">
+        <a href={withBase('/benchmark/')}>Benchmark</a>
         <a href="https://academy.algolia.com/" target="_blank" rel="noreferrer">
           Academy <ExternalLink size={15} />
         </a>

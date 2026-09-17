@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Skills Benchmark — which model to run the Algolia skills on</title>
+<meta name="description" content="Same task, same store, same brief — run with and without the Algolia implementation skills, blind-graded against the live index. Every pair, every model, and which one to run.">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<meta name="theme-color" content="#003dff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap">
+<script>try{var t=localStorage.getItem('algolia-skills-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  color-scheme:light;
+  --blue:#0052ff;--blue-2:#256bff;--cyan:#0082c9;--green:#0f9b5f;--purple:#8a5cff;--teal:#0c8f83;--red:#c8102e;
+  --text:#0b1526;--muted:#526078;--soft:#1d2b44;
+  --page-bg:radial-gradient(circle at 68% 22%,rgba(0,82,255,.13),transparent 30%),linear-gradient(135deg,#fff 0%,#f3f7ff 48%,#eaf1ff 100%);
+  --header-bg:rgba(255,255,255,.78);--header-border:rgba(9,25,55,.12);--nav-text:#17243a;
+  --panel-bg:linear-gradient(180deg,rgba(255,255,255,.96),rgba(247,250,255,.9));--panel-border:rgba(20,48,92,.16);--panel-shadow:0 22px 80px rgba(21,56,117,.15);
+  --chip-bg:rgba(9,35,80,.055);--chip-border:rgba(20,48,92,.12);--divider:rgba(20,48,92,.12);--table-head-bg:rgba(4,28,71,.035);--subtle-bg:rgba(0,82,255,.055);
+  --ready-text:#08733f;--ready-bg:rgba(17,166,82,.10);--ready-border:rgba(17,166,82,.26);
+  --warn-text:#a2520a;--warn-bg:rgba(243,107,0,.10);--warn-border:rgba(243,107,0,.3);
+  --bad-text:#a3122a;--bad-bg:rgba(200,16,46,.09);--bad-border:rgba(200,16,46,.28);
+  --dark:#000033;--dark-2:#0b0b4f;--on-dark:#fff;--on-dark-70:rgba(255,255,255,.72);--on-dark-45:rgba(255,255,255,.46);--on-dark-10:rgba(255,255,255,.1);
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+[data-theme="dark"]{
+  color-scheme:dark;
+  --blue-2:#3c83ff;--cyan:#00c2ff;--green:#6ff29b;--purple:#b394ff;--teal:#2fd0be;--red:#ff6b7f;
+  --text:#f6f8ff;--muted:#aeb9cd;--soft:#dce6ff;
+  --page-bg:radial-gradient(circle at 68% 22%,rgba(0,82,255,.18),transparent 28%),linear-gradient(135deg,#020814 0%,#04101e 48%,#061423 100%);
+  --header-bg:rgba(2,8,20,.72);--header-border:rgba(130,158,205,.16);--nav-text:#eef4ff;
+  --panel-bg:linear-gradient(180deg,rgba(15,27,48,.92),rgba(8,18,32,.86));--panel-border:rgba(130,158,205,.22);--panel-shadow:0 22px 80px rgba(0,0,0,.32);
+  --chip-bg:rgba(255,255,255,.04);--chip-border:rgba(130,158,205,.14);--divider:rgba(130,158,205,.14);--table-head-bg:rgba(255,255,255,.02);--subtle-bg:rgba(0,82,255,.08);
+  --ready-text:#9df8b5;--ready-bg:rgba(18,171,86,.12);--ready-border:rgba(95,231,137,.34);
+  --warn-text:#ffc38a;--warn-bg:rgba(243,107,0,.14);--warn-border:rgba(255,173,20,.36);
+  --bad-text:#ff9aa8;--bad-bg:rgba(200,16,46,.16);--bad-border:rgba(255,107,127,.34);
+}
+html,body{margin:0}
+body{font-family:"Sora",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);background:var(--page-bg);background-attachment:fixed;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--blue-2)}
+.site-header{min-height:82px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;border-bottom:1px solid var(--header-border);background:var(--header-bg);backdrop-filter:blur(20px);position:sticky;top:0;z-index:20}
+.brand{display:inline-flex;align-items:center;gap:20px;text-decoration:none;color:inherit}
+.brand img{width:152px;height:auto}.brand img.dark{display:none}
+[data-theme="dark"] .brand img.light{display:none}[data-theme="dark"] .brand img.dark{display:block}
+.brand span{width:1px;height:28px;background:var(--header-border)}.brand strong{font-size:18px}
+nav{display:flex;align-items:center;gap:22px}
+nav a,nav button{display:inline-flex;align-items:center;gap:5px;color:var(--nav-text);font:inherit;font-size:15px;text-decoration:none;background:transparent;border:0;cursor:pointer}
+nav a:hover,nav button:hover{color:var(--blue-2)}
+nav a[aria-current]{font-weight:700;color:var(--blue-2)}
+.theme-toggle{border:1px solid var(--chip-border)!important;border-radius:999px;padding:6px 12px;font-size:13px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px 80px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-2)}
+.hero{padding:72px 0 40px;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:end}
+h1{font-size:clamp(40px,5vw,62px);line-height:1.02;letter-spacing:-.035em;margin:14px 0 18px;font-weight:800;text-wrap:balance}
+h1 em{font-style:normal;color:var(--blue-2)}
+.lede{font-size:19px;color:var(--muted);max-width:60ch;margin:0}
+.lede b{color:var(--text)}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.tile{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:16px;padding:18px 20px;box-shadow:var(--panel-shadow)}
+.tile .v{font-size:36px;font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.tile .v.up{color:var(--green)}.tile .v.dn{color:var(--purple)}
+.tile .l{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.4}
+section{margin-top:72px}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:10px}
+h2{font-size:clamp(26px,3vw,36px);letter-spacing:-.03em;margin:0;font-weight:800;text-wrap:balance}
+.sub{color:var(--muted);max-width:72ch;margin:8px 0 24px;font-size:16px}
+.sub b{color:var(--text)}
+/* tier cards */
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.tier{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:18px;padding:22px 22px 20px;box-shadow:var(--panel-shadow);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.tier::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--accent)}
+.tier .badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:5px 10px;width:max-content}
+.tier.rec{--accent:var(--green)}.tier.rec .badge{color:var(--ready-text);background:var(--ready-bg);border:1px solid var(--ready-border)}
+.tier.dim{--accent:var(--purple)}.tier.dim .badge{color:var(--purple);background:var(--subtle-bg);border:1px solid var(--chip-border)}
+.tier.gate{--accent:#f36b00}.tier.gate .badge{color:var(--warn-text);background:var(--warn-bg);border:1px solid var(--warn-border)}
+.tier h3{margin:4px 0 0;font-size:22px;letter-spacing:-.02em}
+.tier .models{font-size:13px;color:var(--muted)}
+.tier .num{display:flex;flex-wrap:wrap;gap:12px 22px;margin:6px 0 2px}
+.tier .num b{display:block;font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tier .num span{font-size:12px;color:var(--muted)}
+.tier p{margin:0;font-size:14px;color:var(--soft);line-height:1.5}
+.tier .do{margin-top:auto;padding-top:10px;border-top:1px solid var(--divider);font-size:14px}
+.tier .do b{color:var(--text)}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;counter-reset:s}
+.step{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:14px;padding:18px 16px 16px;position:relative}
+.step::before{counter-increment:s;content:"0" counter(s);font-family:var(--mono);font-size:12px;color:var(--blue-2);font-weight:700;display:block;margin-bottom:10px}
+.step b{display:block;font-size:15px;margin-bottom:6px;letter-spacing:-.01em}
+.step span{font-size:13px;color:var(--muted);line-height:1.45}
+/* tables */
+.card{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:18px;box-shadow:var(--panel-shadow);padding:22px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 14px;border-bottom:1px solid var(--divider);white-space:nowrap;background:var(--table-head-bg)}
+th[data-sort]{cursor:pointer;user-select:none}th[data-sort]:hover{color:var(--text)}th .dir{opacity:.6;margin-left:4px}
+td{padding:13px 14px;border-bottom:1px solid var(--divider);vertical-align:middle;white-space:nowrap;color:var(--soft)}
+td:first-child{color:var(--text);font-weight:600}
+tr:last-child td{border-bottom:0}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.pos{color:var(--green)}.neg{color:var(--purple)}.zero{color:var(--muted)}
+.bar{display:inline-block;height:9px;border-radius:999px;vertical-align:middle;margin-right:8px;min-width:2px}
+.bar.pos{background:var(--green)}.bar.neg{background:var(--purple)}.bar.zero{background:var(--chip-border)}
+.pbar{display:inline-flex;gap:2px;height:10px;border-radius:999px;overflow:hidden;background:var(--chip-bg);width:150px;vertical-align:middle;margin-right:10px}
+.pbar i{display:block;height:100%}.pbar .w{background:var(--green)}.pbar .t{background:var(--chip-border)}.pbar .l{background:var(--purple)}
+.res{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:4px 9px}
+.res.win{background:var(--ready-bg);color:var(--ready-text);border:1px solid var(--ready-border)}
+.res.tie{background:var(--chip-bg);color:var(--muted);border:1px solid var(--chip-border)}
+.res.loss{background:var(--subtle-bg);color:var(--purple);border:1px solid var(--chip-border)}
+.res.ex{background:transparent;color:var(--muted);border:1px dashed var(--chip-border)}
+.lead{font-size:11px;font-weight:700;color:var(--ready-text);margin-left:6px}
+tbody tr.row{cursor:pointer}tbody tr.row:hover td{background:var(--subtle-bg)}
+tr.detail td{white-space:normal;background:var(--subtle-bg);font-size:13.5px;line-height:1.55;padding:14px 16px 16px}
+tr.detail td>div{position:sticky;left:16px;max-width:min(900px,calc(100vw - 130px))}
+tr.detail b{color:var(--text)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+.grp{display:inline-flex;gap:2px;align-items:center;background:var(--chip-bg);border:1px solid var(--chip-border);border-radius:999px;padding:3px}
+.grp span{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:0 8px 0 10px}
+.grp button,.tog{border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:600;color:var(--soft);padding:6px 12px;border-radius:999px;cursor:pointer}
+.grp button[aria-pressed="true"]{background:var(--blue);color:#fff}
+.tog{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--chip-border);background:var(--chip-bg)}
+.tog i{width:30px;height:16px;border-radius:999px;background:var(--chip-border);position:relative}
+.tog i::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff}
+.tog[aria-pressed="true"] i{background:var(--blue)}.tog[aria-pressed="true"] i::after{transform:translateX(14px)}
+.foot{font-size:13px;color:var(--muted);margin:14px 0 0;line-height:1.55}
+.foot b{color:var(--text)}
+/* fact row */
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.fact{background:var(--dark);color:var(--on-dark);border-radius:18px;padding:24px;position:relative;overflow:hidden}
+.fact::after{content:"";position:absolute;inset:0;background:radial-gradient(600px 300px at 80% 0%,var(--dark-2),transparent 70%);pointer-events:none}
+.fact>*{position:relative}
+.fact .v{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.fact .v small{font-size:18px;color:var(--on-dark-45);font-weight:600}
+.fact .v .t{color:#21c9c4}.fact .v .p{color:#a894ff}
+.fact p{margin:10px 0 0;font-size:14px;color:var(--on-dark-70);line-height:1.5}
+.fact p b{color:#fff}
+/* methodology */
+details.m{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:14px;margin-bottom:10px}
+details.m summary{cursor:pointer;padding:16px 20px;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.m summary::-webkit-details-marker{display:none}
+details.m summary::after{content:"+";font-size:20px;color:var(--muted)}details.m[open] summary::after{content:"–"}
+details.m .b{padding:0 20px 18px;font-size:14.5px;color:var(--soft);line-height:1.6}
+details.m .b p{margin:0 0 10px}details.m .b ul{margin:0 0 10px;padding-left:20px}details.m .b li{margin-bottom:4px}
+details.m .b code{font-family:var(--mono);font-size:12.5px;background:var(--chip-bg);padding:2px 6px;border-radius:5px}
+.cta{margin-top:56px;background:var(--dark);color:#fff;border-radius:20px;padding:32px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.cta h3{margin:0 0 6px;font-size:24px;letter-spacing:-.02em}.cta p{margin:0;color:var(--on-dark-70);font-size:15px}
+.cta .btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:12px 20px;font-weight:700;text-decoration:none;font-size:14px}
+.btn.pri{background:var(--blue);color:#fff}.btn.sec{background:var(--on-dark-10);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.pagefoot{margin-top:40px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+@media (max-width:980px){.hero{grid-template-columns:1fr}.tiers,.facts{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.tiles{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.site-header{padding:0 16px}nav a.ext{display:none}.wrap{padding:0 16px 60px}.hero{padding:44px 0 24px}.steps,.tiles{grid-template-columns:1fr}.brand strong{display:none}.brand span{display:none}}
+</style></head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../" aria-label="Algolia Skills Library home">
+    <img class="light" src="../brand/Algolia-logo-blue.svg" alt="Algolia"><img class="dark" src="../brand/Algolia-logo-white.svg" alt="Algolia">
+    <span></span><strong>Skills Library</strong>
+  </a>
+  <nav aria-label="Primary navigation">
+    <a href="../">Skills</a>
+    <a href="./" aria-current="page">Benchmark</a>
+    <a class="ext" href="../start/">Quick start</a>
+    <a class="ext" href="https://academy.algolia.com/" target="_blank" rel="noreferrer">Academy</a>
+    <button class="theme-toggle" type="button" id="themeToggle" aria-label="Toggle dark mode">Theme</button>
+  </nav>
+</header>
+
+<div class="wrap">
+<div class="hero">
+  <div>
+    <div class="eyebrow">Implementation skills benchmark · <span id="asof"></span></div>
+    <h1>There is no best model.<br>There is a <em>best pairing.</em></h1>
+    <p class="lede">Same task, same seeded store, same brief — run <b>with</b> and <b>without</b> the Algolia implementation skills, then blind-graded against the live index. Below: every pair, what each model did with the skills, and which one to run them on.</p>
+  </div>
+  <div class="tiles" id="tiles"></div>
+</div>
+
+<section id="pick">
+  <div class="sechead"><h2>Which model should run the skills?</h2></div>
+  <p class="sub">The skills are instructions. How much they help depends on whether the model can execute what it reads — and whether it verifies what it wrote. Three tiers, three different answers.</p>
+  <div class="tiers" id="tiers"></div>
+  <p class="foot"><b>Read this as direction, not a ranking.</b> The mid-tier row has seven pairs behind it; the top and small tiers have one or two per task. Enough to see the shape, not enough to separate two models by a point.</p>
+</section>
+
+<section id="built">
+  <div class="sechead"><h2>How it's built</h2></div>
+  <p class="sub">The design borrows from Algolia's <a href="https://www.algolia.com/llm-leaderboard/methodology" target="_blank" rel="noreferrer">Agentic Search Leaderboard</a>: score what the agent actually does against live state, never what it says it did.</p>
+  <div class="steps">
+    <div class="step"><b>A real store, seeded</b><span>300-product catalog on a dedicated Algolia app. For audits, 16 planted defects — most of them symptom-free.</span></div>
+    <div class="step"><b>Identical briefs, pinned model</b><span>Byte-identical prompts per pair. One model per pair, pinned. "Add search to our store, make it good." — or "audit this."</span></div>
+    <div class="step"><b>Two arms, one difference</b><span>Bare: client library, REST, public docs. Skills: the same plus the implementation skills and the CLI. Nothing else changes.</span></div>
+    <div class="step"><b>Live checks, blind graders</b><span>Ten deterministic checks against the live index per run, then a 35- or 37-point rubric scored by a condition-blind grader told to ignore toolchain.</span></div>
+    <div class="step"><b>Claims verified, not read</b><span>Every scored claim is checked against live state — settings, queries, the rendered page, captured event payloads. Unsupported claims score zero.</span></div>
+  </div>
+</section>
+
+<section id="facts">
+  <div class="sechead"><h2>What the skills change</h2></div>
+  <p class="sub">On the recommended tier, the gap is not "smarter code." It is a different definition of <b>done</b>.</p>
+  <div class="facts">
+    <div class="fact"><div class="v"><span class="t">3</span><small>/3</small> <small style="margin:0 6px">vs</small> <span class="p">1</span><small>/3</small></div><p><b>Analytics wired and verified.</b> From a one-line brief, the skills arm shipped attributed click and conversion events every time. The bare arm shipped them once — twice it deferred them as "out of scope."</p></div>
+    <div class="fact"><div class="v"><span class="t">7.3</span> <small style="margin:0 6px">vs</small> <span class="p">4.3</span><small>/10</small></div><p><b>Silent defects fixed on an existing store.</b> Tie-breakers, searchable facets, hierarchy, facet stats, leaked internal fields — the class of issue that never throws an error and never fails a demo.</p></div>
+    <div class="fact"><div class="v"><span class="t">9</span><small>/10</small> <small style="margin:0 6px">from</small> <span class="p">4</span><small>/10</small></div><p><b>After the fixes, unprompted.</b> The benchmark found the skills weren't being invoked; we shipped <code style="font-family:var(--mono)">algolia-audit</code> and routing fixes; the free-choice re-run invoked it on its own and fixed 9 of 10.</p></div>
+  </div>
+</section>
+
+<section id="board">
+  <div class="sechead"><h2>Every model, every dimension</h2></div>
+  <p class="sub">Summaries recompute from the pairs you filter below. Quality delta is a share of the rubric so build (/35) and audit (/37) pairs share a column without pooling raw points. "Working storefront" is what a shopper would see, checked in a browser after each run.</p>
+  <div class="card"><div class="scroll"><table id="pivot"></table></div></div>
+</section>
+
+<section id="pairs">
+  <div class="sechead"><h2>Every pair</h2></div>
+  <p class="sub">Click a row for what decided it. Excluded rows are shown for completeness and never counted.</p>
+  <div class="chips" id="chips"></div>
+  <div class="card" style="padding:0"><div class="scroll"><table id="pairsTable"></table></div></div>
+  <p class="foot" id="summary"></p>
+  <p class="foot"><b>Modes.</b> <em>Autopilot</em>: skills installed, agent chooses. <em>Triggered</em>: told to start with <code style="font-family:var(--mono)">algolia-discovery-planning</code>. <em>Mandated</em>: told to read two domain skills first. <em>Skills-assisted</em>: Codex with skills + CLI. Post-fix validation runs are listed in the methodology, not as pairs.</p>
+</section>
+
+<section id="method">
+  <div class="sechead"><h2>Methodology, limitations, updates</h2></div>
+  <details class="m"><summary>Controls and scoring</summary><div class="b">
+    <p>One Algolia application, one 300-product catalog (seeded, deterministic), one brief per task type. Each pair pins one model and runs the same brief twice: bare (client library, REST API, public docs) and skills (the same plus the implementation skills and the Algolia CLI). Prompts are byte-identical within a pair.</p>
+    <p>Two scoring layers. <b>Live checks</b>: ten deterministic assertions against the live index and rendered page after each run (settings shape, facet stats present, replicas actually sorted, retrieval hygiene, page renders, events captured). <b>Blind rubric</b>: 35 points for builds, 37 for audits, scored by a grader that does not know which arm it is grading and is instructed to verify every claim in the agent's write-up against live state. The two rubrics are never pooled.</p>
+  </div></details>
+  <details class="m"><summary>What "working storefront" means</summary><div class="b">
+    <p>After each run the page is loaded in a browser. It counts as working if search requests fire, hit cards render with readable text, and there are no uncaught errors. Several runs on the small tier shipped pages that passed every settings check and rendered nothing — a wrong CDN filename for the Insights loader, or a seeded crash left in place — which is why this column exists and why the release-qa skill now has a mechanical page-smoke gate.</p>
+  </div></details>
+  <details class="m"><summary>Known limitations</summary><div class="b">
+    <ul>
+      <li><b>Sample size.</b> Seven pairs on Claude Sonnet 5; two counted on GPT-5.6; two on Haiku 4.5; one on Opus 5. Variance runs both ways at this n — one adverse pair calibrates a pattern, it does not reverse it, and one favorable pair does not establish one.</li>
+      <li><b>One catalog, one vertical.</b> Ecommerce only. Support, B2B and marketplace catalogs are the obvious next seeds.</li>
+      <li><b>Timing is agent time.</b> Wall-clock and tokens as reported by the agent harness; Codex does not expose tokens. Skills cost more time in most pairs (typically +30–40%, up to +65% on Opus) — this benchmark measures correctness, not speed.</li>
+      <li><b>Graders are models.</b> Condition-blind and told to verify against live state, with deterministic checks as a floor. Disagreements between grader and checker were resolved by re-checking live and are noted in the pair notes.</li>
+      <li><b>Platform and model are confounded on Codex.</b> GPT-5.6 was only run through Codex; a second Codex model would separate the two.</li>
+    </ul>
+  </div></details>
+  <details class="m"><summary>Post-fix validation runs</summary><div class="b" id="validation"></div></details>
+  <details class="m"><summary>Update policy and changelog</summary><div class="b">
+    <p>Every run is appended to <code>benchmark/data.json</code> with its date, model, mode, both arms' scores, effort, storefront outcome and the grader's decisive note; this page recomputes on build. Excluded runs stay in the data with a reason. Corrections restate the affected pair and are listed here.</p>
+    <ul id="changelog"><li><b>2026-09-17</b> — first public version: 13 pairs (7 Sonnet 5, 2 Haiku 4.5, 1 Opus 5, 3 GPT-5.6/Codex, one excluded), 4 post-fix validation runs.</li></ul>
+    <p>Want your model or platform on the board? The harness runs the identical tasks on anything an agent platform exposes — contact the Algolia skills team.</p>
+  </div></details>
+</section>
+
+<div class="cta">
+  <div><h3>Run the skills on your next implementation</h3><p>One install, one line in your agent config. Start with <code style="font-family:var(--mono)">algolia-discovery-planning</code> for builds, <code style="font-family:var(--mono)">algolia-audit</code> for anything that already exists.</p></div>
+  <div class="btns"><a class="btn pri" href="../">Browse the skills</a><a class="btn sec" href="../start/">Quick start</a><a class="btn sec" href="https://github.com/algolia/skills" target="_blank" rel="noreferrer">GitHub</a></div>
+</div>
+<div class="pagefoot"><span>Algolia Implementation Skills · Benchmark</span><span id="footnote"></span></div>
+</div>
+
+<script type="application/json" id="benchmark-data">/*__DATA__*/</script>
+<script>
+(function(){
+  /* theme */
+  var tb=document.getElementById('themeToggle');
+  function applyTheme(t){ if(t==='dark') document.documentElement.setAttribute('data-theme','dark'); else document.documentElement.removeAttribute('data-theme'); tb.textContent = t==='dark'?'Light mode':'Dark mode'; }
+  var cur='light'; try{ cur=localStorage.getItem('algolia-skills-theme')||'light'; }catch(e){}
+  applyTheme(cur);
+  tb.addEventListener('click',function(){ cur = cur==='dark'?'light':'dark'; try{ localStorage.setItem('algolia-skills-theme',cur); }catch(e){} applyTheme(cur); });
+
+  var DATA=JSON.parse(document.getElementById('benchmark-data').textContent);
+  var pairs=DATA.pairs.map(function(p){ p.delta=+(p.quality.skills-p.quality.bare).toFixed(2); p.deltaPct=p.delta/p.quality.max*100; p.liveDelta=(p.live.bare!=null&&p.live.skills!=null)?p.live.skills-p.live.bare:null; p.timePct=(p.effort.minBare&&p.effort.minSkills)?(p.effort.minSkills-p.effort.minBare)/p.effort.minBare*100:null; p.result=p.delta>0?'win':(p.delta<0?'loss':'tie'); return p; });
+  var counted=pairs.filter(function(p){return !p.excluded;});
+  var dates=pairs.map(function(p){return p.date;}).sort(); document.getElementById('asof').textContent='updated '+dates[dates.length-1];
+  document.getElementById('footnote').textContent=counted.length+' counted pairs · '+DATA.validation.length+' validation runs · data updated '+DATA.updated;
+  function mean(a){return a.length?a.reduce(function(s,x){return s+x;},0)/a.length:null;}
+  function pct(n,d){return n==null?'—':((n>0?'+':'')+n.toFixed(d==null?0:d)+'%');}
+  function trim(n){return String(+(+n).toFixed(2));}
+  function worked(s){return /worked|renders/.test(s)&&!/failed|dead/.test(s.split(',')[0]);}
+
+  /* hero tiles (all counted pairs) */
+  (function(){
+    var w=counted.filter(function(p){return p.result==='win';}).length,t=counted.filter(function(p){return p.result==='tie';}).length,l=counted.filter(function(p){return p.result==='loss';}).length;
+    var mq=mean(counted.map(function(p){return p.deltaPct;})), sw=counted.filter(function(p){return worked(p.storefront.skills);}).length, bw=counted.filter(function(p){return worked(p.storefront.bare);}).length;
+    var models={}; counted.forEach(function(p){models[p.model]=1;});
+    document.getElementById('tiles').innerHTML=
+      '<div class="tile"><div class="v">'+w+'–'+t+'–'+l+'</div><div class="l">skills wins – ties – losses across '+counted.length+' blind-graded pairs, '+Object.keys(models).length+' models, 2 agent platforms</div></div>'+
+      '<div class="tile"><div class="v '+(mq>0?'up':'dn')+'">'+pct(mq,1)+'</div><div class="l">mean quality delta with the skills, as a share of the rubric</div></div>'+
+      '<div class="tile"><div class="v">'+sw+'/'+counted.length+' · '+bw+'/'+counted.length+'</div><div class="l">working storefront after the run — skills · bare</div></div>'+
+      '<div class="tile"><div class="v up">9<small style="font-size:18px;color:var(--muted)">/10</small></div><div class="l">live-checked defects fixed by the free-choice audit after the skill fixes shipped (was 4/10)</div></div>';
+  })();
+
+  /* tier cards — computed per model, then grouped */
+  function stats(rows){ var w=0,t=0,l=0; rows.forEach(function(p){ if(p.result==='win')w++; else if(p.result==='tie')t++; else l++; }); return {w:w,t:t,l:l,q:mean(rows.map(function(p){return p.deltaPct;})),lv:mean(rows.filter(function(p){return p.liveDelta!=null;}).map(function(p){return p.liveDelta;})),tm:mean(rows.filter(function(p){return p.timePct!=null;}).map(function(p){return p.timePct;})),sw:rows.filter(function(p){return worked(p.storefront.skills);}).length,n:rows.length}; }
+  var byModel={}; counted.forEach(function(p){(byModel[p.model]=byModel[p.model]||[]).push(p);});
+  var TIERS=[
+    {cls:'rec',badge:'Recommended',name:'Mid-tier',models:['claude-sonnet-5','gpt-5.6-terra'],why:'Capable enough to execute everything the skills prescribe, not so capable that it already does. Analytics wired 3 of 3 vs 1 of 3; nearly double the silent-defect fixes on existing stores; a working page every round; after the routing fixes, Sonnet reaches for the audit skill unprompted.',do:'<b>Run the skills here.</b> Add the one-line trigger to your agent config and you get the headline numbers.'},
+    {cls:'dim',badge:'Diminishing lift',name:'Top tier',models:['claude-opus-5'],why:'Without the skills it already scored 10/10 on live checks and wired verified events. With them it built more — a suggestions index, 18 synonyms, 5 rules — at +65% time, and shipped one shopper-facing regression its own QA missed (an autocomplete-only input where Enter did nothing).',do:'<b>Keep them for scope discipline</b> — the QA gates and event taxonomy — not for a quality lift.'},
+    {cls:'gate',badge:'Only with gates',name:'Small / fast tier',models:['claude-haiku-4-5'],why:'Four to eight minutes on a third of the tokens, and the skills’ content works when it is read (a mandated audit repaired 5 of 10 live-checked defects). But it verifies by re-reading its edits, not by loading the page: three skills builds shipped a dead Insights loader or broken cards while their QA reports said “verified.” On free choice it invoked no skill at all.',do:'<b>Trigger line mandatory</b>, plus the mechanical page-smoke gate in <code style="font-family:var(--mono)">algolia-release-qa</code>. Never accept “launch-ready” from this tier without the gate’s output.'}
+  ];
+  var labelOf={}; pairs.forEach(function(p){labelOf[p.model]=p.modelLabel;});
+  document.getElementById('tiers').innerHTML=TIERS.map(function(t){
+    var rows=[]; t.models.forEach(function(m){ rows=rows.concat(byModel[m]||[]); }); var s=stats(rows);
+    var names=t.models.map(function(m){return labelOf[m]||m;}).join(' · ');
+    return '<div class="tier '+t.cls+'"><span class="badge">'+t.badge+'</span><h3>'+t.name+'</h3><div class="models">'+names+' · '+s.n+' pair'+(s.n===1?'':'s')+'</div>'+
+      '<div class="num"><div><b>'+s.w+'–'+s.t+'–'+s.l+'</b><span>record</span></div><div><b class="'+(s.q>0?'pos':'neg')+'">'+pct(s.q,1)+'</b><span>quality delta</span></div><div><b class="'+(s.tm>0?'neg':'pos')+'">'+pct(s.tm)+'</b><span>time cost</span></div><div><b>'+s.sw+'/'+s.n+'</b><span>working page</span></div></div>'+
+      '<p>'+t.why+'</p><div class="do">'+t.do+'</div></div>';
+  }).join('');
+
+  /* filters */
+  var filt={platform:'all',model:'all',task:'all',mode:'all'}, showEx=true, sortKey='deltaPct', sortDir=-1;
+  var uniq=function(k){var s=[];pairs.forEach(function(p){if(s.indexOf(p[k])<0)s.push(p[k]);});return s;};
+  var TASKN={build:'Checklist build',vague:'Vague brief',audit:'Audit'};
+  var chips=document.getElementById('chips');
+  function grp(label,key,vals,labels){ var d=document.createElement('div'); d.className='grp'; d.innerHTML='<span>'+label+'</span>'; ['all'].concat(vals).forEach(function(v){ var b=document.createElement('button'); b.type='button'; b.textContent=v==='all'?'All':(labels?labels[v]||v:v); b.setAttribute('aria-pressed',String(filt[key]===v)); b.addEventListener('click',function(){ filt[key]=v; d.querySelectorAll('button').forEach(function(o){o.setAttribute('aria-pressed','false');}); b.setAttribute('aria-pressed','true'); render(); }); d.appendChild(b); }); chips.appendChild(d); }
+  grp('Platform','platform',uniq('platform')); grp('Model','model',uniq('model'),labelOf); grp('Task','task',uniq('task'),TASKN); grp('Skills mode','mode',uniq('mode'));
+  var tog=document.createElement('button'); tog.type='button'; tog.className='tog'; tog.setAttribute('aria-pressed','true'); tog.innerHTML='<i></i>Show excluded'; tog.addEventListener('click',function(){showEx=!showEx;tog.setAttribute('aria-pressed',String(showEx));render();}); chips.appendChild(tog);
+  function visible(){ return pairs.filter(function(p){ return (filt.platform==='all'||p.platform===filt.platform)&&(filt.model==='all'||p.model===filt.model)&&(filt.task==='all'||p.task===filt.task)&&(filt.mode==='all'||p.mode===filt.mode)&&(showEx||!p.excluded); }); }
+
+  function render(){
+    var rows=visible(), c=rows.filter(function(p){return !p.excluded;});
+    /* pivot */
+    var models={}; c.forEach(function(p){(models[p.model]=models[p.model]||{label:p.modelLabel,platform:p.platform,rows:[]}).rows.push(p);});
+    var keys=Object.keys(models); var best={q:-Infinity,lv:-Infinity};
+    var rowsData=keys.map(function(k){ var s=stats(models[k].rows); s.k=k; s.label=models[k].label; s.platform=models[k].platform; s.bw=models[k].rows.filter(function(p){return worked(p.storefront.bare);}).length; if(s.q>best.q)best.q=s.q; if(s.lv!=null&&s.lv>best.lv)best.lv=s.lv; return s; }).sort(function(a,b){return b.q-a.q;});
+    var ph='<thead><tr><th>Model</th><th>Platform</th><th>Pairs</th><th>Record (W–T–L)</th><th>Quality delta</th><th>Live-check delta</th><th>Time cost</th><th>Working storefront<br><span style="font-weight:500;text-transform:none;letter-spacing:0">skills · bare</span></th></tr></thead><tbody>';
+    rowsData.forEach(function(s){ ph+='<tr><td>'+s.label+'<br><span class="num" style="font-size:11px;color:var(--muted);font-weight:500">'+s.k+'</span></td><td>'+s.platform+'</td><td class="num">'+s.n+'</td><td><span class="pbar" title="'+s.w+' wins, '+s.t+' ties, '+s.l+' losses"><i class="w" style="width:'+(s.w/s.n*100)+'%"></i><i class="t" style="width:'+(s.t/s.n*100)+'%"></i><i class="l" style="width:'+(s.l/s.n*100)+'%"></i></span><span class="num">'+s.w+'–'+s.t+'–'+s.l+'</span></td><td class="num '+(s.q>0?'pos':s.q<0?'neg':'zero')+'">'+pct(s.q,1)+(s.q===best.q&&keys.length>1?'<span class="lead">LEADS</span>':'')+'</td><td class="num">'+(s.lv==null?'—':(s.lv>0?'+':'')+s.lv.toFixed(1))+'</td><td class="num '+(s.tm>0?'neg':'pos')+'">'+pct(s.tm)+'</td><td class="num">'+s.sw+'/'+s.n+' · '+s.bw+'/'+s.n+'</td></tr>'; });
+    ph+='</tbody>'; document.getElementById('pivot').innerHTML=keys.length?ph:'<tbody><tr><td style="color:var(--muted)">No counted pairs match these filters.</td></tr></tbody>';
+    /* pairs */
+    rows.sort(function(a,b){var x=a[sortKey],y=b[sortKey]; if(x==null)return 1; if(y==null)return -1; if(typeof x==='string')return sortDir*x.localeCompare(y); return sortDir*(x-y);});
+    var maxAbs=Math.max.apply(null,rows.map(function(p){return Math.abs(p.deltaPct);}).concat([1]));
+    var H=[['taskLabel','Task'],['platform','Platform'],['modelLabel','Model'],['mode','Mode'],[null,'Bare'],[null,'Skills'],['deltaPct','Quality delta'],['liveDelta','Live Δ'],['timePct','Time cost'],[null,'Result']];
+    var th='<thead><tr>'+H.map(function(h){var k=h[0];return '<th'+(k?' data-sort="'+k+'" tabindex="0"':'')+'>'+h[1]+(k&&sortKey===k?'<span class="dir">'+(sortDir<0?'▼':'▲')+'</span>':'')+'</th>';}).join('')+'</tr></thead>';
+    var tb='<tbody>'+rows.map(function(p,i){ var cls=p.excluded?'ex':p.result; return '<tr class="row" data-i="'+i+'"><td>'+p.taskLabel+(p.excluded?' <span class="res ex">excluded</span>':'')+'</td><td>'+p.platform+'</td><td>'+p.modelLabel+'</td><td>'+p.mode+'</td><td class="num">'+trim(p.quality.bare)+'<span style="color:var(--muted)">/'+p.quality.max+'</span></td><td class="num">'+trim(p.quality.skills)+'</td><td class="num"><span class="bar '+(p.delta>0?'pos':p.delta<0?'neg':'zero')+'" style="width:'+Math.round(Math.abs(p.deltaPct)/maxAbs*60)+'px"></span>'+(p.delta>0?'+':'')+trim(p.delta)+' <span style="color:var(--muted)">('+pct(p.deltaPct,1)+')</span></td><td class="num">'+(p.liveDelta==null?'—':(p.liveDelta>0?'+':'')+p.liveDelta)+'</td><td class="num '+(p.timePct>0?'neg':'pos')+'">'+pct(p.timePct)+'</td><td><span class="res '+cls+'">'+(p.excluded?'excluded':cls==='win'?'skills win':cls==='loss'?'bare win':'tie')+'</span></td></tr>'; }).join('')+'</tbody>';
+    var tbl=document.getElementById('pairsTable'); tbl.innerHTML=th+tb;
+    tbl.querySelectorAll('th[data-sort]').forEach(function(h){ var go=function(){var k=h.getAttribute('data-sort'); if(sortKey===k)sortDir*=-1; else {sortKey=k; sortDir=(k==='taskLabel'||k==='platform'||k==='modelLabel'||k==='mode')?1:-1;} render();}; h.addEventListener('click',go); h.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}}); });
+    tbl.querySelectorAll('tr.row').forEach(function(tr){ tr.addEventListener('click',function(){ var p=rows[+tr.getAttribute('data-i')]; var ex=tbl.querySelector('tr.detail'); var was=tr.classList.contains('open'); tbl.querySelectorAll('tr.open').forEach(function(r){r.classList.remove('open');}); if(ex)ex.remove(); if(was)return; tr.classList.add('open'); var d=document.createElement('tr'); d.className='detail'; d.innerHTML='<td colspan="10"><div><b>What decided it:</b> '+p.decided+'<br><span style="color:var(--muted)">'+p.date+' · '+(p.grading==='blind'?'condition-blind grading':'controller-graded')+(p.excludedReason?' · excluded: '+p.excludedReason:'')+' · storefront: skills '+p.storefront.skills+'; bare '+p.storefront.bare+' · effort: '+(p.effort.minBare||'—')+' → '+(p.effort.minSkills||'—')+' min'+(p.effort.tokBare!=null?', '+Math.round(p.effort.tokBare/1000)+'k → '+Math.round(p.effort.tokSkills/1000)+'k tokens':'')+'</span></div></td>'; tr.parentNode.insertBefore(d,tr.nextSibling); }); });
+    var w=c.filter(function(p){return p.result==='win';}).length,t=c.filter(function(p){return p.result==='tie';}).length,l=c.filter(function(p){return p.result==='loss';}).length;
+    document.getElementById('summary').innerHTML='Showing <b>'+rows.length+'</b> pair'+(rows.length===1?'':'s')+' · record among counted rows shown: <b>'+w+'–'+t+'–'+l+'</b>.';
+  }
+  render();
+
+  /* validation runs */
+  document.getElementById('validation').innerHTML='<p>Re-runs of the seeded audit on the improved skills, with the identical free-choice prompt. Listed here because they compare a post-fix skills arm to the pre-fix baseline, not two arms of one pair.</p><ul>'+DATA.validation.map(function(v){ return '<li><b>'+v.date+' · '+(v.modelLabel||v.model)+' · '+v.mode+'</b> — live '+v.live.skills+'/10'+(v.live.baselineBareMean!=null?' vs '+v.live.baselineBareMean+' baseline':v.live.baselineBare!=null?' vs '+v.live.baselineBare+' baseline':'')+(v.quality?' · blind '+v.quality.skills+'/'+v.quality.max:'')+(v.skillsInvoked!=null?' · skills invoked: '+v.skillsInvoked:'')+'. '+v.note+'</li>'; }).join('')+'</ul>';
+})();
+</script>
+</body></html>

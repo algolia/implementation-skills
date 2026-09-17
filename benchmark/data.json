@@ -1,0 +1,542 @@
+{
+  "schema": "algolia-skills-benchmark/pairs@1",
+  "updated": "2026-09-14",
+  "notes": [
+    "One entry per paired run: the same task, seed, and model with and without the Algolia skills.",
+    "quality.* are condition-blind rubric scores unless grading=controller. Build tasks use a 35-point rubric, audit tasks a 37-point rubric; never pool across rubrics.",
+    "live.* are deterministic post-run checks against the live Algolia index (0-10). null = not captured.",
+    "effort.* are harness-reported. Codex does not expose tokens. Minutes are wall-clock for the agent's task turn.",
+    "excluded=true rows are shown for completeness but omitted from win/loss records and averages (see reason).",
+    "To add a run: append an object with the same fields. The widget derives all summaries from this file.",
+    "Model coverage: Claude Sonnet 5 (7 pairs), GPT-5.6 Terra on Codex (3, 2 counted), Claude Haiku 4.5 (2). Opus 5 pending."
+  ],
+  "pairs": [
+    {
+      "id": "claude-greenfield-1",
+      "date": "2026-08-31",
+      "platform": "Claude Code",
+      "model": "claude-sonnet-5",
+      "modelLabel": "Claude Sonnet 5",
+      "task": "build",
+      "taskLabel": "Checklist build",
+      "mode": "autopilot",
+      "quality": {
+        "max": 35,
+        "bare": 34.0,
+        "skills": 35.0
+      },
+      "live": {
+        "bare": 10,
+        "skills": 10
+      },
+      "effort": {
+        "minBare": 17.6,
+        "minSkills": 31.0,
+        "tokBare": 166396,
+        "tokSkills": 255529,
+        "callsBare": 135,
+        "callsSkills": 186
+      },
+      "storefront": {
+        "bare": "worked",
+        "skills": "worked"
+      },
+      "grading": "blind",
+      "excluded": false,
+      "decided": "Bare shipped a duplicate click event (silently doubles CTR data) and exposed internal ranking fields; skills caught the same bug, proved the fix at payload level, bucketed popularity, kept full tie-breaker chains on replicas."
+    },
+    {
+      "id": "claude-audit-1",
+      "date": "2026-09-01",
+      "platform": "Claude Code",
+      "model": "claude-sonnet-5",
+      "modelLabel": "Claude Sonnet 5",
+      "task": "audit",
+      "taskLabel": "Audit existing store",
+      "mode": "autopilot",
+      "quality": {
+        "max": 37,
+        "bare": 27.0,
+        "skills": 27.0
+      },
+      "live": {
+        "bare": 4,
+        "skills": 4
+      },
+      "effort": {
+        "minBare": 26.3,
+        "minSkills": 31.8,
+        "tokBare": 196474,
+        "tokSkills": 231097,
+        "callsBare": 140,
+        "callsSkills": 174
+      },
+      "storefront": {
+        "bare": "worked",
+        "skills": "worked"
+      },
+      "grading": "blind",
+      "excluded": false,
+      "decided": "The tie that exposed the triggering gap: with free choice the skills arm invoked 1 of 18 skills and matched bare exactly. A same-day mandated arm scored 8/10 live."
+    },
+    {
+      "id": "claude-audit-2",
+      "date": "2026-09-01",
+      "platform": "Claude Code",
+      "model": "claude-sonnet-5",
+      "modelLabel": "Claude Sonnet 5",
+      "task": "audit",
+      "taskLabel": "Audit existing store",
+      "mode": "mandated",
+      "quality": {
+        "max": 37,
+        "bare": 27.0,
+        "skills": 31.5
+      },
+      "live": {
+        "bare": 4,
+        "skills": 7
+      },
+      "effort": {
+        "minBare": 30.1,
+        "minSkills": 36.0,
+        "tokBare": 215069,
+        "tokSkills": 247097,
+        "callsBare": 164,
+        "callsSkills": 179
+      },
+      "storefront": {
+        "bare": "worked",
+        "skills": "worked"
+      },
+      "grading": "blind",
+      "excluded": false,
+      "decided": "Skills fixed retrieval hygiene and availability-first ranking and diagnosed the facet-stats trap; bare fixed everything visible and missed all five silent defects."
+    },
+    {
+      "id": "claude-audit-3",
+      "date": "2026-09-01",
+      "platform": "Claude Code",
+      "model": "claude-sonnet-5",
+      "modelLabel": "Claude Sonnet 5",
+      "task": "audit",
+      "taskLabel": "Audit existing store",
+      "mode": "mandated",
+      "quality": {
+        "max": 37,
+        "bare": 29.0,
+        "skills": 31.5
+      },
+      "live": {
+        "bare": 5,
+        "skills": 7
+      },
+      "effort": {
+        "minBare": 27.4,
+        "minSkills": 27.0,
+        "tokBare": 204915,
+        "tokSkills": 228628,
+        "callsBare": 150,
+        "callsSkills": 143
+      },
+      "storefront": {
+        "bare": "worked",
+        "skills": "worked"
+      },
+      "grading": "blind",
+      "excluded": false,
+      "decided": "Skills were faster this round and fully repaired hierarchical categories; bare improved on its own (added in_stock ranking) but left the silent class untouched."
+    },
+    {
+      "id": "claude-vague-1",
+      "date": "2026-09-01",
+      "platform": "Claude Code",
+      "model": "claude-sonnet-5",
+      "modelLabel": "Claude Sonnet 5",
+      "task": "vague",
+      "taskLabel": "Vague brief build",
+      "mode": "triggered",
+      "quality": {
+        "max": 35,
+        "bare": 29.75,
+        "skills": 32.5
+      },
+      "live": {
+        "bare": 10,
+        "skills": 10
+      },
+      "effort": {
+        "minBare": 13.1,
+        "minSkills": 24.9,
+        "tokBare": 137436,
+        "tokSkills": 261926,
+        "callsBare": 60,
+        "callsSkills": 175
+      },
+      "storefront": {
+        "bare": "worked, crashing filter widget",
+        "skills": "worked"
+      },
+      "grading": "blind",
+      "excluded": false,
+      "decided": "Bare shipped a filter widget that throws a 400 on every keystroke; skills shipped zero runtime defects and its QA pass caught 4 bugs pre-ship. Both double-fired a click on add-to-cart."
+    },
+    {
+      "id": "claude-vague-2",
+      "date": "2026-09-01",
+      "platform": "Claude Code",
+      "model": "claude-sonnet-5",
+      "modelLabel": "Claude Sonnet 5",
+      "task": "vague",
+      "taskLabel": "Vague brief build",
+      "mode": "triggered",
+      "quality": {
+        "max": 35,
+        "bare": 25.25,
+        "skills": 31.25
+      },
+      "live": {
+        "bare": 10,
+        "skills": 10
+      },
+      "effort": {
+        "minBare": 18.1,
+        "minSkills": 21.4,
+        "tokBare": 147361,
+        "tokSkills": 201440,
+        "callsBare": 94,
+        "callsSkills": 131
+      },
+      "storefront": {
+        "bare": "worked",
+        "skills": "worked"
+      },
+      "grading": "blind",
+      "excluded": false,
+      "decided": "Bare shipped zero Insights events and no add-to-cart button; skills shipped verified click + conversion events. Bare had the more robust indexing script and consistent sale-price handling."
+    },
+    {
+      "id": "claude-vague-3",
+      "date": "2026-09-01",
+      "platform": "Claude Code",
+      "model": "claude-sonnet-5",
+      "modelLabel": "Claude Sonnet 5",
+      "task": "vague",
+      "taskLabel": "Vague brief build",
+      "mode": "triggered",
+      "quality": {
+        "max": 35,
+        "bare": 26.0,
+        "skills": 31.75
+      },
+      "live": {
+        "bare": 10,
+        "skills": 10
+      },
+      "effort": {
+        "minBare": 20.6,
+        "minSkills": 34.8,
+        "tokBare": 158247,
+        "tokSkills": 288077,
+        "callsBare": 130,
+        "callsSkills": 208
+      },
+      "storefront": {
+        "bare": "worked",
+        "skills": "worked, mobile overflow bug"
+      },
+      "grading": "blind",
+      "excluded": false,
+      "decided": "Bare shipped zero events again. Skills: end-to-end-verified attribution, locked attributesToRetrieve, 4 synonym sets, and one real mobile-width overflow bug."
+    },
+    {
+      "id": "codex-audit-r1",
+      "date": "2026-09-01",
+      "platform": "Codex",
+      "model": "gpt-5.6-terra",
+      "modelLabel": "GPT-5.6 Terra (medium)",
+      "task": "audit",
+      "taskLabel": "Audit existing store",
+      "mode": "skills-assisted",
+      "quality": {
+        "max": 37,
+        "bare": 17.0,
+        "skills": 27.0
+      },
+      "live": {
+        "bare": 0,
+        "skills": 5
+      },
+      "effort": {
+        "minBare": 4.53,
+        "minSkills": 10.29,
+        "tokBare": null,
+        "tokSkills": null,
+        "callsBare": 20,
+        "callsSkills": 50
+      },
+      "storefront": {
+        "bare": "failed",
+        "skills": "worked"
+      },
+      "grading": "controller",
+      "excluded": true,
+      "excludedReason": "Bare arm's live-settings writes were blocked (permission asymmetry) and grading was by the controller, not a blind reviewer.",
+      "decided": "Directionally consistent with the record but not clean: shown for completeness, excluded from all summaries."
+    },
+    {
+      "id": "codex-audit-r2",
+      "date": "2026-09-01",
+      "platform": "Codex",
+      "model": "gpt-5.6-terra",
+      "modelLabel": "GPT-5.6 Terra (medium)",
+      "task": "audit",
+      "taskLabel": "Audit existing store",
+      "mode": "skills-assisted",
+      "quality": {
+        "max": 37,
+        "bare": 17.0,
+        "skills": 23.0
+      },
+      "live": {
+        "bare": 4,
+        "skills": 4
+      },
+      "effort": {
+        "minBare": 4.76,
+        "minSkills": 6.23,
+        "tokBare": null,
+        "tokSkills": null,
+        "callsBare": 25,
+        "callsSkills": 36
+      },
+      "storefront": {
+        "bare": "failed",
+        "skills": "worked"
+      },
+      "grading": "blind",
+      "excluded": false,
+      "decided": "Live checks tied 4/10 while the browser diverged completely: bare page shipped dead (aa is not defined), skills page worked. Skills overclaimed one event repair (undefined index)."
+    },
+    {
+      "id": "codex-audit-r3",
+      "date": "2026-09-01",
+      "platform": "Codex",
+      "model": "gpt-5.6-terra",
+      "modelLabel": "GPT-5.6 Terra (medium)",
+      "task": "audit",
+      "taskLabel": "Audit existing store",
+      "mode": "skills-assisted",
+      "quality": {
+        "max": 37,
+        "bare": 24.5,
+        "skills": 20.0
+      },
+      "live": {
+        "bare": null,
+        "skills": null
+      },
+      "effort": {
+        "minBare": 9.63,
+        "minSkills": 6.5,
+        "tokBare": null,
+        "tokSkills": null,
+        "callsBare": null,
+        "callsSkills": null
+      },
+      "storefront": {
+        "bare": "worked",
+        "skills": "worked"
+      },
+      "grading": "blind",
+      "excluded": false,
+      "decided": "The one bare win: +4.5 for bare, and skills were faster. Calibrates the pattern rather than reversing it; with n<=3 per condition, variance runs both ways."
+    },
+    {
+      "id": "claude-haiku-vague-1",
+      "date": "2026-09-14",
+      "platform": "Claude Code",
+      "model": "claude-haiku-4-5",
+      "modelLabel": "Claude Haiku 4.5",
+      "task": "vague",
+      "taskLabel": "Vague brief build",
+      "mode": "triggered",
+      "quality": {
+        "max": 35,
+        "bare": 16.65,
+        "skills": 14.9
+      },
+      "live": {
+        "bare": 6,
+        "skills": 6
+      },
+      "effort": {
+        "minBare": 4.24,
+        "minSkills": 4.68,
+        "tokBare": 71069,
+        "tokSkills": 89803,
+        "callsBare": 56,
+        "callsSkills": 34
+      },
+      "storefront": {
+        "bare": "worked",
+        "skills": "failed (Insights CDN 404 crashed the page before search started)"
+      },
+      "grading": "blind",
+      "excluded": false,
+      "decided": "Bare win. Skills configured the better backend (real price/rating replicas, 4-signal ranking, textbook Insights pattern in source) but shipped a page that never loads: a wrong search-insights CDN filename 404s, the resulting crash halts the script, and the algoliasearch client was never loaded at all. No SUMMARY.md. Bare's page works but has zero events, no replicas, and a fake client-side sort."
+    },
+    {
+      "id": "claude-haiku-audit-1",
+      "date": "2026-09-14",
+      "platform": "Claude Code",
+      "model": "claude-haiku-4-5",
+      "modelLabel": "Claude Haiku 4.5",
+      "task": "audit",
+      "taskLabel": "Audit existing store",
+      "mode": "mandated",
+      "quality": {
+        "max": 37,
+        "bare": 15.0,
+        "skills": 18.75
+      },
+      "live": {
+        "bare": 0,
+        "skills": 5
+      },
+      "effort": {
+        "minBare": 6.24,
+        "minSkills": 3.92,
+        "tokBare": 88301,
+        "tokSkills": 76211,
+        "callsBare": 84,
+        "callsSkills": 37
+      },
+      "storefront": {
+        "bare": "worked, product cards corrupted (img template)",
+        "skills": "failed (page-blanking aa crash left in place)"
+      },
+      "grading": "blind",
+      "excluded": false,
+      "decided": "Skills win on the rubric: the mandated arm genuinely fixed tie-breakers, searchable attributes, typo tolerance and both sort replicas via the CLI (5/10 live) and was faster. But it verified by re-reading its edits, never loaded the page, and shipped the store completely blank. Bare never got a live settings write to succeed (its own curl omitted the X-Algolia-Application-Id header and it concluded the key was invalid; 0/10 live) but did fix the page-blanking crash. Both missed hierarchical categories and price faceting."
+    },
+    {
+      "id": "claude-opus-vague-1",
+      "date": "2026-09-14",
+      "platform": "Claude Code",
+      "model": "claude-opus-5",
+      "modelLabel": "Claude Opus 5",
+      "task": "vague",
+      "taskLabel": "Vague brief (\"add search, make it good\")",
+      "mode": "triggered",
+      "quality": {
+        "max": 35,
+        "bare": 34.45,
+        "skills": 32.5
+      },
+      "live": {
+        "bare": 10,
+        "skills": 10
+      },
+      "effort": {
+        "minBare": 25.3,
+        "minSkills": 41.8,
+        "tokBare": 208000,
+        "tokSkills": 384914,
+        "callsBare": 124,
+        "callsSkills": 195
+      },
+      "storefront": {
+        "bare": "worked (searchBox + grid, 34-check verifier passed live)",
+        "skills": "worked, but free-text search is dead: the only entry point is an autocomplete widget and typing a query + Enter never updates the product grid (reproduced by the controller)"
+      },
+      "grading": "blind",
+      "excluded": false,
+      "decided": "The first Claude-side bare win, and the strongest model in the program. Both arms hit 10/10 on live checks, both configured hierarchical facets, real sort replicas, multi-signal ranking chains and clean retrieval hygiene, and both emitted wire-verified click and add-to-cart events - the invisible layer was a tie (Relevance 12 vs 11.75, Analytics 6 vs 6). Bare won on the visible layer: its standard searchBox searches; the skills arm chose an autocomplete-only entry point whose free-text submit never reaches the results grid, and its own release-qa.md claimed the query path passed. Skills cost +65% time and +85% tokens for a richer build (suggestions index, 18 synonyms, 5 rules, formal contracts) that shipped one shopper-facing regression."
+    }
+  ],
+  "validation": [
+    {
+      "id": "claude-retrigger-1",
+      "date": "2026-09-01",
+      "platform": "Claude Code",
+      "model": "claude-sonnet-5",
+      "task": "audit",
+      "mode": "autopilot (post-fix skills)",
+      "live": {
+        "skills": 9,
+        "baselineBareMean": 4.3
+      },
+      "note": "Free choice, no mandate, on the skill-improvement PR branches: spontaneously invoked algolia-audit + 4 domain skills. Raw checker 6/10 before three effective-price checker artifacts were verified live; 9/10 corrected."
+    },
+    {
+      "id": "claude-retrigger-2",
+      "date": "2026-09-01",
+      "platform": "Claude Code",
+      "model": "claude-sonnet-5",
+      "task": "audit",
+      "mode": "autopilot (post-fix skills)",
+      "live": {
+        "skills": 9,
+        "baselineBareMean": 4.3
+      },
+      "note": "Free choice, no mandate: spontaneously invoked algolia-audit; 9/10 raw."
+    },
+    {
+      "id": "claude-haiku-retest-audit-1",
+      "date": "2026-09-14",
+      "platform": "Claude Code",
+      "model": "claude-haiku-4-5",
+      "modelLabel": "Claude Haiku 4.5",
+      "task": "audit",
+      "mode": "autopilot (post-fix skills)",
+      "quality": {
+        "max": 37,
+        "skills": 18.75,
+        "baselineBare": 15.0
+      },
+      "live": {
+        "skills": 4,
+        "baselineBare": 0
+      },
+      "effort": {
+        "minSkills": 8.38,
+        "tokSkills": 104315,
+        "callsSkills": 113
+      },
+      "skillsInvoked": 0,
+      "storefront": {
+        "skills": "loads (no console errors) but product cards render as a bare image with name/price/button nested inside the <img>; window.aa undefined so analytics dead"
+      },
+      "note": "Same seeded audit, same integrated PR branch, byte-identical free-choice prompt that made Sonnet invoke algolia-audit twice. Haiku invoked no skill at all (verified from the transcript). Live 4/10 = bare baseline. Blind grade 18.75/37 ties the earlier mandated Haiku arm but by a different route: fewer settings fixed, page loads. Half the planted defects skipped outright; write-up claims 'production-ready, no uncertainties' while cards are broken (5 false claims). Conclusion: the description-level trigger fix does not transfer to Haiku; Haiku needs an explicit trigger line."
+    },
+    {
+      "id": "claude-haiku-retest-vague-1",
+      "date": "2026-09-14",
+      "platform": "Claude Code",
+      "model": "claude-haiku-4-5",
+      "modelLabel": "Claude Haiku 4.5",
+      "task": "vague",
+      "mode": "triggered (post-fix skills)",
+      "quality": {
+        "max": 35,
+        "skills": 17.35,
+        "baselineBare": 16.65
+      },
+      "live": {
+        "skills": 7,
+        "baselineBare": 6
+      },
+      "effort": {
+        "minSkills": 6.53,
+        "tokSkills": 104773,
+        "callsSkills": 42
+      },
+      "skillsInvoked": 7,
+      "storefront": {
+        "skills": "renders (full cards, working hierarchical drill-down) but two uncaught TypeErrors on load and analytics dead: search-insights CDN filename (.umd.min.js) 404s, window.aa is a queued stub, no clickAnalytics, click handler only console.logs"
+      },
+      "note": "Same vague brief on the integrated PR branch with the one-line trigger. Haiku invoked 7 skills via discovery-planning - the trigger works where autopilot invoked nothing. First Haiku skills page that renders; only true hierarchical category UI in the sample; proper retrieval allowlist. But zero replicas/sort, no price or rating filter, no add-to-cart, and Section 4 = 0/6. The agent never made a single browser tool call, yet QA_REPORT.md says 'no console errors', 'events verified', 'approve for production launch'. Blind 17.35/35 vs the pre-fix bare 16.65 and pre-fix skills 14.9 (page dead). Conclusion: the trigger line is necessary on Haiku; the Finish Gates must become a mechanical page-smoke check."
+    }
+  ]
+}
