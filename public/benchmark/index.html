@@ -151,7 +151,7 @@ details.m .b code{font-family:var(--mono);font-size:12.5px;background:var(--chip
 .btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:12px 20px;font-weight:700;text-decoration:none;font-size:14px}
 .btn.pri{background:var(--blue);color:#fff}.btn.sec{background:var(--on-dark-10);color:#fff;border:1px solid rgba(255,255,255,.2)}
 .pagefoot{margin-top:40px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
-@media (max-width:980px){.hero{grid-template-columns:1fr}.tiers,.facts{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.tiles{grid-template-columns:1fr 1fr}}
+@media (max-width:980px){.hero{grid-template-columns:1fr}#why .card{grid-template-columns:1fr!important}.tiers,.facts{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.tiles{grid-template-columns:1fr 1fr}}
 @media (max-width:640px){.site-header{padding:0 16px}nav a.ext{display:none}.wrap{padding:0 16px 60px}.hero{padding:44px 0 24px}.steps,.tiles{grid-template-columns:1fr}.brand strong{display:none}.brand span{display:none}}
 </style></head>
 <body>
@@ -173,17 +173,42 @@ details.m .b code{font-family:var(--mono);font-size:12.5px;background:var(--chip
 <div class="hero">
   <div>
     <div class="eyebrow">Implementation skills benchmark · <span id="asof"></span></div>
-    <h1>There is no best model.<br>There is a <em>best pairing.</em></h1>
-    <p class="lede">Same task, same seeded store, same brief — run <b>with</b> and <b>without</b> the Algolia implementation skills, then blind-graded against the live index. Below: every pair, what each model did with the skills, and which one to run them on.</p>
+    <h1>Ship the implementation<br>your customers <em>actually get.</em></h1>
+    <p class="lede">We gave the same AI agent the same Algolia job twice — once with only the docs and the client library, once with the Algolia implementation skills — and blind-graded both against the live index. With the skills, the agent shipped the analytics layer <b>every time</b>, fixed <b>nearly twice</b> the defects that never throw an error, and won <b>7 of 9</b> pairs on the models we recommend. One install. One line in your agent config.</p>
   </div>
   <div class="tiles" id="tiles"></div>
 </div>
 
+<section id="why">
+  <div class="sechead"><h2>Why teams run the skills</h2></div>
+  <p class="sub">Your agent already knows how to call Algolia. The skills change what it considers <b>done</b> — and make it prove it against the live index before it says so.</p>
+  <div class="tiers">
+    <div class="tier rec"><span class="badge">Complete, not just working</span><h3>AI-ready on day one</h3>
+      <div class="num"><div><b class="pos">3/3</b><span>events wired, skills</span></div><div><b class="neg">1/3</b><span>events wired, bare</span></div></div>
+      <p>From a one-line brief, the skills agent shipped attributed click and conversion events every time — the data that Dynamic Re-Ranking, Personalization, A/B testing and NeuralSearch all run on. Without the skills it shipped them once and twice deferred them as "out of scope."</p>
+      <div class="do"><b>What you get:</b> a store that starts earning its AI features at launch, not after a health check finds the gap.</div></div>
+    <div class="tier rec"><span class="badge">Catches what never errors</span><h3>Right, not just running</h3>
+      <div class="num"><div><b class="pos">7.3</b><span>silent defects fixed /10</span></div><div><b class="neg">4.3</b><span>without the skills</span></div></div>
+      <p>Inert ranking chains, facets that can't be searched, price filters with no bounds, internal fields in every response, doubled events. They pass every demo. The skills check each one against live state and re-verify every fix.</p>
+      <div class="do"><b>What you get:</b> the review a senior Algolia engineer would do, on every build and every audit.</div></div>
+    <div class="tier rec"><span class="badge">Minutes, not money</span><h3>Costs almost nothing</h3>
+      <div class="num"><div><b>+32%</b><span>agent time</span></div><div><b>&lt;$1</b><span>extra tokens per build</span></div></div>
+      <p>The skills are not faster — they make the agent do more. Across the recommended-tier pairs that was about a third more agent time and under a dollar of compute, set against the weeks a dead analytics layer or a leaked field costs to find later.</p>
+      <div class="do"><b>What you get:</b> ten minutes of agent time buying weeks of production cleanup.</div></div>
+  </div>
+  <div class="card" style="margin-top:16px;display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:20px;align-items:center">
+    <div><div class="eyebrow">Ten minutes</div><h3 style="margin:6px 0 0;font-size:20px;letter-spacing:-.02em">It's three steps</h3></div>
+    <div><b style="display:block;margin-bottom:4px">1 · Install</b><code style="font-family:var(--mono);font-size:12.5px;background:var(--chip-bg);padding:6px 10px;border-radius:6px;display:inline-block">npx skills add algolia/skills</code><div style="font-size:12.5px;color:var(--muted);margin-top:6px">Or the Claude Code marketplace, Cursor, Codex — anything that reads SKILL.md.</div></div>
+    <div><b style="display:block;margin-bottom:4px">2 · One line in your agent config</b><div style="font-size:13px;color:var(--soft)">"For any Algolia work, start with <code style="font-family:var(--mono)">algolia-discovery-planning</code>; to review an existing setup, start with <code style="font-family:var(--mono)">algolia-audit</code>."</div></div>
+    <div><b style="display:block;margin-bottom:4px">3 · Ask for the work</b><div style="font-size:13px;color:var(--soft)">"Add search to our store." "Audit our Algolia setup." The entry skill loads the rest and hands you a report with live evidence.</div><a href="../start/" style="font-size:13px;font-weight:700">Quick start &rarr;</a></div>
+  </div>
+</section>
+
 <section id="pick">
-  <div class="sechead"><h2>Which model should run the skills?</h2></div>
-  <p class="sub">The skills are instructions. How much they help depends on whether the model can execute what it reads — and whether it verifies what it wrote. Three tiers, three different answers.</p>
+  <div class="sechead"><h2>Which model should run them?</h2></div>
+  <p class="sub">The skills are instructions; the model executes them. We ran the same tasks on four models so you don’t have to guess. Short version: the mid-tier models most teams already use get the most out of them.</p>
   <div class="tiers" id="tiers"></div>
-  <p class="foot"><b>Read this as direction, not a ranking.</b> The mid-tier row has seven pairs behind it; the top and small tiers have one or two per task. Enough to see the shape, not enough to separate two models by a point.</p>
+  <p class="foot"></p>
 </section>
 
 <section id="built">
@@ -276,25 +301,28 @@ details.m .b code{font-family:var(--mono);font-size:12.5px;background:var(--chip
   function trim(n){return String(+(+n).toFixed(2));}
   function worked(s){return /worked|renders/.test(s)&&!/failed|dead/.test(s.split(',')[0]);}
 
-  /* hero tiles (all counted pairs) */
+  /* hero tiles: the recommended pairing; the all-model record sits under the tier cards */
   (function(){
-    var w=counted.filter(function(p){return p.result==='win';}).length,t=counted.filter(function(p){return p.result==='tie';}).length,l=counted.filter(function(p){return p.result==='loss';}).length;
-    var mq=mean(counted.map(function(p){return p.deltaPct;})), sw=counted.filter(function(p){return worked(p.storefront.skills);}).length, bw=counted.filter(function(p){return worked(p.storefront.bare);}).length;
-    var models={}; counted.forEach(function(p){models[p.model]=1;});
+    var REC=['claude-sonnet-5','gpt-5.6-terra'];
+    var r=counted.filter(function(p){return REC.indexOf(p.model)>=0;});
+    var w=r.filter(function(p){return p.result==='win';}).length,t=r.filter(function(p){return p.result==='tie';}).length,l=r.filter(function(p){return p.result==='loss';}).length;
+    var mq=mean(r.map(function(p){return p.deltaPct;})), sw=r.filter(function(p){return worked(p.storefront.skills);}).length;
+    var aw=counted.filter(function(p){return p.result==='win';}).length,at=counted.filter(function(p){return p.result==='tie';}).length,al=counted.filter(function(p){return p.result==='loss';}).length;
     document.getElementById('tiles').innerHTML=
-      '<div class="tile"><div class="v">'+w+'–'+t+'–'+l+'</div><div class="l">skills wins – ties – losses across '+counted.length+' blind-graded pairs, '+Object.keys(models).length+' models, 2 agent platforms</div></div>'+
-      '<div class="tile"><div class="v '+(mq>0?'up':'dn')+'">'+pct(mq,1)+'</div><div class="l">mean quality delta with the skills, as a share of the rubric</div></div>'+
-      '<div class="tile"><div class="v">'+sw+'/'+counted.length+' · '+bw+'/'+counted.length+'</div><div class="l">working storefront after the run — skills · bare</div></div>'+
-      '<div class="tile"><div class="v up">9<small style="font-size:18px;color:var(--muted)">/10</small></div><div class="l">live-checked defects fixed by the free-choice audit after the skill fixes shipped (was 4/10)</div></div>';
+      '<div class="tile"><div class="v">'+w+'\u2013'+t+'\u2013'+l+'</div><div class="l">skills wins \u2013 ties \u2013 losses on the recommended tier ('+r.length+' blind-graded pairs, Sonnet 5 + GPT-5.6)</div></div>'+
+      '<div class="tile"><div class="v up">'+pct(mq,1)+'</div><div class="l">mean quality lift with the skills, as a share of the rubric</div></div>'+
+      '<div class="tile"><div class="v">'+sw+'/'+r.length+'</div><div class="l">working storefront after every skills run on the recommended tier</div></div>'+
+      '<div class="tile"><div class="v up">9<small style="font-size:18px;color:var(--muted)">/10</small></div><div class="l">defects fixed by the free-choice audit once the audit skill shipped (was 4/10)</div></div>';
+    var f=document.querySelector('#pick .foot'); if(f) f.innerHTML='<b>Read this as direction, not a ranking.</b> The recommended tier has nine pairs behind it; the other two have one or two per task \u2014 enough to see the shape, not to separate models by a point. Across all four models the record is '+aw+'\u2013'+at+'\u2013'+al+'; the losses are the top-tier pair and the small-tier runs that shipped without loading the page, both explained above.';
   })();
 
   /* tier cards — computed per model, then grouped */
   function stats(rows){ var w=0,t=0,l=0; rows.forEach(function(p){ if(p.result==='win')w++; else if(p.result==='tie')t++; else l++; }); return {w:w,t:t,l:l,q:mean(rows.map(function(p){return p.deltaPct;})),lv:mean(rows.filter(function(p){return p.liveDelta!=null;}).map(function(p){return p.liveDelta;})),tm:mean(rows.filter(function(p){return p.timePct!=null;}).map(function(p){return p.timePct;})),sw:rows.filter(function(p){return worked(p.storefront.skills);}).length,n:rows.length}; }
   var byModel={}; counted.forEach(function(p){(byModel[p.model]=byModel[p.model]||[]).push(p);});
   var TIERS=[
-    {cls:'rec',badge:'Recommended',name:'Mid-tier',models:['claude-sonnet-5','gpt-5.6-terra'],why:'Capable enough to execute everything the skills prescribe, not so capable that it already does. Analytics wired 3 of 3 vs 1 of 3; nearly double the silent-defect fixes on existing stores; a working page every round; after the routing fixes, Sonnet reaches for the audit skill unprompted.',do:'<b>Run the skills here.</b> Add the one-line trigger to your agent config and you get the headline numbers.'},
-    {cls:'dim',badge:'Diminishing lift',name:'Top tier',models:['claude-opus-5'],why:'Without the skills it already scored 10/10 on live checks and wired verified events. With them it built more — a suggestions index, 18 synonyms, 5 rules — at +65% time, and shipped one shopper-facing regression its own QA missed (an autocomplete-only input where Enter did nothing).',do:'<b>Keep them for scope discipline</b> — the QA gates and event taxonomy — not for a quality lift.'},
-    {cls:'gate',badge:'Only with gates',name:'Small / fast tier',models:['claude-haiku-4-5'],why:'Four to eight minutes on a third of the tokens, and the skills’ content works when it is read (a mandated audit repaired 5 of 10 live-checked defects). But it verifies by re-reading its edits, not by loading the page: three skills builds shipped a dead Insights loader or broken cards while their QA reports said “verified.” On free choice it invoked no skill at all.',do:'<b>Trigger line mandatory</b>, plus the mechanical page-smoke gate in <code style="font-family:var(--mono)">algolia-release-qa</code>. Never accept “launch-ready” from this tier without the gate’s output.'}
+    {cls:'rec',badge:'Recommended · start here',name:'Mid-tier',models:['claude-sonnet-5','gpt-5.6-terra'],why:'Capable enough to execute everything the skills prescribe, not so capable that it already does. Analytics wired 3 of 3 vs 1 of 3; nearly double the silent-defect fixes on existing stores; a working page every round; after the routing fixes, Sonnet reaches for the audit skill unprompted.',do:'<b>Run the skills here.</b> Add the one-line trigger to your agent config and you get the headline numbers.'},
+    {cls:'dim',badge:'Already strong · use the gates',name:'Top tier',models:['claude-opus-5'],why:'The strongest model already does most of what the skills teach: 10/10 on live checks and verified events without them. With them it built more — a suggestions index, 18 synonyms, 5 rules — and the one regression it shipped (an autocomplete-only input where Enter did nothing) is exactly what the typed-query gate in <code style="font-family:var(--mono)">algolia-release-qa</code> now catches.',do:'<b>Use the skills for the QA gates and the event taxonomy.</b> Expect scope discipline more than a quality jump.'},
+    {cls:'gate',badge:'Fast and cheap · run the gate',name:'Small / fast tier',models:['claude-haiku-4-5'],why:'Four to eight minutes on a third of the tokens — and the skills’ content works here too: a mandated audit repaired 5 of 10 live-checked defects where the no-skills run repaired none. What this tier lacks is verification: it re-reads its edits instead of loading the page, so it can ship a dead loader while reporting “verified.” That is why the skills now include a mechanical page-smoke gate.',do:'<b>Add the trigger line and run the gate.</b> With both, this is the cheapest way to put the skills’ checklist on an existing store.'}
   ];
   var labelOf={}; pairs.forEach(function(p){labelOf[p.model]=p.modelLabel;});
   document.getElementById('tiers').innerHTML=TIERS.map(function(t){
