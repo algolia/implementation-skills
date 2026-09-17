@@ -2,6 +2,7 @@
   "comment": "The skills this site packages, and the scope .github/workflows/sync-skills.yml watches: a change to any other skill in algolia/skills does not open a PR here. They live in the algolia/skills submodule at vendor/algolia-skills; that repo is the canonical home.",
   "skills": [
     "algolia-agent-studio",
+    "algolia-audit",
     "algolia-autocomplete",
     "algolia-data-modeling",
     "algolia-discovery-planning",

@@ -20,6 +20,7 @@ When an agent downloads the full library, it should treat Algolia as a connected
 skills/
   algolia-search-implementation/
   algolia-discovery-planning/
+  algolia-audit/
   algolia-data-modeling/
   algolia-index-configuration/
   algolia-events-insights/
@@ -61,6 +62,7 @@ It checks frontmatter naming and description limits, `agents/openai.yaml` discov
 ## Skills
 
 - `algolia-discovery-planning`: discovery questions and implementation routing.
+- `algolia-audit`: entry point for existing implementations — live-evidence-first audit of the defects that never error, routing deep work to the focused skills.
 - `algolia-search-implementation`: execution checklist and readiness signposts for net-new search, browse, autocomplete, ecommerce, personalization, recommendations, Dynamic Re-Ranking, and search UI builds (loaded via `algolia-discovery-planning`).
 - `algolia-data-modeling`: record, variant, SKU, objectID, indexing, and merchandising data readiness.
 - `algolia-index-configuration`: relevance settings, facets, synonyms, rules, replicas, and rollback planning.

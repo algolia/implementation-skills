@@ -5,6 +5,7 @@
   "promotedAt": "2026-09-17",
   "suite": [
     "algolia-discovery-planning",
+    "algolia-audit",
     "algolia-search-implementation",
     "algolia-data-modeling",
     "algolia-index-configuration",

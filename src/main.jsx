@@ -201,6 +201,38 @@ function trackFeedback(vote, about) {
 
 const packages = [
   {
+    id: 'algolia-audit',
+    title: 'Audit',
+    description: 'START HERE for an existing implementation: the entry point that hunts the defects that never error.',
+    icon: Search,
+    color: 'teal',
+    files: 2,
+    type: 'QA',
+    triggers: ['audit', 'review our setup', 'health check', 'inherited implementation', 'is this configured correctly', 'search got worse'],
+    includes: ['Symptom-free checklist', 'Live-evidence-first workflow', 'Routing to the deep skills', 'Defect vs preference rule'],
+    summary: 'This is the front door for anything that already exists and mostly works. Its premise: the costliest configuration defects are symptom-free. It captures live state before judging, runs a nine-item checklist of defects that pass every demo, routes deep work to index-configuration, data-modeling, events-insights and release-qa, and requires every fix to be re-verified against the live index and rendered page.',
+    useWhen: [
+      'A user asks to audit, review, health-check, or troubleshoot an Algolia implementation that already exists.',
+      'A team inherited an implementation, or search quality got worse and nobody knows why.',
+      'A pre-launch review of a build that "works" and needs someone to check whether it is right.'
+    ],
+    teachesAgentToAsk: [
+      'Which surfaces are in scope: indices and replicas, frontend pages, event pipeline, API keys?',
+      'What does the live state look like right now: primary and replica settings, a public-key hit payload, facet stats, the rendered page and its console?',
+      'Does a near-unique numeric lead the ranking chain, making every later signal inert?',
+      'Is every high-cardinality facet searchable in the index AND in the UI, and does hierarchical data drive a hierarchical widget?',
+      'Which findings are defects against documented practice, and which are defensible preferences?'
+    ],
+    deliverables: [
+      'Live before/after evidence for every finding: settings read-back, live queries, rendered page, captured Insights payloads.',
+      'The symptom-free checklist scored: ranking tie-breakers, searchable facets, hierarchy, facet stats, retrieval hygiene, replica parity, event truth, page startup and mobile, key scope.',
+      'Fixes re-verified against live state, never from the write-up alone.',
+      'A severity-led report in release-qa format: what was checked, what was not, residual risk.'
+    ],
+    filesInside: ['SKILL.md', 'evals/evals.json'],
+    href: '/downloads/algolia-audit.zip'
+  },
+  {
     id: 'algolia-search-implementation',
     title: 'Search Implementation',
     description: 'Execution checklist for net-new builds, loaded via Discovery Planning, with data and events as the foundation.',
@@ -601,7 +633,7 @@ const recommendedPaths = [
     label: 'Review current setup',
     shortLabel: 'Review setup',
     icon: Check,
-    skills: ['algolia-release-qa', 'algolia-data-modeling', 'algolia-index-configuration', 'algolia-events-insights'],
+    skills: ['algolia-audit', 'algolia-index-configuration', 'algolia-data-modeling', 'algolia-events-insights', 'algolia-release-qa'],
     artifacts: [artifactLinks.qa, artifactLinks.events, artifactLinks.indexing]
   },
   {
