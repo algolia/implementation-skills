@@ -31,6 +31,7 @@ The recommended lens is whole-product Algolia implementation:
 
 - `algolia-search-implementation`: guided workflow and readiness signposts for net-new search, browse, autocomplete, ecommerce, personalization, recommendations, Dynamic Re-Ranking, and search UI builds.
 - `algolia-discovery-planning`: ask the right product, business, data, and measurement questions before implementation.
+- `algolia-audit`: entry point for reviewing an existing implementation — captures live state first and hunts the symptom-free defects (inert ranking chains, non-searchable facets, flat hierarchy, missing facet stats, leaked internal fields, drifted replicas, dead events) that pass every demo.
 - `algolia-data-modeling`: design records, variants, SKUs, indices, replicas, objectIDs, and indexing contracts.
 - `algolia-index-configuration`: configure relevance, ranking, facets, synonyms, rules, replicas, and merchandising.
 - `algolia-events-insights`: implement a simple event plan for clicks, conversions, views, cart, purchase, queryID, and userToken.

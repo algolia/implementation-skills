@@ -12,6 +12,9 @@ personalization / merchandising / events / analytics):
 1. **Start with `algolia-discovery-planning`** even if the task looks already
    scoped or names one feature. It maps the request to the lifecycle and tells
    you which companion skills each phase needs.
+   **Exception:** to audit, review, or health-check an implementation that already
+   exists, start with `algolia-audit` instead — it captures live state first and
+   routes to the deep skills for the defects that never error.
 2. **Enumerate the in-scope phases up front** and state the plan: which skill owns
    each phase and in what order. A greenfield build usually runs
    `data-modeling → index-configuration → instantsearch-ui / autocomplete →

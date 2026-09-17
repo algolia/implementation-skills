@@ -28,4 +28,6 @@ Use algolia-events-insights to design the smallest useful event setup for search
 
 ```text
 Use algolia-release-qa to review my Algolia setup before launch. Lead with blockers and high-risk issues, then list what was tested, what was not tested, and who needs to fix each issue.
+
+Use algolia-audit to review our existing Algolia implementation. Capture the live settings, replica settings, a public-key hit payload, facet stats and the rendered page first, then run the symptom-free checklist and tell me which findings are defects and which are preferences.
 ```

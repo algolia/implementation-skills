@@ -754,6 +754,7 @@ hub = (
                     ["Skill", "What it owns"],
                     [
                         ["`algolia-discovery-planning`", "**Start here.** Asks the right questions, classifies maturity, routes to the rest."],
+                        ["`algolia-audit`", "**Start here for existing setups.** Captures live state, hunts the defects that never error, routes to the rest."],
                         ["`algolia-search-implementation`", "Guided end-to-end build for new search, browse and autocomplete."],
                         ["`algolia-data-modeling`", "Records, variants, SKUs, indices, replicas, objectIDs."],
                         ["`algolia-index-configuration`", "Relevance, ranking, facets, synonyms, rules, merchandising."],
