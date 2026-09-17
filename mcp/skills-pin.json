@@ -1,8 +1,8 @@
 {
   "comment": "The promoted commit of algolia/skills that this server serves. Customer-facing guidance goes through a review gate: bump `commit` deliberately once a change has been validated, never track main live. `suite` limits what is served; drop it to serve every skill in the repo.",
   "repo": "algolia/skills",
-  "commit": "ded7ff387b1099edc6218e002a7d5fda13390d26",
-  "promotedAt": "2026-08-28",
+  "commit": "4f8c6a184c8957f63de95cf775ab82e50c54dc58",
+  "promotedAt": "2026-09-17",
   "suite": [
     "algolia-discovery-planning",
     "algolia-search-implementation",
