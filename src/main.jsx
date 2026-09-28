@@ -1491,11 +1491,13 @@ function QuickStart() {
         <h2 id="quickstart-title">
           Three steps: <em>download, drop it in, ask</em>
         </h2>
-        <p>Ten minutes. Works with most AI tools.</p>
-        <a className="quickstart-link" href={withBase('/start/')}>
-          Step-by-step guide
-          <ArrowRight size={15} />
-        </a>
+        <p>
+          Ten minutes. Works with most AI tools.{' '}
+          <a className="quickstart-link" href={withBase('/start/')}>
+            Step-by-step guide
+            <ArrowRight size={13} />
+          </a>
+        </p>
       </div>
       <ol className="quickstart-steps">
         {quickStartSteps.map(({ icon: Icon, label, copy }, index) => (
@@ -1503,7 +1505,7 @@ function QuickStart() {
             <span className="quickstart-num">{index + 1}</span>
             <div>
               <strong>
-                <Icon size={14} />
+                <Icon size={13} />
                 {label}
               </strong>
               <span>{copy}</span>
