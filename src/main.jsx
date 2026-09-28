@@ -203,7 +203,7 @@ const packages = [
   {
     id: 'algolia-audit',
     title: 'Audit',
-    description: "Start here when Algolia is already live. It looks at what is really configured before judging, finds the problems that never show an error message, and separates real defects from matters of taste.",
+    description: "Checks a live setup and finds the problems that never show an error.",
     icon: Search,
     color: 'teal',
     files: 2,
@@ -235,7 +235,7 @@ const packages = [
   {
     id: 'algolia-search-implementation',
     title: 'Search Implementation',
-    description: "The step-by-step checklist for building search from scratch. Discovery Planning loads it for you, so you rarely need to pick it yourself.",
+    description: "The build-from-scratch checklist. Discovery Planning loads it for you.",
     icon: Rocket,
     color: 'green',
     files: 2,
@@ -266,7 +266,7 @@ const packages = [
   {
     id: 'algolia-discovery-planning',
     title: 'Discovery Planning',
-    description: "Start here when you are new to Algolia or the request is broad. It turns “we want better search” into a plan, asks only the questions it needs, and hands off to the right skills in the right order.",
+    description: "Turns a broad request into a plan and picks the next skill.",
     icon: Waypoints,
     color: 'blue',
     files: 3,
@@ -299,7 +299,7 @@ const packages = [
   {
     id: 'algolia-data-modeling',
     title: 'Data Modeling',
-    description: "Use it before anything gets indexed, or when search cannot filter or rank the way the business wants. It decides what one search result should be and which fields matter.",
+    description: "Decides what a search result is and which fields matter.",
     icon: Database,
     color: 'teal',
     files: 4,
@@ -334,7 +334,7 @@ const packages = [
   {
     id: 'algolia-index-configuration',
     title: 'Index Configuration',
-    description: "Use it when results come back in the wrong order, filters feel off, or you want to promote certain items. It turns business priorities into settings and tests the change before and after.",
+    description: "Fixes result order, filters and promotions through settings.",
     icon: GitBranch,
     color: 'purple',
     files: 3,
@@ -365,7 +365,7 @@ const packages = [
   {
     id: 'algolia-events-insights',
     title: 'Events & Insights',
-    description: "Use it when analytics look empty or wrong, or before turning on Personalization, Recommend or Dynamic Re-Ranking. It sets up the few click and conversion events that matter and proves they are usable, not just arriving.",
+    description: "Gets click and conversion tracking working and trustworthy.",
     icon: Zap,
     color: 'orange',
     files: 5,
@@ -399,7 +399,7 @@ const packages = [
   {
     id: 'algolia-instantsearch-ui',
     title: 'InstantSearch UI',
-    description: "Use it when building or fixing the search results page or a category page. It plans filters, sorting, links, mobile and tracking before any code, working alongside Algolia’s official InstantSearch skill.",
+    description: "Plans and builds the results page.",
     icon: Search,
     color: 'pink',
     files: 3,
@@ -432,7 +432,7 @@ const packages = [
   {
     id: 'algolia-ui-libraries',
     title: 'UI Libraries',
-    description: "A lookup, not a workflow. It helps your assistant pick the current Algolia front-end library for your framework instead of relying on stale memory. Take it alongside a Search screen skill.",
+    description: "Picks the current Algolia front-end library for your framework.",
     icon: Library,
     color: 'blue',
     files: 3,
@@ -463,7 +463,7 @@ const packages = [
   {
     id: 'algolia-autocomplete',
     title: 'Autocomplete',
-    description: "Use it for the suggestions that appear as people type. It decides what should show up, what happens when someone picks one, and how it behaves on a phone.",
+    description: "Plans and builds the suggestions people see as they type.",
     icon: Layers3,
     color: 'gold',
     files: 3,
@@ -494,7 +494,7 @@ const packages = [
   {
     id: 'algolia-release-qa',
     title: 'Release QA',
-    description: "Use it before a launch or after a risky change. It checks data, relevance, the page, tracking and security with real evidence, and lists blockers first.",
+    description: "Checks a launch with evidence, blockers first.",
     icon: ShieldCheck,
     color: 'green',
     files: 4,
@@ -525,7 +525,7 @@ const packages = [
   {
     id: 'algolia-agent-studio',
     title: 'Agent Studio',
-    description: "Use it when building a chat or shopping assistant on Algolia. It keeps the first agent narrow, defines what it may and may not do, and plans how to measure it.",
+    description: "Scope, safety and measurement for a chat assistant.",
     icon: Bot,
     color: 'blue',
     files: 3,
@@ -556,7 +556,7 @@ const packages = [
   {
     id: 'algolia-neuralsearch',
     title: 'NeuralSearch',
-    description: "Use it when you are considering Algolia’s AI relevance, or it is on and not helping. It checks whether your data and tracking are ready, picks test searches, and plans a safe rollout with a way back.",
+    description: "Readiness and safe rollout for Algolia’s AI relevance.",
     icon: BrainCircuit,
     color: 'purple',
     files: 4,
@@ -590,11 +590,11 @@ const packages = [
 // categories, so someone who does not know the vocabulary can still place
 // themselves. Order inside a stage is the order you would normally reach for them.
 const stages = [
-  { id: 'Start here', caption: 'One of these two is your first move. They ask, plan, and bring in the others.' },
-  { id: 'Foundations', caption: 'Get these right early. They decide what search can do and whether your numbers can be trusted.' },
-  { id: 'Search screen', caption: 'The part your visitors see: the results page and the suggestions as they type.' },
-  { id: 'Launch check', caption: 'Before anything goes live, or after a change that worries you.' },
-  { id: 'AI features', caption: 'Once the foundations hold, these get Algolia\u2019s AI features working well.' }
+  { id: 'Start here', caption: 'Pick one of these first.' },
+  { id: 'Foundations', caption: 'Data, settings, tracking.' },
+  { id: 'Search screen', caption: 'What visitors see.' },
+  { id: 'Launch check', caption: 'Before it goes live.' },
+  { id: 'AI features', caption: 'Once the foundations hold.' }
 ];
 
 const stageById = {
@@ -613,8 +613,8 @@ const stageById = {
 };
 
 const badgeById = {
-  'algolia-discovery-planning': 'Start here if you are new',
-  'algolia-audit': 'Start here if Algolia is live',
+  'algolia-discovery-planning': 'New to Algolia',
+  'algolia-audit': 'Already live',
   'algolia-search-implementation': 'Loaded for you'
 };
 
@@ -712,7 +712,7 @@ const recommendedPaths = [
 const useCaseBundles = [
   {
     id: 'ecommerce-search',
-    pickIf: "you sell products online and people search or browse to find them.",
+    pickIf: "you sell products online.",
     title: 'Ecommerce search bundle',
     icon: ShoppingCart,
     description: 'Product and variant data, relevance, events, InstantSearch, autocomplete, NeuralSearch readiness, and launch QA.',
@@ -723,7 +723,7 @@ const useCaseBundles = [
   },
   {
     id: 'b2b-catalog',
-    pickIf: "your customers log in and see different products, prices or stock from one another.",
+    pickIf: "your customers log in and see different prices or stock.",
     title: 'B2B catalog bundle',
     icon: BriefcaseBusiness,
     description: 'Account-aware records, price lists, secured filters, permissions, relevance, events, and production readiness.',
@@ -734,7 +734,7 @@ const useCaseBundles = [
   },
   {
     id: 'support-knowledge-base',
-    pickIf: "people search your help articles, and you would like search or an assistant to answer before they open a ticket.",
+    pickIf: "people search your help articles.",
     title: 'Support knowledge base bundle',
     icon: Headphones,
     description: 'Content records, synonyms, article UX, deflection events, NeuralSearch, Agent Studio, and QA.',
@@ -745,7 +745,7 @@ const useCaseBundles = [
   },
   {
     id: 'ai-shopping-assistant',
-    pickIf: "you want a chat-style assistant that helps people find and choose products.",
+    pickIf: "you want a chat assistant that helps people shop.",
     title: 'AI shopping assistant bundle',
     icon: WandSparkles,
     description: 'AI readiness, product data, event feedback loops, NeuralSearch, Agent Studio guardrails, and validation.',
@@ -756,7 +756,7 @@ const useCaseBundles = [
   },
   {
     id: 'marketplace',
-    pickIf: "many sellers list on your site and results must respect region, seller or permission rules.",
+    pickIf: "many sellers list on your site.",
     title: 'Marketplace bundle',
     icon: Store,
     description: 'Multi-seller catalogs, region or permission variants, relevance controls, events, UI, AI readiness, and QA.',
@@ -776,8 +776,8 @@ const companionTools = [
     id: 'algolia-productivity-mcp',
     title: 'Algolia Productivity MCP',
     eyebrow: 'See your real account',
-    description: 'Lets your AI assistant look at your actual Algolia account — your searches, your settings, what people click — instead of guessing from what you describe.',
-    note: 'Reading and analysis only — it looks, it does not touch anything. Signs in through your browser, no API key to copy.',
+    description: 'Lets your assistant read your real Algolia account: settings, searches, clicks.',
+    note: 'Read-only. Signs in through your browser.',
     icon: Bot,
     command: 'claude mcp add --transport http algolia https://mcp.algolia.com/mcp',
     commandFor: 'For Claude Code. Other tools are in the setup guide.',
@@ -788,8 +788,8 @@ const companionTools = [
     id: 'algolia-cli',
     title: 'Algolia CLI',
     eyebrow: 'Make the changes',
-    description: 'Applies the changes: settings, records, synonyms, rules. The MCP above shows you what is wrong; this is what fixes it.',
-    note: 'For engineers, or anyone comfortable in a terminal.',
+    description: 'Makes the changes: settings, records, synonyms, rules.',
+    note: 'For anyone comfortable in a terminal.',
     icon: Terminal,
     command: 'brew install algolia',
     commandFor: 'For macOS. Windows and Linux are in the setup guide.',
@@ -800,8 +800,8 @@ const companionTools = [
     id: 'official-algolia-skills',
     title: 'Official Algolia skills',
     eyebrow: 'The wider set',
-    description: 'Every official Algolia skill, covering the Crawler, InstantSearch, chat agents and more. The eleven skills on this page are part of it.',
-    note: 'Already have the library above? You have these eleven either way.',
+    description: 'Every official Algolia skill. The eleven on this page are included.',
+    note: '',
     icon: Library,
     command: '/plugin marketplace add algolia/skills',
     commandFor: 'For Claude Code. Other tools are covered in the repo.',
@@ -1045,7 +1045,7 @@ const situations = [
   {
     id: 'new',
     icon: Rocket,
-    label: 'I am starting fresh with Algolia',
+    label: 'Starting fresh',
     lead: 'algolia-discovery-planning',
     then: ['algolia-data-modeling', 'algolia-events-insights', 'algolia-index-configuration', 'algolia-instantsearch-ui', 'algolia-release-qa'],
     prompt: 'Use the Algolia Discovery Planning skill. I want to [add search to my store / build search for our help centre]. Ask me only the questions you need, assume I may not know which technical details matter, then tell me the smallest useful first step.'
@@ -1053,7 +1053,7 @@ const situations = [
   {
     id: 'live',
     icon: Check,
-    label: 'Algolia is already live and I want it checked',
+    label: 'Already live, want it checked',
     lead: 'algolia-audit',
     then: ['algolia-index-configuration', 'algolia-data-modeling', 'algolia-events-insights', 'algolia-release-qa'],
     prompt: 'Use the Algolia Audit skill to review our existing Algolia setup. Look at what is actually configured before judging anything, tell me what is a real problem versus a matter of preference, and do not change anything without asking me first.'
@@ -1061,7 +1061,7 @@ const situations = [
   {
     id: 'events',
     icon: ChartNoAxesColumnIncreasing,
-    label: 'Our click and conversion numbers look wrong or empty',
+    label: 'Analytics look wrong or empty',
     lead: 'algolia-events-insights',
     then: ['algolia-instantsearch-ui', 'algolia-autocomplete', 'algolia-release-qa'],
     prompt: 'Use the Algolia Events & Insights skill. Our search analytics show [no click-through / no conversions / odd numbers]. Explain in plain language what is happening, check our event tracking end to end on the live page, and tell me the smallest fix.'
@@ -1069,7 +1069,7 @@ const situations = [
   {
     id: 'ai',
     icon: Sparkles,
-    label: 'We want AI features: NeuralSearch, Recommend, Personalization, Agent Studio',
+    label: 'Turning on AI features',
     lead: 'algolia-discovery-planning',
     then: ['algolia-data-modeling', 'algolia-events-insights', 'algolia-neuralsearch', 'algolia-agent-studio', 'algolia-release-qa'],
     prompt: 'Use the Algolia Discovery Planning skill. We want to turn on [NeuralSearch / Recommend / Personalization / Agent Studio]. Tell me what our data and event tracking need to look like first, what is already good enough, and the order to do things in.'
@@ -1077,7 +1077,7 @@ const situations = [
   {
     id: 'screen',
     icon: Monitor,
-    label: 'We are building or fixing the search page itself',
+    label: 'Building the search page',
     lead: 'algolia-instantsearch-ui',
     then: ['algolia-ui-libraries', 'algolia-autocomplete', 'algolia-events-insights', 'algolia-release-qa'],
     prompt: 'Use the Algolia InstantSearch UI skill. We are building a [search results / category / suggestions-as-you-type] page in [React / Vue / plain JavaScript]. Plan the page first, then build it, and make sure clicks on results are tracked.'
@@ -1085,7 +1085,7 @@ const situations = [
   {
     id: 'launch',
     icon: ShieldCheck,
-    label: 'We are about to launch a change',
+    label: 'About to launch',
     lead: 'algolia-release-qa',
     then: ['algolia-events-insights', 'algolia-index-configuration'],
     prompt: 'Use the Algolia Release QA skill. We are about to launch [what changed]. Check it the way a careful reviewer would, test against the live page and app rather than reading code alone, and list anything that would block launch first.'
@@ -1097,8 +1097,8 @@ function Situations({ onDetails }) {
     <section className="situation-section" aria-labelledby="situation-title">
       <div className="section-heading compact-heading">
         <div>
-          <h2 id="situation-title">Not sure where to start? Pick your situation</h2>
-          <p>Each card names the skill to open first and what it brings in after. Copy the starter prompt, paste it into your AI assistant, and answer its questions in plain words.</p>
+          <h2 id="situation-title">Where do I start?</h2>
+          <p>Pick your situation. Copy the prompt, paste it into your AI assistant.</p>
         </div>
       </div>
       <div className="situation-grid">
@@ -1106,10 +1106,6 @@ function Situations({ onDetails }) {
           <SituationCard situation={situation} onDetails={onDetails} key={situation.id} />
         ))}
       </div>
-      <p className="situation-note">
-        <Lightbulb size={15} />
-        Whichever you pick, the assistant asks before it assumes. It only reads your Algolia account; nothing changes unless you install the Algolia CLI and ask it to.
-      </p>
     </section>
   );
 }
@@ -1147,16 +1143,10 @@ function SituationCard({ situation, onDetails }) {
         Start with{' '}
         <button type="button" onClick={() => onDetails(lead)}>{lead.title}</button>
       </p>
-      <p className="situation-then">
-        Then it brings in {situation.then.map((id) => getPackageById(id).title).join(', ')}.
-      </p>
-      <div className="situation-prompt">
-        <p>{situation.prompt}</p>
-        <button type="button" onClick={copyPrompt}>
-          {copied ? <Check size={15} /> : <Copy size={15} />}
-          {copied ? 'Copied' : 'Copy starter prompt'}
-        </button>
-      </div>
+      <button className="situation-copy" type="button" onClick={copyPrompt}>
+        {copied ? <Check size={15} /> : <Copy size={15} />}
+        {copied ? 'Copied' : 'Copy prompt'}
+      </button>
     </article>
   );
 }
@@ -1239,7 +1229,7 @@ function App() {
             <div className="hero-copy">
               <h1 id="page-title">Algolia Implementation Skills</h1>
               <p>
-                A skill is a set of instructions you drop into your AI assistant. Each one teaches the assistant how an experienced Algolia person approaches one part of the job, so it asks the right questions, works in the right order, and checks its own work. You describe what you want in plain words. The assistant handles the Algolia terms.
+                Instruction packs for your AI assistant. Each one teaches it how an Algolia expert handles one part of the job.
               </p>
             </div>
           </section>
@@ -1252,7 +1242,7 @@ function App() {
             <div className="section-heading">
               <div>
                 <h2 id="catalog-title">Choose a skill</h2>
-                <p>Each skill covers one part of the job. Read its “use it when” line and pick the one that matches your situation, or download the full library and let Discovery Planning choose for you.</p>
+                <p>Or download the full library and let Discovery Planning choose.</p>
               </div>
               <div className="catalog-controls">
                 <label className="search-control">
@@ -1308,8 +1298,8 @@ function App() {
 
             <div className="reference-pack-section" aria-labelledby="reference-pack-title">
               <div>
-                <h3 id="reference-pack-title">One reference to keep alongside</h3>
-                <p>UI Libraries is a lookup, not a workflow. Your assistant uses it to pick the current Algolia front-end library for your framework instead of relying on stale memory. Download it with any Search screen skill.</p>
+                <h3 id="reference-pack-title">Reference</h3>
+                <p>A lookup, not a workflow. Take it with any Search screen skill.</p>
               </div>
               <div className="package-table compact" role="list">
                 {referencePackages.map((pkg, index) => (
@@ -1381,7 +1371,7 @@ function WorksBestWith() {
       <div className="section-heading compact-heading">
         <div>
           <h2 id="companion-title">Works with official Algolia tools</h2>
-          <p>All optional. Add these when you want your AI assistant to see your real Algolia account, or to make the changes for you rather than just telling you what to change.</p>
+          <p>Optional. Let your assistant see your account, or make the changes for you.</p>
         </div>
       </div>
       <div className="companion-grid">
@@ -1425,7 +1415,7 @@ function CompanionToolCard({ tool }) {
         </div>
       </div>
       <p>{tool.description}</p>
-      <p className="companion-note">{tool.note}</p>
+      {tool.note && <p className="companion-note">{tool.note}</p>}
       <code>{tool.command}</code>
       <p className="companion-command-for">{tool.commandFor}</p>
       <div className="companion-actions">
@@ -1458,7 +1448,7 @@ function UseCaseBundles({ onGuide }) {
       <div className="section-heading compact-heading">
         <div>
           <h2 id="bundle-title">Bundles</h2>
-          <p>Not sure which skills you need? Pick the bundle that sounds like your project. Each one packs the right skills with a guide and a starting prompt.</p>
+          <p>Everything for one kind of project.</p>
         </div>
       </div>
       <div className="bundle-grid">
@@ -1471,7 +1461,6 @@ function UseCaseBundles({ onGuide }) {
                 <h3>{bundle.title}</h3>
               </div>
               <p className="bundle-pick"><strong>Pick this if</strong> {bundle.pickIf}</p>
-              <p>{bundle.description}</p>
               <button className="bundle-guide-link" type="button" onClick={() => onGuide(bundle)}>
                 <BookOpen size={16} />
                 Read bundle guide
@@ -1527,8 +1516,7 @@ function QuickStart() {
           Three steps: <em>download, drop it in, ask</em>
         </h2>
         <p>
-          No Algolia experience needed, and about ten minutes start to finish. Works with Claude,
-          Codex, Cursor, Copilot, ChatGPT and most other AI tools.
+          About ten minutes. Works with Claude, Codex, Cursor, Copilot, ChatGPT and most AI tools.
         </p>
         <a className="quickstart-link" href={withBase('/start/')}>
           Full step-by-step guide for every AI tool
@@ -1660,12 +1648,11 @@ function FeedbackSection() {
           Tell us what to <em>build next</em>
         </h2>
         <p>
-          These skills get better on real feedback. A missing skill, a rough edge, a step that
-          didn't fit your stack — all of it is useful, and none of it needs to be polished.
+          A missing skill, a rough edge, a step that didn't fit: all useful.
         </p>
         <p className="feedback-meta">
           <Lightbulb size={14} />
-          Anonymous, and it stays on this page. No sign-in, no email.
+          Anonymous. No sign-in.
         </p>
       </div>
 
@@ -2186,7 +2173,7 @@ function PackageDetailsModal({ pkg, onClose }) {
         </div>
         <p className="details-purpose">{pkg.description}</p>
         <p className="details-how">
-          Paste the prompt below into your AI assistant. It asks a few questions, then works through the job and shows its checks. It only reads your Algolia account. Nothing changes unless you have installed the Algolia CLI and ask it to.
+          Paste the prompt into your AI assistant. It asks a few questions first, and reads your account without changing it.
         </p>
 
         <div className="task-summary-grid practical" aria-label={`${pkg.title} practical details`}>
@@ -2200,7 +2187,7 @@ function PackageDetailsModal({ pkg, onClose }) {
             <h3 id={`${pkg.id}-prompt-title`}>Sample prompt</h3>
             <p>{profile.prompt}</p>
             {profile.prompt.includes('[') && (
-              <p className="prompt-hint">Swap the parts in [brackets] for your own details. Leave the rest as it is.</p>
+              <p className="prompt-hint">Swap the [bracketed] parts for your details.</p>
             )}
           </div>
           <button type="button" onClick={copyPrompt}>

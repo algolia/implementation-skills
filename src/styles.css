@@ -2266,6 +2266,7 @@ button.bundle-guide-link {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-height: 150px;
   padding: 16px;
   border: 1px solid var(--panel-border);
   border-radius: 8px;
@@ -2336,24 +2337,8 @@ button.bundle-guide-link {
   line-height: 1.45;
 }
 
-.situation-prompt {
-  display: grid;
-  gap: 10px;
+.situation-copy {
   margin-top: auto;
-  padding: 12px;
-  border: 1px solid var(--chip-border);
-  border-radius: 10px;
-  background: var(--subtle-bg);
-}
-
-.situation-prompt p {
-  margin: 0;
-  color: var(--soft);
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.situation-prompt button {
   min-height: 36px;
   display: inline-flex;
   align-items: center;
@@ -2369,7 +2354,7 @@ button.bundle-guide-link {
   transition: border-color 180ms ease, background 180ms ease;
 }
 
-.situation-prompt button:hover {
+.situation-copy:hover {
   border-color: rgba(0, 82, 255, 0.35);
 }
 
