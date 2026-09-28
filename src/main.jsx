@@ -590,7 +590,7 @@ const packages = [
 // categories, so someone who does not know the vocabulary can still place
 // themselves. Order inside a stage is the order you would normally reach for them.
 const stages = [
-  { id: 'Start here' },
+  { id: 'Plan and review' },
   { id: 'Foundations' },
   { id: 'Search screen' },
   { id: 'Launch check' },
@@ -599,9 +599,9 @@ const stages = [
 ];
 
 const stageById = {
-  'algolia-discovery-planning': 'Start here',
-  'algolia-audit': 'Start here',
-  'algolia-search-implementation': 'Start here',
+  'algolia-discovery-planning': 'Plan and review',
+  'algolia-audit': 'Plan and review',
+  'algolia-search-implementation': 'Plan and review',
   'algolia-data-modeling': 'Foundations',
   'algolia-index-configuration': 'Foundations',
   'algolia-events-insights': 'Foundations',
@@ -1092,7 +1092,7 @@ const situations = [
   }
 ];
 
-function Situations({ onDetails }) {
+function Situations({ onSelect }) {
   return (
     <section className="situation-section" aria-labelledby="situation-title">
       <div className="section-heading compact-heading">
@@ -1102,50 +1102,25 @@ function Situations({ onDetails }) {
       </div>
       <div className="situation-grid">
         {situations.map((situation) => (
-          <SituationCard situation={situation} onDetails={onDetails} key={situation.id} />
+          <SituationCard situation={situation} onSelect={onSelect} key={situation.id} />
         ))}
       </div>
     </section>
   );
 }
 
-function SituationCard({ situation, onDetails }) {
-  const Icon = situation.icon;
+function SituationCard({ situation, onSelect }) {
   const lead = getPackageById(situation.lead);
-  const [copied, setCopied] = useState(false);
-
-  async function copyPrompt() {
-    try {
-      await navigator.clipboard.writeText(situation.prompt);
-    } catch {
-      const fallback = document.createElement('textarea');
-      fallback.value = situation.prompt;
-      fallback.setAttribute('readonly', '');
-      fallback.style.position = 'fixed';
-      fallback.style.opacity = '0';
-      document.body.appendChild(fallback);
-      fallback.select();
-      document.execCommand('copy');
-      document.body.removeChild(fallback);
-    }
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1600);
-  }
-
+  const Icon = lead.icon;
   return (
-    <article className="situation-card">
-      <div className="situation-header">
-        <span><Icon size={20} /></span>
-        <h3>{situation.label}</h3>
-      </div>
-      <p className="situation-lead">
-        <button type="button" onClick={() => onDetails(lead)}>{lead.title}</button>
-      </p>
-      <button className="situation-copy" type="button" onClick={copyPrompt}>
-        {copied ? <Check size={15} /> : <Copy size={15} />}
-        {copied ? 'Copied' : 'Copy prompt'}
-      </button>
-    </article>
+    <button className="situation-card" type="button" onClick={() => onSelect(lead, situation.prompt)}>
+      <span className={`package-icon ${lead.color}`}><Icon size={20} /></span>
+      <span className="situation-text">
+        <span className="situation-label">{situation.label}</span>
+        <span className="situation-skill">{lead.title}</span>
+      </span>
+      <ArrowRight size={16} className="situation-arrow" />
+    </button>
   );
 }
 
@@ -1154,6 +1129,7 @@ function App() {
   const [filter, setFilter] = useState('All');
   const [guideOpen, setGuideOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const [promptOverride, setPromptOverride] = useState(null);
   const [guideBundle, setGuideBundle] = useState(null);
   const [theme, setTheme] = useState(() => localStorage.getItem('algolia-skills-theme') || 'light');
   const [consent, setConsent] = useState(readConsent);
@@ -1229,12 +1205,25 @@ function App() {
               <p>
                 Instruction packs that teach your AI assistant to work like an Algolia expert.
               </p>
+              <ol className="hero-steps" aria-label="How it works">
+                {quickStartSteps.map(({ label, copy }, index) => (
+                  <li key={label}>
+                    <span className="quickstart-num">{index + 1}</span>
+                    <strong>{label}</strong>
+                    <span>{copy}</span>
+                  </li>
+                ))}
+                <li className="hero-guide">
+                  <a href={withBase('/start/')}>
+                    Step-by-step guide
+                    <ArrowRight size={14} />
+                  </a>
+                </li>
+              </ol>
             </div>
           </section>
 
-          <QuickStart />
-
-          <Situations onDetails={setSelectedPackage} />
+          <Situations onSelect={(pkg, prompt) => { setPromptOverride(prompt); setSelectedPackage(pkg); }} />
 
           <section className="catalog-section" id="catalog" aria-labelledby="catalog-title">
             <div className="section-heading">
@@ -1298,7 +1287,13 @@ function App() {
       </div>
       {consent === null && <CookieBanner onChoose={chooseConsent} />}
       {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} />}
-      {selectedPackage && <PackageDetailsModal pkg={selectedPackage} onClose={() => setSelectedPackage(null)} />}
+      {selectedPackage && (
+        <PackageDetailsModal
+          pkg={selectedPackage}
+          prompt={promptOverride}
+          onClose={() => { setSelectedPackage(null); setPromptOverride(null); }}
+        />
+      )}
       {guideBundle && <BundleGuideModal bundle={guideBundle} onClose={() => setGuideBundle(null)} />}
     </>
   );
@@ -1483,39 +1478,6 @@ const quickStartSteps = [
   { icon: Layers3, label: 'Drop it in', copy: 'Into your AI tool.' },
   { icon: Sparkles, label: 'Ask', copy: 'Paste one prompt.' }
 ];
-
-function QuickStart() {
-  return (
-    <section className="quickstart-strip" aria-labelledby="quickstart-title">
-      <div className="quickstart-copy">
-        <h2 id="quickstart-title">
-          Three steps: <em>download, drop it in, ask</em>
-        </h2>
-        <p>
-          Ten minutes. Works with most AI tools.{' '}
-          <a className="quickstart-link" href={withBase('/start/')}>
-            Step-by-step guide
-            <ArrowRight size={13} />
-          </a>
-        </p>
-      </div>
-      <ol className="quickstart-steps">
-        {quickStartSteps.map(({ icon: Icon, label, copy }, index) => (
-          <li key={label}>
-            <span className="quickstart-num">{index + 1}</span>
-            <div>
-              <strong>
-                <Icon size={13} />
-                {label}
-              </strong>
-              <span>{copy}</span>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </section>
-  );
-}
 
 function DownloadButton({ href, label, size }) {
   return (
@@ -2074,7 +2036,7 @@ function GuideModal({ onClose }) {
   );
 }
 
-function PackageDetailsModal({ pkg, onClose }) {
+function PackageDetailsModal({ pkg, prompt, onClose }) {
   const Icon = pkg.icon;
   const profile = detailProfiles[pkg.id] || {
     useThisTo: pkg.useWhen,
@@ -2086,6 +2048,7 @@ function PackageDetailsModal({ pkg, onClose }) {
     docs: ['Algolia documentation']
   };
   const [copied, setCopied] = useState(false);
+  const promptText = prompt || profile.prompt;
 
   useEffect(() => {
     function handleKeyDown(event) {
@@ -2100,10 +2063,10 @@ function PackageDetailsModal({ pkg, onClose }) {
 
   async function copyPrompt() {
     try {
-      await navigator.clipboard.writeText(profile.prompt);
+      await navigator.clipboard.writeText(promptText);
     } catch {
       const textArea = document.createElement('textarea');
-      textArea.value = profile.prompt;
+      textArea.value = promptText;
       textArea.setAttribute('readonly', '');
       textArea.style.position = 'fixed';
       textArea.style.opacity = '0';
@@ -2145,8 +2108,8 @@ function PackageDetailsModal({ pkg, onClose }) {
         <div className="modal-prompt">
           <div>
             <h3 className="modal-label">Prompt</h3>
-            <p>{profile.prompt}</p>
-            {profile.prompt.includes('[') && <small>Swap the [bracketed] parts for your details.</small>}
+            <p>{promptText}</p>
+            {promptText.includes('[') && <small>Swap the [bracketed] parts for your details.</small>}
           </div>
           <button type="button" onClick={copyPrompt}>
             {copied ? <Check size={16} /> : <Copy size={16} />}
