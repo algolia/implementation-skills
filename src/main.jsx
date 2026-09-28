@@ -1105,7 +1105,44 @@ function Situations({ onSelect }) {
           <SituationCard situation={situation} onSelect={onSelect} key={situation.id} />
         ))}
       </div>
+      <SuitePrompt />
     </section>
+  );
+}
+
+// One prompt that works for anything: the Discovery Planning skill reads the
+// situation and routes to the rest of the suite.
+const SUITE_PROMPT = 'Use the Algolia Discovery Planning skill. Here is what I am trying to do: [describe it in your own words]. Ask me only the questions you need, assume I may not know which technical details matter, then tell me which skill to use next and the smallest useful first step.';
+
+function SuitePrompt() {
+  const [copied, setCopied] = useState(false);
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(SUITE_PROMPT);
+    } catch {
+      const area = document.createElement('textarea');
+      area.value = SUITE_PROMPT;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand('copy');
+      document.body.removeChild(area);
+    }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1600);
+  }
+
+  return (
+    <div className="suite-prompt">
+      <span><strong>Not sure which?</strong> One prompt works for anything. It asks, then picks the skill.</span>
+      <button type="button" onClick={copy}>
+        {copied ? <Check size={15} /> : <Copy size={15} />}
+        {copied ? 'Copied' : 'Copy prompt'}
+      </button>
+    </div>
   );
 }
 
@@ -1125,8 +1162,6 @@ function SituationCard({ situation, onSelect }) {
 }
 
 function App() {
-  const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState('All');
   const [guideOpen, setGuideOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [promptOverride, setPromptOverride] = useState(null);
@@ -1179,17 +1214,6 @@ function App() {
     setConsent(null);
   }
 
-  const visiblePackages = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    return skillPackages.filter((pkg) => {
-      const matchesFilter = filter === 'All' || pkg.stage === filter;
-      const haystack = [pkg.title, pkg.description, pkg.type, pkg.stage, pkg.id, ...pkg.triggers, ...pkg.includes]
-        .join(' ')
-        .toLowerCase();
-      return matchesFilter && (!needle || haystack.includes(needle));
-    });
-  }, [filter, query]);
-
   return (
     <>
       <div className="app-shell">
@@ -1226,55 +1250,23 @@ function App() {
           <Situations onSelect={(pkg, prompt) => { setPromptOverride(prompt); setSelectedPackage(pkg); }} />
 
           <section className="catalog-section" id="catalog" aria-labelledby="catalog-title">
-            <div className="section-heading">
+            <div className="section-heading compact-heading">
               <div>
                 <h2 id="catalog-title">Choose a skill</h2>
-              </div>
-              <div className="catalog-controls">
-                <label className="search-control">
-                  <Search size={18} />
-                  <span className="sr-only">Search skills</span>
-                  <input
-                    value={query}
-                    onChange={(event) => setQuery(event.target.value)}
-                    placeholder="Search skills..."
-                  />
-                </label>
-                <label className="filter-control">
-                  <Filter size={18} />
-                  <span className="sr-only">Filter packages</span>
-                  <select value={filter} onChange={(event) => setFilter(event.target.value)}>
-                    {filters.map((item) => (
-                      <option value={item} key={item}>{item}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={18} />
-                </label>
               </div>
             </div>
 
             <div className="package-table" role="list">
-              {filter === 'All' && !query.trim()
-                ? stages.map((stage) => (
-                  <React.Fragment key={stage.id}>
-                    <div className="stage-heading" role="presentation">
-                      <strong>{stage.id}</strong>
-                    </div>
-                    {visiblePackages.filter((pkg) => pkg.stage === stage.id).map((pkg, index) => (
-                      <PackageRow pkg={pkg} index={index} onDetails={() => setSelectedPackage(pkg)} key={pkg.id} />
-                    ))}
-                  </React.Fragment>
-                ))
-                : visiblePackages.map((pkg, index) => (
-                  <PackageRow pkg={pkg} index={index} onDetails={() => setSelectedPackage(pkg)} key={pkg.id} />
-                ))}
-              {visiblePackages.length === 0 && (
-                <div className="empty-state">
-                  <Search size={24} />
-                  <strong>No skills found</strong>
-                  <p>Try a different query or clear the filter.</p>
-                </div>
-              )}
+              {stages.map((stage) => (
+                <React.Fragment key={stage.id}>
+                  <div className="stage-heading" role="presentation">
+                    <strong>{stage.id}</strong>
+                  </div>
+                  {skillPackages.filter((pkg) => pkg.stage === stage.id).map((pkg) => (
+                    <PackageRow pkg={pkg} onDetails={() => setSelectedPackage(pkg)} key={pkg.id} />
+                  ))}
+                </React.Fragment>
+              ))}
             </div>
 
             <WorksBestWith />
@@ -1317,10 +1309,7 @@ function Header({ onGuide, theme, onToggleTheme }) {
         <a href="https://www.algolia.com/doc/" target="_blank" rel="noreferrer">
           Docs <ExternalLink size={15} />
         </a>
-        <a href="https://www.algolia.com/" target="_blank" rel="noreferrer">
-          Algolia.com <ExternalLink size={15} />
-        </a>
-        <button className="install-button" type="button" onClick={onGuide}>Install</button>
+        <button className="nav-link" type="button" onClick={onGuide}>Install</button>
         <button
           className="theme-toggle"
           type="button"
@@ -1348,7 +1337,7 @@ function WorksBestWith() {
           <h2 id="companion-title">Optional Algolia tools</h2>
         </div>
       </div>
-      <div className="companion-grid">
+      <div className="tool-rows">
         {companionTools.map((tool) => (
           <CompanionToolCard tool={tool} key={tool.id} />
         ))}
@@ -1380,37 +1369,23 @@ function CompanionToolCard({ tool }) {
   }
 
   return (
-    <article className="companion-card">
-      <div className="companion-card-header">
-        <span><Icon size={22} /></span>
-        <div>
-          <p>{tool.eyebrow}</p>
-          <h3>{tool.title}</h3>
-        </div>
-      </div>
-      <p>{tool.description}</p>
+    <div className="tool-row">
+      <span className="tool-icon"><Icon size={18} /></span>
+      <span className="tool-text">
+        <span className="tool-title">{tool.title}</span>
+        <span className="tool-desc">{tool.description}</span>
+      </span>
       <code>{tool.command}</code>
-      <div className="companion-actions">
-        <button type="button" onClick={copyCommand}>
-          {copied ? <Check size={16} /> : <Copy size={16} />}
+      <span className="tool-actions">
+        <button type="button" onClick={copyCommand} aria-label={`Copy the ${tool.title} command`}>
+          {copied ? <Check size={15} /> : <Copy size={15} />}
           {copied ? 'Copied' : 'Copy'}
         </button>
         <a href={tool.href} target="_blank" rel="noreferrer">
-          {tool.action} <ExternalLink size={15} />
+          {tool.action} <ExternalLink size={13} />
         </a>
-      </div>
-      {tool.downloadHref && (
-        <a
-          className="companion-download"
-          href={withBase(tool.downloadHref)}
-          download
-          onClick={() => trackDownload(tool.downloadHref, tool.downloadLabel)}
-        >
-          <ArrowDownToLine size={16} />
-          {tool.downloadLabel}
-        </a>
-      )}
-    </article>
+      </span>
+    </div>
   );
 }
 
@@ -1426,18 +1401,14 @@ function UseCaseBundles({ onGuide }) {
         {useCaseBundles.map((bundle) => {
           const Icon = bundle.icon;
           return (
-            <article className="bundle-card" key={bundle.id}>
-              <div className="bundle-header">
+            <button className="bundle-card" type="button" onClick={() => onGuide(bundle)} key={bundle.id}>
+              <span className="bundle-header">
                 <span><Icon size={20} /></span>
-                <h3>{bundle.title}</h3>
-              </div>
-              <p className="bundle-pick"><strong>Pick this if</strong> {bundle.pickIf}</p>
-              <button className="bundle-guide-link" type="button" onClick={() => onGuide(bundle)}>
-                <BookOpen size={16} />
-                Guide
-              </button>
-              <DownloadButton href={bundle.href} label="Download" />
-            </article>
+                <strong className="bundle-title">{bundle.title}</strong>
+              </span>
+              <span className="bundle-pick"><strong>Pick this if</strong> {bundle.pickIf}</span>
+              <span className="bundle-arrow"><ArrowRight size={15} /></span>
+            </button>
           );
         })}
       </div>
@@ -1445,28 +1416,25 @@ function UseCaseBundles({ onGuide }) {
   );
 }
 
-function PackageRow({ pkg, index, onDetails }) {
+function PackageRow({ pkg, onDetails }) {
   const Icon = pkg.icon;
   return (
     <article className="package-row" role="listitem">
-      <div className="package-main">
-        <span className={`package-icon ${pkg.color}`}><Icon size={30} /></span>
-        <div>
-          <h3>
+      <button className="package-main" type="button" onClick={onDetails}>
+        <span className={`package-icon ${pkg.color}`}><Icon size={26} /></span>
+        <span className="package-text">
+          <span className="package-title">
             {pkg.title}
             {pkg.badge && <span className="package-badge">{pkg.badge}</span>}
-          </h3>
-          <p>{pkg.description}</p>
-          <RowVote about={pkg.title} />
-        </div>
-      </div>
-      <div className="package-actions">
-        <button className="details-button" type="button" onClick={onDetails}>
-          <BookOpen size={17} />
-          Details
-        </button>
-        <DownloadButton href={pkg.href} label="Download" />
-      </div>
+          </span>
+          <span className="package-desc">{pkg.description}</span>
+        </span>
+        <ArrowRight size={16} className="package-arrow" />
+      </button>
+      <a className="package-download" href={withBase(pkg.href)} download onClick={() => trackDownload(pkg.href, 'Download')}>
+        <ArrowDownToLine size={15} />
+        Download
+      </a>
     </article>
   );
 }
@@ -1495,7 +1463,7 @@ function DownloadButton({ href, label, size }) {
 
 // Quiet per-skill vote, so it's visible which of the skills actually land.
 // Posts in place — no navigation, no Google Form.
-function RowVote({ about }) {
+function RowVote({ about, showLabel }) {
   const [state, setState] = useState('idle');
 
   if (!rowVoteReady) return null;
@@ -1531,7 +1499,7 @@ function RowVote({ about }) {
 
   return (
     <p className="row-vote">
-      <span className="row-vote-label sr-only">Useful?</span>
+      <span className={`row-vote-label ${showLabel ? '' : 'sr-only'}`}>Useful?</span>
       {['up', 'down'].map((choice) => {
         const Icon = choice === 'up' ? ThumbsUp : ThumbsDown;
         return (
@@ -1585,10 +1553,7 @@ function FeedbackSection() {
         <h2 id="feedback-title">
           Tell us what to <em>build next</em>
         </h2>
-        <p className="feedback-meta">
-          <Lightbulb size={14} />
-          Anonymous.
-        </p>
+        <p className="feedback-meta">Anonymous.</p>
       </div>
 
       {state === 'sent' ? (
@@ -1625,8 +1590,8 @@ function FeedbackSection() {
             <textarea
               value={idea}
               maxLength={IDEA_MAX}
-              rows={3}
-              placeholder="An idea, a rough edge, a skill you wish existed…"
+              rows={1}
+              placeholder="An idea or a rough edge…"
               onChange={(event) => setIdea(event.target.value)}
             />
           </label>
@@ -1639,7 +1604,7 @@ function FeedbackSection() {
               disabled={nothingToSend || state === 'sending'}
             >
               <Send size={17} />
-              <span>{state === 'sending' ? 'Sending…' : 'Send feedback'}</span>
+              <span>{state === 'sending' ? 'Sending…' : 'Send'}</span>
             </button>
             <span className="feedback-status" role="status">
               {state === 'error' && (
@@ -2119,6 +2084,7 @@ function PackageDetailsModal({ pkg, prompt, onClose }) {
 
         <footer className="modal-foot">
           <span>{pkg.id} &middot; {pkg.filesInside.length} {pkg.filesInside.length === 1 ? 'file' : 'files'}</span>
+          <RowVote about={pkg.title} showLabel />
           <DownloadButton href={pkg.href} label="Download" />
         </footer>
       </section>
