@@ -816,108 +816,108 @@ function getPackageById(id) {
 
 const detailProfiles = {
   'algolia-audit': {
-    useThisTo: ["Algolia is already live and you want to know if it is set up well.", "Search got worse, or you inherited a setup nobody fully understands.", "A build “works” and you want it checked before launch."],
-    asks: ["Access to the live Algolia app, ideally through the Algolia MCP so the assistant can look for itself.", "The pages that use search, so it can open them.", "Anything you already suspect is wrong."],
-    produces: ["A list of real problems, worst first, each with the evidence and what it costs you.", "A clear line between defects and matters of preference.", "Fixes that are re-checked against the live setup, not just described."],
+    useThisTo: ["Algolia is already live.", "Search got worse, or nobody knows the setup."],
+    asks: ["Access to the live app and the search pages."],
+    produces: ["Problems ranked worst first, with evidence.", "Fixes re-checked against the live setup."],
     prompt: "Use the Algolia Audit skill to review our existing Algolia setup. Our search is live at [URL] and the index is [index name]. We think [what feels wrong, or “nothing specific”]. Look at what is actually configured before judging anything, tell me what is a real problem versus a matter of preference, worst first, with the evidence, and do not change anything without asking me first.",
     academyModules: ['Implementation review', 'Relevance and event health'],
     learningObjectives: ['Capture live state before judging.', 'Separate defects from preferences and re-verify every fix.'],
     docs: ['Index settings', 'Insights events', 'API key security']
   },
   'algolia-search-implementation': {
-    useThisTo: ["Building search from scratch. Discovery Planning usually loads this for you.", "Keeping a new build from jumping to the screen before the data and tracking are settled."],
-    asks: ["The plan from Discovery Planning, or the same answers: what people search for and what success means.", "Your data source and front-end framework."],
-    produces: ["A decision-by-decision checklist across data, tracking, settings, the screen and the launch check.", "What was deferred, who approved it, and how it will be verified later."],
+    useThisTo: ["Building search from scratch."],
+    asks: ["The plan from Discovery Planning."],
+    produces: ["A checklist in order: data, tracking, settings, page, launch."],
     prompt: "Use the Algolia Search Implementation skill to plan our search build. We sell [what] to [whom]. People mainly need to find [top tasks]. Our data lives in [platform] and the site is built with [framework]. Walk me through the decisions in order: data, tracking, settings, the page, launch checks. Do not change anything in Algolia yet.",
     academyModules: ['Search implementation workflow', 'Data and event foundations', 'AI readiness signposts'],
     learningObjectives: ['Sequence data, events, index configuration, UI, AI readiness, and QA work in order.', 'Apply search implementation readiness signposts.'],
     docs: ['Algolia documentation: Getting started', 'Algolia documentation: Send events']
   },
   'algolia-discovery-planning': {
-    useThisTo: ["You are new to Algolia, or the request is broad: “we want better search”, “add search to the app”.", "You are not sure which skill applies. This one decides and brings the others in."],
-    asks: ["What people are trying to find, in your own words.", "What a good result looks like for your business: sales, fewer tickets, faster lookups.", "Roughly where your data lives and what your website is built with, if you know."],
-    produces: ["A short plan in stages, with the skill that owns each stage.", "The questions that still need an answer, and the assumptions it made if you told it to keep going.", "The smallest useful first step."],
+    useThisTo: ["New to Algolia.", "The request is broad."],
+    asks: ["What people search for, and what success means."],
+    produces: ["A plan in stages.", "The next skill to open."],
     prompt: "Use the Algolia Discovery Planning skill. I want to [add search to my store / improve our site search]. Ask me only the questions you need, assume I may not know which technical details matter, then recommend the next skill, the smallest useful first step, and how we will check it worked.",
     academyModules: ['Search implementation discovery', 'Business outcomes and relevance ownership'],
     learningObjectives: ['Identify the minimum customer context required before setup.', 'Route broad requests to the right implementation skill.'],
     docs: ['Algolia documentation: Getting started', 'Algolia documentation: Sending and managing data']
   },
   'algolia-data-modeling': {
-    useThisTo: ["Before anything is indexed, when deciding what one search result should be: a product, a size, a colour, an article.", "When search cannot filter, sort or promote the way the business wants because the data is not shaped for it.", "When moving data into Algolia from a database, CMS or commerce platform."],
-    asks: ["A sample of your product or content data, even a spreadsheet.", "Which details people filter by, and which matter for ordering results: rating, sales, stock, margin.", "Whether different customers, regions or languages should see different things."],
-    produces: ["A record design: what each result represents and which fields it carries.", "A plan for stable identifiers, updates and re-indexing.", "A list of data gaps that block what the business wants to do."],
+    useThisTo: ["Before anything is indexed.", "Search can’t filter or sort the way you want."],
+    asks: ["A sample of your data, even a spreadsheet."],
+    produces: ["What one result is and which fields it carries.", "A list of data gaps."],
     prompt: "Use the Algolia Data Modeling skill. Here is a sample of our data: [paste or attach]. Decide what one search result should be, which fields people search, filter and sort by, and what is missing for [what the business wants to do]. Explain the trade-offs in plain language.",
     academyModules: ['Prepare and structure records', 'Indexing strategy and objectID design'],
     learningObjectives: ['Choose record granularity from the user journey.', 'Design stable objectIDs and search-ready variant data.'],
     docs: ['Prepare your data', 'Searchable attributes', 'Custom ranking']
   },
   'algolia-index-configuration': {
-    useThisTo: ["Results come back in the wrong order, or the top results are not the ones people want.", "Filters feel off, sorting does not behave, or you want to promote certain items.", "Turning business priorities into settings instead of workarounds on the page."],
-    asks: ["A handful of important searches and what the right results would be.", "Rules that must always hold (in stock, permitted, in region) versus preferences (brand, margin, popularity).", "Access to the live app if you want it to check the current settings."],
-    produces: ["A record of each setting change and the reasoning behind it.", "Test searches to run before and after, and how to undo the change.", "Guidance on ranking, synonyms, rules and sort options."],
+    useThisTo: ["Results come back in the wrong order.", "You want to promote certain items."],
+    asks: ["A few important searches and their ideal results."],
+    produces: ["Settings changes, with the reasoning.", "Test searches, and how to undo."],
     prompt: "Use the Algolia Index Configuration skill. Important searches and what should come first: [examples]. Rules that must always hold: [in stock, permitted, region]. Preferences: [brand, popularity, margin]. Recommend the settings changes, the test searches to run before and after, and how to undo them. Do not change live settings without asking.",
     academyModules: ['Relevance configuration fundamentals', 'Faceting, filtering, synonyms, rules, and replicas'],
     learningObjectives: ['Map business intent to ranking settings.', 'Validate relevance changes with representative queries.'],
     docs: ['Searchable attributes', 'Custom ranking', 'Rules', 'Synonyms']
   },
   'algolia-events-insights': {
-    useThisTo: ["Analytics show no clicks or conversions even though people are searching.", "A developer says events are working, but Algolia reports them as unhealthy or unusable.", "Before turning on Personalization, Recommend, Dynamic Re-Ranking or NeuralSearch, which all learn from these events."],
-    asks: ["Which action counts as success for you: a purchase, an add to cart, a sign-up, a solved ticket.", "Where your search page is built, and whether a tag manager or analytics tool is involved.", "Access to the live page so the assistant can watch what is actually sent."],
-    produces: ["The smallest set of events that matter, usually one click and one conversion, and why to stop there.", "Plain checks for whether events arrive, are complete, and can be tied back to the search.", "Fixes verified on the live page, and what “healthy” looks like in the Algolia dashboard."],
+    useThisTo: ["Analytics show no clicks or conversions.", "Before Personalization, Recommend or Re-Ranking."],
+    asks: ["What counts as success: purchase, add to cart, sign-up."],
+    produces: ["The few events that matter.", "Proof they arrive and can be trusted."],
     prompt: "Use the Algolia Events & Insights skill. Our analytics show [no clicks / no conversions / odd numbers]. Our search page is built with [framework or tag manager]. The action that counts as success is [purchase / add to cart / sign-up]. Explain in plain language what is wrong, check the tracking end to end on the live page, and give me the smallest fix.",
     academyModules: ['Insights event implementation', 'Analytics and AI feature readiness'],
     learningObjectives: ['Implement search-attributed events with queryID and userToken.', 'Validate events against downstream feature requirements, not only HTTP 200 responses.'],
     docs: ['Event types', 'Send events', 'InstantSearch events', 'Segment connector', 'Google Tag Manager connector']
   },
   'algolia-instantsearch-ui': {
-    useThisTo: ["Building or fixing the search results page or a category page.", "Adding filters, sorting, paging, shareable links or mobile behaviour.", "Making sure clicks on results are tracked properly."],
-    asks: ["Your front-end framework: React, Vue, plain JavaScript or something else.", "Which filters and sort options people need.", "Whether a search should be shareable as a link."],
-    produces: ["A plan for the page before code: filters, sorting, links, mobile, empty and loading states.", "Tracking wired in from the start.", "A checklist for desktop, mobile, accessibility and behaviour."],
+    useThisTo: ["Building or fixing the results page."],
+    asks: ["Your framework, and the filters people need."],
+    produces: ["A page plan: filters, sorting, links, mobile.", "Tracking wired in."],
     prompt: "Use the Algolia InstantSearch UI skill together with Algolia’s official InstantSearch skill. We are building a [search results / category] page in [React / Vue / plain JavaScript]. People need [filters, sorting, shareable links, mobile]. Plan the page first, then build it, and make sure result clicks are tracked.",
     academyModules: ['Build search UI with InstantSearch', 'Filters, routing, and events'],
     learningObjectives: ['Choose the right widgets or connectors for the journey.', 'Preserve search state, mobile recovery paths, accessibility, and event attribution.'],
     docs: ['Official algolia/skills instantsearch', 'InstantSearch documentation', 'Routing', 'Insights middleware']
   },
   'algolia-autocomplete': {
-    useThisTo: ["Adding or improving the suggestions that appear as people type.", "Deciding what should show up: past searches, popular searches, products, categories, articles.", "Fixing what happens when someone picks a suggestion, especially on a phone."],
-    asks: ["What people should see as they type, and what should happen when they choose it.", "Whether you already have a list of popular searches.", "Your front-end framework."],
-    produces: ["A clear plan for each kind of suggestion and where it leads.", "Keyboard and mobile behaviour that holds up.", "Tracking so suggestion clicks count in analytics."],
+    useThisTo: ["Adding suggestions as people type."],
+    asks: ["What should show up, and what choosing it does."],
+    produces: ["What appears, and where it leads.", "Keyboard and mobile behaviour."],
     prompt: "Use the Algolia Autocomplete skill. As people type we want to show [past searches / popular searches / products / categories]. Choosing one should [run the search / open the item]. Plan what appears and where it leads, make it work on a phone and with a keyboard, and track the clicks.",
     academyModules: ['Autocomplete and query suggestions', 'Search UX patterns'],
     learningObjectives: ['Design source strategy by user intent.', 'Validate helpfulness, clarity, focus, device usability, selection handoff, and attribution across every input path.'],
     docs: ['Official algolia/skills instantsearch', 'Autocomplete documentation', 'Query Suggestions', 'Recent searches plugin']
   },
   'algolia-release-qa': {
-    useThisTo: ["You are about to launch, or you have just made a change that could break something.", "You want an honest list of what was checked, what was not, and what is still risky."],
-    asks: ["What changed: data, settings, the page, tracking, keys or environment.", "Access to the live page and app so it can test rather than read.", "Who owns each area, so findings land with the right person."],
-    produces: ["Findings ranked by severity, blockers first, each with evidence and the smallest re-test.", "What was tested, what was not, and how to roll back.", "Remaining risk in plain terms."],
+    useThisTo: ["About to launch.", "A change that could break something."],
+    asks: ["What changed, and access to the live page."],
+    produces: ["Blockers first, with evidence.", "What was and wasn’t tested."],
     prompt: "Use the Algolia Release QA skill. We are about to launch [what changed]. You can check [the live page URL / the app]. Test rather than read, list anything that would block launch first, then the rest by severity, and tell me what you could not check.",
     academyModules: ['Launch readiness and implementation QA', 'Analytics and security validation'],
     learningObjectives: ['Inspect the full implementation surface before launch.', 'Write actionable findings with evidence and owner.'],
     docs: ['API key security', 'Index settings', 'Insights validation']
   },
   'algolia-agent-studio': {
-    useThisTo: ["Building a chat or shopping assistant on top of Algolia with Agent Studio.", "Deciding what the assistant may do, what it must not do, and how you will know it is working."],
-    asks: ["The one job the first agent should do well.", "Which data it may use and which actions need a person to confirm.", "How you will measure success: conversions, solved questions, feedback."],
-    produces: ["A map of the agent’s scope, tools, safety rules and entry point.", "Test conversations and a plan for a limited first rollout.", "Checks for sign-in, allowed domains and tool safety."],
+    useThisTo: ["Building a chat or shopping assistant."],
+    asks: ["The one job the agent should do."],
+    produces: ["Scope, tools and safety rules.", "Test conversations and a first rollout."],
     prompt: "Use the Algolia Agent Studio skill. The first agent should do one job: [task]. Users are [audience]. It may use [data / tools] and must not [actions]. Map its scope, tools and safety rules, suggest test conversations, and recommend a small first rollout.",
     academyModules: ['Agent Studio setup and validation', 'AI experience measurement'],
     learningObjectives: ['Define safe agent-room and tool boundaries.', 'Diagnose behavior from scope through retrieval, safety, and integration before changing the model.'],
     docs: ['Agent Studio documentation', 'Algolia AI documentation', 'Insights events']
   },
   'algolia-neuralsearch': {
-    useThisTo: ["You are considering NeuralSearch, Algolia’s AI relevance, or it is on and not helping.", "Checking whether your data and tracking are ready before you switch it on."],
-    asks: ["Examples of searches you hope it will improve, and searches that must not change.", "Which fields describe your items in words a person would use.", "Roughly how much traffic and click data you have."],
-    produces: ["A readiness check with clear go / not yet reasons.", "A set of test searches and how to compare before and after.", "A staged rollout with a way back."],
+    useThisTo: ["Considering Algolia’s AI relevance.", "It’s on and not helping."],
+    asks: ["Searches to improve, and searches that must not change."],
+    produces: ["Ready or not yet, with reasons.", "Before/after tests, and a way back."],
     prompt: "Use the Algolia NeuralSearch skill. Searches we hope it improves: [examples]. Searches that must not change: [examples]. We have [some / little / no] click data. Tell me whether we are ready, what to fix first if not, how to test before and after, and how to roll back.",
     academyModules: ['NeuralSearch readiness and rollout', 'Semantic relevance measurement'],
     learningObjectives: ['Validate data quality, event readiness, and measurement readiness before AI relevance rollout.', 'Measure hybrid relevance with query sets, evidence, diagnostics, and rollout controls.'],
     docs: ['NeuralSearch documentation', 'A/B testing', 'Insights events']
   },
   'algolia-ui-libraries': {
-    useThisTo: ["Your assistant needs to choose or upgrade an Algolia front-end library and should not rely on memory.", "Planning routing, server rendering, mobile or secured keys for the front end."],
-    asks: ["Your framework and platform: web, iOS, Android, Flutter.", "The kind of experience: results page, suggestions, mobile, docs search."],
-    produces: ["The library to use and why, with the current docs to verify against.", "A short plan covering routing, events, security and performance."],
+    useThisTo: ["Choosing or upgrading a front-end library."],
+    asks: ["Your framework and platform."],
+    produces: ["The library to use, and why.", "Docs to verify against."],
     prompt: "Use the Algolia UI Libraries skill. Our site is built with [framework] on [web / iOS / Android / Flutter] and we need [a results page / suggestions as you type / mobile search]. Recommend the current Algolia library and point me to the docs to verify.",
     academyModules: ['UI library selection', 'Frontend implementation paths'],
     learningObjectives: ['Pick the right frontend library for the job.', 'Verify live docs before install or upgrade.'],
@@ -1903,7 +1903,7 @@ function GuidePrompt({ text }) {
       <pre><code>{text}</code></pre>
       <button className="secondary-button" type="button" onClick={copy}>
         {copied ? <Check size={16} /> : <Copy size={16} />}
-        {copied ? 'Copied' : 'Copy prompt'}
+        {copied ? 'Copied' : 'Copy'}
       </button>
     </div>
   );
@@ -1980,22 +1980,22 @@ function BundleGuideModal({ bundle, onClose }) {
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
       <section
-        className="details-modal"
+        className="modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="bundle-guide-title"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <button className="close-button" type="button" onClick={onClose} aria-label={`Close ${bundle.title} guide`}>
-          <X size={20} />
+          <X size={18} />
         </button>
-        <div className="details-header">
-          <span className="package-icon blue"><Icon size={30} /></span>
+        <header className="modal-head">
+          <span className="package-icon blue"><Icon size={24} /></span>
           <div>
-            <p className="details-eyebrow">Bundle guide</p>
             <h2 id="bundle-guide-title">{bundle.title}</h2>
+            <p>Pick this if {bundle.pickIf}</p>
           </div>
-        </div>
+        </header>
         <div className="guide-body">
           {state === 'loading' && <p className="guide-status">Loading the guide…</p>}
           {state === 'error' && (
@@ -2011,7 +2011,6 @@ function BundleGuideModal({ bundle, onClose }) {
             const guide = parseGuide(source);
             return (
               <>
-                <p className="guide-lead">{bundle.description}</p>
                 <div className="guide-sections">
                   <GuideSkills skills={bundle.skills} />
                   {guide.sections
@@ -2025,10 +2024,10 @@ function BundleGuideModal({ bundle, onClose }) {
           })()}
         </div>
         {state === 'ready' && (
-          <div className="guide-footer">
-            <DownloadButton href={bundle.href} label="Download bundle" />
-            <span>{bundle.skills.length} skills · MIT licensed</span>
-          </div>
+          <footer className="modal-foot">
+            <span>{bundle.skills.length} skills &middot; MIT licensed</span>
+            <DownloadButton href={bundle.href} label="Download" />
+          </footer>
         )}
       </section>
     </div>
@@ -2049,39 +2048,25 @@ function GuideModal({ onClose }) {
 
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
-      <section className="guide-modal" role="dialog" aria-modal="true" aria-labelledby="guide-title" onMouseDown={(event) => event.stopPropagation()}>
+      <section className="modal narrow" role="dialog" aria-modal="true" aria-labelledby="guide-title" onMouseDown={(event) => event.stopPropagation()}>
         <button className="close-button" type="button" onClick={onClose} aria-label="Close installation guide">
-          <X size={20} />
+          <X size={18} />
         </button>
-        <h2 id="guide-title">Install the skills</h2>
-        <p>Download the full library or a single skill, unzip it, and keep each skill folder whole with its SKILL.md file at the top. The folders follow the open Agent Skills format, so the same folder works in most AI tools. Where to put it depends on the tool you use:</p>
-        <div className="install-grid">
+        <header className="modal-head plain">
           <div>
-            <h3>Most tools</h3>
-            <code>.agents/skills/algolia-*/SKILL.md</code>
-            <p>Copy each extracted algolia-* folder into .agents/skills/ in your project. Works in Codex, Cursor, Copilot, ChatGPT desktop, Gemini CLI and Windsurf.</p>
+            <h2 id="guide-title">Install</h2>
+            <p>Unzip, then put each skill folder where your tool looks.</p>
           </div>
-          <div>
-            <h3>Claude Code</h3>
-            <code>~/.claude/skills/algolia-*/SKILL.md</code>
-            <p>Claude Code does not read .agents/skills. Copy the folders to ~/.claude/skills/, or .claude/skills/ to scope them to one project.</p>
-          </div>
-          <div>
-            <h3>Claude and ChatGPT apps</h3>
-            <code>Upload the ZIP</code>
-            <p>Upload an individual skill ZIP in Customize &rarr; Skills (Claude) or the Skills tab (ChatGPT). Enable code execution in Claude first.</p>
-          </div>
-        </div>
-        <p className="guide-note"><a href={withBase('/start/')}>Full step-by-step guide for every AI tool &rarr;</a> Customers still need current docs verification and access to their own Algolia app, source data, codebase, and analytics for production work.</p>
-        <a
-          className="download-button large"
-          href={withBase('/downloads/algolia-skills-library.zip')}
-          download
-          onClick={() => trackDownload('/downloads/algolia-skills-library.zip', 'Download full library')}
-        >
-          <ArrowDownToLine size={22} />
-          Download full library
-        </a>
+        </header>
+        <dl className="install-rows">
+          <div><dt>Most tools</dt><dd><code>.agents/skills/</code></dd></div>
+          <div><dt>Claude Code</dt><dd><code>~/.claude/skills/</code></dd></div>
+          <div><dt>Claude and ChatGPT apps</dt><dd>Upload one skill ZIP at a time</dd></div>
+        </dl>
+        <footer className="modal-foot">
+          <a className="modal-link" href={withBase('/start/')}>Step-by-step guide <ArrowRight size={14} /></a>
+          <DownloadButton href="/downloads/algolia-skills-library.zip" label="Download full library" />
+        </footer>
       </section>
     </div>
   );
@@ -2131,52 +2116,46 @@ function PackageDetailsModal({ pkg, onClose }) {
 
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
-      <section className="details-modal" role="dialog" aria-modal="true" aria-labelledby="package-details-title" onMouseDown={(event) => event.stopPropagation()}>
+      <section className="modal" role="dialog" aria-modal="true" aria-labelledby="package-details-title" onMouseDown={(event) => event.stopPropagation()}>
         <button className="close-button" type="button" onClick={onClose} aria-label={`Close ${pkg.title} details`}>
-          <X size={20} />
+          <X size={18} />
         </button>
-        <div className="details-header">
-          <span className={`package-icon ${pkg.color}`}><Icon size={30} /></span>
+        <header className="modal-head">
+          <span className={`package-icon ${pkg.color}`}><Icon size={24} /></span>
           <div>
-            <p>{pkg.id}</p>
             <h2 id="package-details-title">{pkg.title}</h2>
+            <p>{pkg.description}</p>
+          </div>
+        </header>
+
+        <div className="modal-cols">
+          <div>
+            <h3 className="modal-label">Use it when</h3>
+            <ul>{profile.useThisTo.map((item) => <li key={item}>{item}</li>)}</ul>
+          </div>
+          <div>
+            <h3 className="modal-label">You get</h3>
+            <ul>{profile.produces.map((item) => <li key={item}>{item}</li>)}</ul>
           </div>
         </div>
-        <p className="details-purpose">{pkg.description}</p>
-        <p className="details-how">
-          Paste the prompt into your AI assistant. It asks a few questions first, and reads your account without changing it.
-        </p>
+        <p className="modal-bring"><strong>Have handy</strong> {profile.asks[0]}</p>
 
-        <div className="task-summary-grid practical" aria-label={`${pkg.title} practical details`}>
-          <TaskSummaryBlock title="When to reach for it" items={profile.useThisTo} />
-          <TaskSummaryBlock title="Good to have on hand" items={profile.asks} />
-          <TaskSummaryBlock title="What you get back" items={profile.produces} />
-        </div>
-
-        <section className="prompt-panel" aria-labelledby={`${pkg.id}-prompt-title`}>
+        <div className="modal-prompt">
           <div>
-            <h3 id={`${pkg.id}-prompt-title`}>Sample prompt</h3>
+            <h3 className="modal-label">Prompt</h3>
             <p>{profile.prompt}</p>
-            {profile.prompt.includes('[') && (
-              <p className="prompt-hint">Swap the [bracketed] parts for your details.</p>
-            )}
+            {profile.prompt.includes('[') && <small>Swap the [bracketed] parts for your details.</small>}
           </div>
           <button type="button" onClick={copyPrompt}>
             {copied ? <Check size={16} /> : <Copy size={16} />}
-            {copied ? 'Copied' : 'Copy prompt'}
+            {copied ? 'Copied' : 'Copy'}
           </button>
-        </section>
-
-        <section className="included-panel" aria-labelledby={`${pkg.id}-included-title`}>
-          <h3 id={`${pkg.id}-included-title`}>Included in the download</h3>
-          <div className="included-list">
-            {pkg.filesInside.map((item) => <span key={item}>{item}</span>)}
-          </div>
-        </section>
-
-        <div className="details-footer">
-          <DownloadButton href={pkg.href} label="Download" />
         </div>
+
+        <footer className="modal-foot">
+          <span>{pkg.id} &middot; {pkg.filesInside.length} {pkg.filesInside.length === 1 ? 'file' : 'files'}</span>
+          <DownloadButton href={pkg.href} label="Download" />
+        </footer>
       </section>
     </div>
   );
