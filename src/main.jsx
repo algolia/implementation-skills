@@ -365,7 +365,7 @@ const packages = [
   {
     id: 'algolia-events-insights',
     title: 'Events & Insights',
-    description: "Click and conversion tracking.",
+    description: "Click and conversion tracking, set up right the first time. NeuralSearch and Dynamic Re-Ranking learn from it.",
     icon: Zap,
     color: 'orange',
     files: 5,
@@ -861,9 +861,9 @@ const detailProfiles = {
     docs: ['Searchable attributes', 'Custom ranking', 'Rules', 'Synonyms']
   },
   'algolia-events-insights': {
-    useThisTo: ["Analytics show no clicks or conversions.", "Before Personalization, Recommend or Re-Ranking."],
+    useThisTo: ["Analytics show no clicks or conversions.", "Before NeuralSearch, Dynamic Re-Ranking or Personalization. They learn from these events."],
     asks: ["What counts as success: purchase, add to cart, sign-up."],
-    produces: ["The few events that matter.", "Proof they arrive and can be trusted."],
+    produces: ["The few events that matter, set up right the first time.", "Proof they arrive, and that the AI features can use them."],
     prompt: "Use the Algolia Events & Insights skill. Our analytics show [no clicks / no conversions / odd numbers]. Our search page is built with [framework or tag manager]. The action that counts as success is [purchase / add to cart / sign-up]. Explain in plain language what is wrong, check the tracking end to end on the live page, and give me the smallest fix.",
     academyModules: ['Insights event implementation', 'Analytics and AI feature readiness'],
     learningObjectives: ['Implement search-attributed events with queryID and userToken.', 'Validate events against downstream feature requirements, not only HTTP 200 responses.'],
