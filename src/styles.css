@@ -2455,3 +2455,5 @@ button.bundle-guide-link {
     margin: 6px 0 0;
   }
 }
+
+.package-actions .download-button { min-width: 0; }

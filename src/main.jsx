@@ -203,7 +203,7 @@ const packages = [
   {
     id: 'algolia-audit',
     title: 'Audit',
-    description: "Checks a live setup and finds the problems that never show an error.",
+    description: "Reviews a live setup.",
     icon: Search,
     color: 'teal',
     files: 2,
@@ -235,7 +235,7 @@ const packages = [
   {
     id: 'algolia-search-implementation',
     title: 'Search Implementation',
-    description: "The build-from-scratch checklist. Discovery Planning loads it for you.",
+    description: "The build-from-scratch checklist.",
     icon: Rocket,
     color: 'green',
     files: 2,
@@ -266,7 +266,7 @@ const packages = [
   {
     id: 'algolia-discovery-planning',
     title: 'Discovery Planning',
-    description: "Turns a broad request into a plan and picks the next skill.",
+    description: "Turns your request into a plan.",
     icon: Waypoints,
     color: 'blue',
     files: 3,
@@ -299,7 +299,7 @@ const packages = [
   {
     id: 'algolia-data-modeling',
     title: 'Data Modeling',
-    description: "Decides what a search result is and which fields matter.",
+    description: "Shapes your data for search.",
     icon: Database,
     color: 'teal',
     files: 4,
@@ -334,7 +334,7 @@ const packages = [
   {
     id: 'algolia-index-configuration',
     title: 'Index Configuration',
-    description: "Fixes result order, filters and promotions through settings.",
+    description: "Result order, filters, promotions.",
     icon: GitBranch,
     color: 'purple',
     files: 3,
@@ -365,7 +365,7 @@ const packages = [
   {
     id: 'algolia-events-insights',
     title: 'Events & Insights',
-    description: "Gets click and conversion tracking working and trustworthy.",
+    description: "Click and conversion tracking.",
     icon: Zap,
     color: 'orange',
     files: 5,
@@ -399,7 +399,7 @@ const packages = [
   {
     id: 'algolia-instantsearch-ui',
     title: 'InstantSearch UI',
-    description: "Plans and builds the results page.",
+    description: "The results page.",
     icon: Search,
     color: 'pink',
     files: 3,
@@ -432,7 +432,7 @@ const packages = [
   {
     id: 'algolia-ui-libraries',
     title: 'UI Libraries',
-    description: "Picks the current Algolia front-end library for your framework.",
+    description: "Which front-end library to use.",
     icon: Library,
     color: 'blue',
     files: 3,
@@ -463,7 +463,7 @@ const packages = [
   {
     id: 'algolia-autocomplete',
     title: 'Autocomplete',
-    description: "Plans and builds the suggestions people see as they type.",
+    description: "Suggestions as people type.",
     icon: Layers3,
     color: 'gold',
     files: 3,
@@ -494,7 +494,7 @@ const packages = [
   {
     id: 'algolia-release-qa',
     title: 'Release QA',
-    description: "Checks a launch with evidence, blockers first.",
+    description: "Pre-launch check, blockers first.",
     icon: ShieldCheck,
     color: 'green',
     files: 4,
@@ -525,7 +525,7 @@ const packages = [
   {
     id: 'algolia-agent-studio',
     title: 'Agent Studio',
-    description: "Scope, safety and measurement for a chat assistant.",
+    description: "A chat assistant, scoped and measured.",
     icon: Bot,
     color: 'blue',
     files: 3,
@@ -556,7 +556,7 @@ const packages = [
   {
     id: 'algolia-neuralsearch',
     title: 'NeuralSearch',
-    description: "Readiness and safe rollout for Algolia’s AI relevance.",
+    description: "AI relevance, rolled out safely.",
     icon: BrainCircuit,
     color: 'purple',
     files: 4,
@@ -590,11 +590,12 @@ const packages = [
 // categories, so someone who does not know the vocabulary can still place
 // themselves. Order inside a stage is the order you would normally reach for them.
 const stages = [
-  { id: 'Start here', caption: 'Pick one of these first.' },
-  { id: 'Foundations', caption: 'Data, settings, tracking.' },
-  { id: 'Search screen', caption: 'What visitors see.' },
-  { id: 'Launch check', caption: 'Before it goes live.' },
-  { id: 'AI features', caption: 'Once the foundations hold.' }
+  { id: 'Start here' },
+  { id: 'Foundations' },
+  { id: 'Search screen' },
+  { id: 'Launch check' },
+  { id: 'AI features' },
+  { id: 'Reference' }
 ];
 
 const stageById = {
@@ -625,8 +626,7 @@ packages.forEach((pkg) => {
   pkg.badge = badgeById[pkg.id];
 });
 
-const skillPackages = packages.filter((pkg) => pkg.id !== 'algolia-ui-libraries');
-const referencePackages = packages.filter((pkg) => pkg.id === 'algolia-ui-libraries');
+const skillPackages = packages;
 
 const filters = ['All', ...stages.map((stage) => stage.id)];
 
@@ -776,7 +776,7 @@ const companionTools = [
     id: 'algolia-productivity-mcp',
     title: 'Algolia Productivity MCP',
     eyebrow: 'See your real account',
-    description: 'Lets your assistant read your real Algolia account: settings, searches, clicks.',
+    description: 'Your assistant reads your real account. Read-only.',
     note: 'Read-only. Signs in through your browser.',
     icon: Bot,
     command: 'claude mcp add --transport http algolia https://mcp.algolia.com/mcp',
@@ -788,7 +788,7 @@ const companionTools = [
     id: 'algolia-cli',
     title: 'Algolia CLI',
     eyebrow: 'Make the changes',
-    description: 'Makes the changes: settings, records, synonyms, rules.',
+    description: 'Your assistant makes the changes.',
     note: 'For anyone comfortable in a terminal.',
     icon: Terminal,
     command: 'brew install algolia',
@@ -800,7 +800,7 @@ const companionTools = [
     id: 'official-algolia-skills',
     title: 'Official Algolia skills',
     eyebrow: 'The wider set',
-    description: 'Every official Algolia skill. The eleven on this page are included.',
+    description: 'Every official Algolia skill, these included.',
     note: '',
     icon: Library,
     command: '/plugin marketplace add algolia/skills',
@@ -1098,7 +1098,6 @@ function Situations({ onDetails }) {
       <div className="section-heading compact-heading">
         <div>
           <h2 id="situation-title">Where do I start?</h2>
-          <p>Pick your situation. Copy the prompt, paste it into your AI assistant.</p>
         </div>
       </div>
       <div className="situation-grid">
@@ -1140,7 +1139,6 @@ function SituationCard({ situation, onDetails }) {
         <h3>{situation.label}</h3>
       </div>
       <p className="situation-lead">
-        Start with{' '}
         <button type="button" onClick={() => onDetails(lead)}>{lead.title}</button>
       </p>
       <button className="situation-copy" type="button" onClick={copyPrompt}>
@@ -1229,7 +1227,7 @@ function App() {
             <div className="hero-copy">
               <h1 id="page-title">Algolia Implementation Skills</h1>
               <p>
-                Instruction packs for your AI assistant. Each one teaches it how an Algolia expert handles one part of the job.
+                Instruction packs that teach your AI assistant to work like an Algolia expert.
               </p>
             </div>
           </section>
@@ -1242,7 +1240,6 @@ function App() {
             <div className="section-heading">
               <div>
                 <h2 id="catalog-title">Choose a skill</h2>
-                <p>Or download the full library and let Discovery Planning choose.</p>
               </div>
               <div className="catalog-controls">
                 <label className="search-control">
@@ -1268,16 +1265,11 @@ function App() {
             </div>
 
             <div className="package-table" role="list">
-              <div className="table-head" aria-hidden="true">
-                <span>Skill</span>
-                <span>Action</span>
-              </div>
               {filter === 'All' && !query.trim()
                 ? stages.map((stage) => (
                   <React.Fragment key={stage.id}>
                     <div className="stage-heading" role="presentation">
                       <strong>{stage.id}</strong>
-                      <span>{stage.caption}</span>
                     </div>
                     {visiblePackages.filter((pkg) => pkg.stage === stage.id).map((pkg, index) => (
                       <PackageRow pkg={pkg} index={index} onDetails={() => setSelectedPackage(pkg)} key={pkg.id} />
@@ -1294,18 +1286,6 @@ function App() {
                   <p>Try a different query or clear the filter.</p>
                 </div>
               )}
-            </div>
-
-            <div className="reference-pack-section" aria-labelledby="reference-pack-title">
-              <div>
-                <h3 id="reference-pack-title">Reference</h3>
-                <p>A lookup, not a workflow. Take it with any Search screen skill.</p>
-              </div>
-              <div className="package-table compact" role="list">
-                {referencePackages.map((pkg, index) => (
-                  <PackageRow pkg={pkg} index={index} onDetails={() => setSelectedPackage(pkg)} key={pkg.id} />
-                ))}
-              </div>
             </div>
 
             <WorksBestWith />
@@ -1370,8 +1350,7 @@ function WorksBestWith() {
     <section className="companion-section" aria-labelledby="companion-title">
       <div className="section-heading compact-heading">
         <div>
-          <h2 id="companion-title">Works with official Algolia tools</h2>
-          <p>Optional. Let your assistant see your account, or make the changes for you.</p>
+          <h2 id="companion-title">Optional Algolia tools</h2>
         </div>
       </div>
       <div className="companion-grid">
@@ -1415,13 +1394,11 @@ function CompanionToolCard({ tool }) {
         </div>
       </div>
       <p>{tool.description}</p>
-      {tool.note && <p className="companion-note">{tool.note}</p>}
       <code>{tool.command}</code>
-      <p className="companion-command-for">{tool.commandFor}</p>
       <div className="companion-actions">
         <button type="button" onClick={copyCommand}>
           {copied ? <Check size={16} /> : <Copy size={16} />}
-          {copied ? 'Copied' : 'Copy command'}
+          {copied ? 'Copied' : 'Copy'}
         </button>
         <a href={tool.href} target="_blank" rel="noreferrer">
           {tool.action} <ExternalLink size={15} />
@@ -1448,7 +1425,6 @@ function UseCaseBundles({ onGuide }) {
       <div className="section-heading compact-heading">
         <div>
           <h2 id="bundle-title">Bundles</h2>
-          <p>Everything for one kind of project.</p>
         </div>
       </div>
       <div className="bundle-grid">
@@ -1463,9 +1439,9 @@ function UseCaseBundles({ onGuide }) {
               <p className="bundle-pick"><strong>Pick this if</strong> {bundle.pickIf}</p>
               <button className="bundle-guide-link" type="button" onClick={() => onGuide(bundle)}>
                 <BookOpen size={16} />
-                Read bundle guide
+                Guide
               </button>
-              <DownloadButton href={bundle.href} label="Download bundle" />
+              <DownloadButton href={bundle.href} label="Download" />
             </article>
           );
         })}
@@ -1494,7 +1470,7 @@ function PackageRow({ pkg, index, onDetails }) {
           <BookOpen size={17} />
           Details
         </button>
-        <DownloadButton href={pkg.href} label={pkg.type === 'Reference' ? 'Download reference' : 'Download skill'} />
+        <DownloadButton href={pkg.href} label="Download" />
       </div>
     </article>
   );
@@ -1503,9 +1479,9 @@ function PackageRow({ pkg, index, onDetails }) {
 // Teaser only. The full walkthrough — per-tool install paths, prompts and
 // troubleshooting — lives at /start/, generated by enablement/build-customer.py.
 const quickStartSteps = [
-  { icon: ArrowDownToLine, label: 'Download', copy: 'One ZIP from the library below.' },
-  { icon: Layers3, label: 'Drop it in', copy: 'Into the AI tool your team already uses.' },
-  { icon: Sparkles, label: 'Ask', copy: 'Paste one prompt. It asks you questions first.' }
+  { icon: ArrowDownToLine, label: 'Download', copy: 'One ZIP.' },
+  { icon: Layers3, label: 'Drop it in', copy: 'Into your AI tool.' },
+  { icon: Sparkles, label: 'Ask', copy: 'Paste one prompt.' }
 ];
 
 function QuickStart() {
@@ -1515,11 +1491,9 @@ function QuickStart() {
         <h2 id="quickstart-title">
           Three steps: <em>download, drop it in, ask</em>
         </h2>
-        <p>
-          About ten minutes. Works with Claude, Codex, Cursor, Copilot, ChatGPT and most AI tools.
-        </p>
+        <p>Ten minutes. Works with most AI tools.</p>
         <a className="quickstart-link" href={withBase('/start/')}>
-          Full step-by-step guide for every AI tool
+          Step-by-step guide
           <ArrowRight size={15} />
         </a>
       </div>
@@ -1593,7 +1567,7 @@ function RowVote({ about }) {
 
   return (
     <p className="row-vote">
-      <span className="row-vote-label">Useful?</span>
+      <span className="row-vote-label sr-only">Useful?</span>
       {['up', 'down'].map((choice) => {
         const Icon = choice === 'up' ? ThumbsUp : ThumbsDown;
         return (
@@ -1647,12 +1621,9 @@ function FeedbackSection() {
         <h2 id="feedback-title">
           Tell us what to <em>build next</em>
         </h2>
-        <p>
-          A missing skill, a rough edge, a step that didn't fit: all useful.
-        </p>
         <p className="feedback-meta">
           <Lightbulb size={14} />
-          Anonymous. No sign-in.
+          Anonymous.
         </p>
       </div>
 
@@ -2204,7 +2175,7 @@ function PackageDetailsModal({ pkg, onClose }) {
         </section>
 
         <div className="details-footer">
-          <DownloadButton href={pkg.href} label={pkg.type === 'Reference' ? 'Download reference' : 'Download skill'} />
+          <DownloadButton href={pkg.href} label="Download" />
         </div>
       </section>
     </div>
