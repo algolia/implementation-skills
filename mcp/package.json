@@ -11,6 +11,6 @@
     "vendor": "node scripts/vendor-pin.mjs"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0"
+    "@modelcontextprotocol/sdk": "^1.32.0"
   }
 }
