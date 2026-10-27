@@ -1,4 +1,5 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { readFileSync } from 'node:fs';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { createServer } from '../src/server.js';
 
@@ -26,8 +27,16 @@ check('every tool is described', tools.every((t) => t.description?.length > 20))
 console.log('list_skills');
 const listed = await client.callTool({ name: 'list_skills', arguments: {} });
 const catalogue = JSON.parse(listed.content[0].text);
-check('returns the whole suite', catalogue.count === 18, `count=${catalogue.count}`);
-check('reports the promoted commit', /^[0-9a-f]{40}$/.test(catalogue.promotedCommit));
+const pin = JSON.parse(readFileSync(new URL('../skills-pin.json', import.meta.url), 'utf8'));
+const actualNames = catalogue.skills.map((skill) => skill.name).sort();
+check('reports the catalogue count', catalogue.count === actualNames.length && catalogue.count > 0,
+  `count=${catalogue.count}, listed=${actualNames.length}`);
+if (pin.suite) {
+  const expectedNames = [...pin.suite].sort();
+  check('returns the whole configured suite', JSON.stringify(actualNames) === JSON.stringify(expectedNames),
+    `expected=${expectedNames.join(',')}; actual=${actualNames.join(',')}`);
+}
+check('reports the promoted commit', catalogue.promotedCommit === pin.commit);
 check('every skill has a description', catalogue.skills.every((s) => s.description?.length > 50));
 const size = listed.content[0].text.length;
 check('catalogue stays small enough to hold in context', size < 40000, `${size} chars`);
