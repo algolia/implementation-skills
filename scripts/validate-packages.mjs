@@ -33,8 +33,11 @@ for (const skill of skills) {
     continue;
   }
   const listing = unzip(zip);
-  for (const required of [`${skill}/SKILL.md`, 'LICENSE']) {
+  for (const required of [`${skill}/SKILL.md`, `${skill}/LICENSE`]) {
     if (!listing.split('\n').includes(required)) failures.push(`${skill}.zip is missing ${required}`);
+  }
+  for (const entry of listing.split('\n').filter(Boolean)) {
+    if (!entry.startsWith(`${skill}/`)) failures.push(`${skill}.zip contains a top-level entry outside ${skill}/: ${entry}`);
   }
   const archivedSkill = unzip(zip, `${skill}/SKILL.md`);
   const sourceSkill = readFileSync(join(skillsRoot, skill, 'SKILL.md'));

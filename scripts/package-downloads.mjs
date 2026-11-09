@@ -98,8 +98,7 @@ function withStage(callback) {
 for (const skill of skillIds) {
   withStage((stage) => {
     copySkill(stage, skill);
-    copyArtifacts(stage);
-    copyLicense(stage);
+    copyLicense(join(stage, skill));
     zipStage(stage, `${skill}.zip`);
   });
 }
