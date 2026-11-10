@@ -1,0 +1,444 @@
+{
+  "schema": "algolia-skills-benchmark/current@1",
+  "updated": "2026-11-10",
+  "librarySnapshot": "Frozen 22-skill library; experimental variants reported separately",
+  "models": {
+    "gpt-6.1-terra": "GPT-6.1 Terra",
+    "gpt-6.1-sol": "GPT-6.1 Sol",
+    "claude-sonnet-5-5": "Claude Sonnet 5.5",
+    "terra": "GPT-6.1 Terra",
+    "sonnet": "Claude Sonnet 5.5"
+  },
+  "lanes": [
+    {
+      "id": "supplied-evidence",
+      "label": "Merchandising advice",
+      "max": 12,
+      "verification": "Independent blind rubric applied to supplied evidence",
+      "caveat": "Two cases per model; advice quality, not live changes or measured business impact."
+    },
+    {
+      "id": "live-backend",
+      "label": "Live backend audit",
+      "max": 10,
+      "verification": "Deterministic checks against live backend state",
+      "caveat": "Same prefix-scoped HTTP transport in both arms. This tests backend guidance rather than a full CLI or end-to-end deployment workflow. Configuration and price-contract checker limitations remain."
+    },
+    {
+      "id": "frontend-runtime",
+      "label": "Browser behavior",
+      "max": 8,
+      "verification": "Actual browser checks against a simulated service",
+      "caveat": "The raw one-point bare shortfall arose when a modal blocked a subsequent background cart click. A separate replay dismissed the modal and received a correctly attributed conversion. The original score is retained; it does not establish a faulty conversion handler or an advantage caused by guidance."
+    }
+  ],
+  "pairs": [
+    {
+      "id": "merch-gpt-6.1-terra-1",
+      "lane": "supplied-evidence",
+      "model": "gpt-6.1-terra",
+      "case": 1,
+      "bare": {
+        "score": 10,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 12,
+        "skillsRead": true
+      }
+    },
+    {
+      "id": "merch-gpt-6.1-terra-2",
+      "lane": "supplied-evidence",
+      "model": "gpt-6.1-terra",
+      "case": 2,
+      "bare": {
+        "score": 11,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 12,
+        "skillsRead": true
+      }
+    },
+    {
+      "id": "merch-gpt-6.1-sol-1",
+      "lane": "supplied-evidence",
+      "model": "gpt-6.1-sol",
+      "case": 1,
+      "bare": {
+        "score": 12,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 12,
+        "skillsRead": true
+      }
+    },
+    {
+      "id": "merch-gpt-6.1-sol-2",
+      "lane": "supplied-evidence",
+      "model": "gpt-6.1-sol",
+      "case": 2,
+      "bare": {
+        "score": 11,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 12,
+        "skillsRead": true
+      }
+    },
+    {
+      "id": "merch-claude-sonnet-5-5-1",
+      "lane": "supplied-evidence",
+      "model": "claude-sonnet-5-5",
+      "case": 1,
+      "bare": {
+        "score": 12,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 12,
+        "skillsRead": true
+      }
+    },
+    {
+      "id": "merch-claude-sonnet-5-5-2",
+      "lane": "supplied-evidence",
+      "model": "claude-sonnet-5-5",
+      "case": 2,
+      "bare": {
+        "score": 11,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 10,
+        "skillsRead": false
+      }
+    },
+    {
+      "id": "claude-backend-1",
+      "lane": "live-backend",
+      "model": "claude-sonnet-5-5",
+      "case": 1,
+      "bare": {
+        "score": 9,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 7,
+        "skillsRead": false
+      }
+    },
+    {
+      "id": "claude-backend-2",
+      "lane": "live-backend",
+      "model": "claude-sonnet-5-5",
+      "case": 2,
+      "bare": {
+        "score": 8,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 7,
+        "skillsRead": false
+      }
+    },
+    {
+      "id": "terra-backend-1",
+      "lane": "live-backend",
+      "model": "gpt-6.1-terra",
+      "case": 1,
+      "bare": {
+        "score": 7,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 9,
+        "skillsRead": true
+      }
+    },
+    {
+      "id": "terra-backend-2",
+      "lane": "live-backend",
+      "model": "gpt-6.1-terra",
+      "case": 2,
+      "bare": {
+        "score": 7,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 7,
+        "skillsRead": true
+      }
+    },
+    {
+      "id": "sol-backend-1",
+      "lane": "live-backend",
+      "model": "gpt-6.1-sol",
+      "case": 1,
+      "bare": {
+        "score": 9,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 9,
+        "skillsRead": true
+      }
+    },
+    {
+      "id": "sol-backend-2",
+      "lane": "live-backend",
+      "model": "gpt-6.1-sol",
+      "case": 2,
+      "bare": {
+        "score": 8,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 9,
+        "skillsRead": true
+      }
+    },
+    {
+      "id": "frontend-gpt-6.1-terra-audit",
+      "lane": "frontend-runtime",
+      "model": "gpt-6.1-terra",
+      "case": "audit",
+      "bare": {
+        "score": 8,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 8,
+        "skillsRead": false
+      }
+    },
+    {
+      "id": "frontend-gpt-6.1-terra-greenfield",
+      "lane": "frontend-runtime",
+      "model": "gpt-6.1-terra",
+      "case": "greenfield",
+      "bare": {
+        "score": 8,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 8,
+        "skillsRead": false
+      }
+    },
+    {
+      "id": "frontend-gpt-6.1-sol-audit",
+      "lane": "frontend-runtime",
+      "model": "gpt-6.1-sol",
+      "case": "audit",
+      "bare": {
+        "score": 8,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 8,
+        "skillsRead": true
+      }
+    },
+    {
+      "id": "frontend-gpt-6.1-sol-greenfield",
+      "lane": "frontend-runtime",
+      "model": "gpt-6.1-sol",
+      "case": "greenfield",
+      "bare": {
+        "score": 7,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 8,
+        "skillsRead": false
+      }
+    },
+    {
+      "id": "frontend-claude-sonnet-5-5-audit",
+      "lane": "frontend-runtime",
+      "model": "claude-sonnet-5-5",
+      "case": "audit",
+      "bare": {
+        "score": 8,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 8,
+        "skillsRead": false
+      }
+    },
+    {
+      "id": "frontend-claude-sonnet-5-5-greenfield",
+      "lane": "frontend-runtime",
+      "model": "claude-sonnet-5-5",
+      "case": "greenfield",
+      "bare": {
+        "score": 8,
+        "skillsRead": false
+      },
+      "skills": {
+        "score": 8,
+        "skillsRead": false
+      }
+    }
+  ],
+  "validation": [
+    {
+      "id": "v3",
+      "label": "Experimental guidance: supplied-evidence decisions",
+      "status": "disputed_or_unproven",
+      "scope": "Eight comparisons across three fresh cases, with one repeated case. Explicit invocation, two independent reviewers and conservative score bounds.",
+      "pairs": [
+        {
+          "model": "terra",
+          "case": "01",
+          "rep": 1,
+          "bare_higher": 20,
+          "candidate_lower": 19.5,
+          "conservative_delta": -0.5
+        },
+        {
+          "model": "terra",
+          "case": "02",
+          "rep": 1,
+          "bare_higher": 20,
+          "candidate_lower": 20,
+          "conservative_delta": 0
+        },
+        {
+          "model": "terra",
+          "case": "03",
+          "rep": 1,
+          "bare_higher": 20,
+          "candidate_lower": 20,
+          "conservative_delta": 0
+        },
+        {
+          "model": "terra",
+          "case": "02",
+          "rep": 2,
+          "bare_higher": 20,
+          "candidate_lower": 19.0,
+          "conservative_delta": -1.0
+        },
+        {
+          "model": "sonnet",
+          "case": "01",
+          "rep": 1,
+          "bare_higher": 20,
+          "candidate_lower": 20,
+          "conservative_delta": 0
+        },
+        {
+          "model": "sonnet",
+          "case": "02",
+          "rep": 1,
+          "bare_higher": 19,
+          "candidate_lower": 17.0,
+          "conservative_delta": -2.0
+        },
+        {
+          "model": "sonnet",
+          "case": "03",
+          "rep": 1,
+          "bare_higher": 19.0,
+          "candidate_lower": 20,
+          "conservative_delta": 1.0
+        },
+        {
+          "model": "sonnet",
+          "case": "02",
+          "rep": 2,
+          "bare_higher": 19,
+          "candidate_lower": 17.5,
+          "conservative_delta": -1.5
+        }
+      ]
+    },
+    {
+      "id": "v4",
+      "label": "Experimental guidance: local artifact repairs",
+      "status": "disputed_or_unproven",
+      "scope": "Eight comparisons across three fresh repair cases, with one repeated case. Explicit invocation; mechanical and expert checks. Every run passed the mechanical checks. Local artifacts do not establish live API acceptance.",
+      "pairs": [
+        {
+          "model": "terra",
+          "case": "01",
+          "rep": 1,
+          "bare_higher": 19,
+          "candidate_lower": 19,
+          "conservative_delta": 0
+        },
+        {
+          "model": "terra",
+          "case": "02",
+          "rep": 1,
+          "bare_higher": 20,
+          "candidate_lower": 20,
+          "conservative_delta": 0
+        },
+        {
+          "model": "terra",
+          "case": "03",
+          "rep": 1,
+          "bare_higher": 20,
+          "candidate_lower": 20,
+          "conservative_delta": 0
+        },
+        {
+          "model": "terra",
+          "case": "02",
+          "rep": 2,
+          "bare_higher": 20,
+          "candidate_lower": 20,
+          "conservative_delta": 0
+        },
+        {
+          "model": "sonnet",
+          "case": "01",
+          "rep": 1,
+          "bare_higher": 20,
+          "candidate_lower": 20,
+          "conservative_delta": 0
+        },
+        {
+          "model": "sonnet",
+          "case": "02",
+          "rep": 1,
+          "bare_higher": 20,
+          "candidate_lower": 20,
+          "conservative_delta": 0
+        },
+        {
+          "model": "sonnet",
+          "case": "03",
+          "rep": 1,
+          "bare_higher": 20,
+          "candidate_lower": 20,
+          "conservative_delta": 0
+        },
+        {
+          "model": "sonnet",
+          "case": "02",
+          "rep": 2,
+          "bare_higher": 20,
+          "candidate_lower": 20,
+          "conservative_delta": 0
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "These small, selected ecommerce task samples show specific improvements, ties and losses; they do not establish a consistent quality, speed or cost advantage.",
+    "The 18 library comparisons are the revised supplied-evidence, backend and simulated-service browser protocol, not the originally proposed full live end-to-end protocol.",
+    "Skill reads are observed trace events, not proof of influence. No observed read is not proof that the description had no effect.",
+    "One infrastructure-interrupted attempt (two arms) was excluded from outcomes and retained in the internal spend record; four earlier diagnostic runs are outside this primary matrix.",
+    "Two cases per model in each library lane; repeated scenarios are not additional independent task types. No human comparison was conducted.",
+    "Further validation uses isolated experimental candidates and different tasks, rubrics and invocation conditions; do not pool it with library or historical scores. Neither experimental batch passed its registered publication gate.",
+    "Token and timing records are incomplete as an all-in invoice; these tests support no general savings or business ROI claim."
+  ]
+}
