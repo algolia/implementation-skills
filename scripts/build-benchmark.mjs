@@ -1,6 +1,9 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Compass, ListChecks, ShieldCheck, Search, ScanSearch, SlidersHorizontal, ChartNoAxesCombined } from 'lucide-react';
 
 // benchmark/ is canonical and hand-edited (template + data); public/benchmark/
 // is the generated page Vite serves at /benchmark/. Re-run after adding a run
@@ -58,8 +61,19 @@ const payload = (value) => JSON.stringify(value).replace(/</g, '\\u003c');
 for (const marker of ['/*__DATA__*/', '/*__CURRENT_DATA__*/']) {
   if (template.split(marker).length !== 2) throw new Error(`Expected one ${marker} placeholder`);
 }
+const icons = {
+  compass: Compass, checklist: ListChecks, shield: ShieldCheck,
+  search: Search, audit: ScanSearch, relevance: SlidersHorizontal, analytics: ChartNoAxesCombined,
+};
 const html = template.replace('/*__DATA__*/', () => payload(historical))
-  .replace('/*__CURRENT_DATA__*/', () => payload(current));
+  .replace('/*__CURRENT_DATA__*/', () => payload(current))
+  .replace(/<!--ICON:([a-z]+)-->/g, (_marker, name) => {
+    if (!icons[name]) throw new Error(`Unknown benchmark icon: ${name}`);
+    return renderToStaticMarkup(createElement(icons[name], {
+      className: 'icon', width: 24, height: 24, strokeWidth: 1.75,
+      'aria-hidden': true, focusable: false,
+    }));
+  });
 
 mkdirSync(join(root, 'public', 'benchmark'), { recursive: true });
 writeFileSync(join(root, 'public', 'benchmark', 'index.html'), html);
