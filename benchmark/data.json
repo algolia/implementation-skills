@@ -77,7 +77,7 @@
       },
       "grading": "blind",
       "excluded": false,
-      "decided": "The tie that exposed the triggering gap: with free choice the skills arm invoked 1 of 18 skills and matched bare exactly. A same-day mandated arm scored 8/10 live."
+      "decided": "With free choice, the skills run invoked one of 18 skills and tied the run without skills. A same-day mandated run scored 8/10 on live checks."
     },
     {
       "id": "claude-audit-2",
@@ -282,7 +282,7 @@
       "grading": "controller",
       "excluded": true,
       "excludedReason": "Bare arm's live-settings writes were blocked (permission asymmetry) and grading was by the controller, not a blind reviewer.",
-      "decided": "Directionally consistent with the record but not clean: shown for completeness, excluded from all summaries."
+      "decided": "Excluded from summaries because the grading and permissions were not comparable."
     },
     {
       "id": "codex-audit-r2",
@@ -350,7 +350,7 @@
       },
       "grading": "blind",
       "excluded": false,
-      "decided": "The one bare win: +4.5 for bare, and skills were faster. Calibrates the pattern rather than reversing it; with n<=3 per condition, variance runs both ways."
+      "decided": "The run without skills scored 4.5 points higher; the skills run was faster."
     },
     {
       "id": "claude-haiku-vague-1",
@@ -452,7 +452,7 @@
       },
       "grading": "blind",
       "excluded": false,
-      "decided": "The first Claude-side bare win, and the strongest model in the program. Both arms hit 10/10 on live checks, both configured hierarchical facets, real sort replicas, multi-signal ranking chains and clean retrieval hygiene, and both emitted wire-verified click and add-to-cart events - the invisible layer was a tie (Relevance 12 vs 11.75, Analytics 6 vs 6). Bare won on the visible layer: its standard searchBox searches; the skills arm chose an autocomplete-only entry point whose free-text submit never reaches the results grid, and its own release-qa.md claimed the query path passed. Skills cost +65% time and +85% tokens for a richer build (suggestions index, 18 synonyms, 5 rules, formal contracts) that shipped one shopper-facing regression."
+      "decided": "The run without skills scored higher. Both arms hit 10/10 on live checks, both configured hierarchical facets, real sort replicas, multi-signal ranking chains and clean retrieval hygiene, and both emitted wire-verified click and add-to-cart events - analytics scores were tied (Relevance 12 vs 11.75, Analytics 6 vs 6). Bare won on the visible layer: its standard searchBox searches; the skills arm chose an autocomplete-only entry point whose free-text submit never reaches the results grid, and its own release-qa.md claimed the query path passed. Skills cost +65% time and +85% tokens for a richer build (suggestions index, 18 synonyms, 5 rules, formal contracts) that shipped one shopper-facing regression."
     }
   ],
   "validation": [
@@ -508,7 +508,7 @@
       "storefront": {
         "skills": "loads (no console errors) but product cards render as a bare image with name/price/button nested inside the <img>; window.aa undefined so analytics dead"
       },
-      "note": "Same seeded audit, same integrated PR branch, byte-identical free-choice prompt that made Sonnet invoke algolia-audit twice. Haiku invoked no skill at all (verified from the transcript). Live 4/10 = bare baseline. Blind grade 18.75/37 ties the earlier mandated Haiku arm but by a different route: fewer settings fixed, page loads. Half the planted defects skipped outright; write-up claims 'production-ready, no uncertainties' while cards are broken (5 false claims). Conclusion: the description-level trigger fix does not transfer to Haiku; Haiku needs an explicit trigger line."
+      "note": "Same seeded audit, same integrated PR branch, byte-identical free-choice prompt that made Sonnet invoke algolia-audit twice. Haiku invoked no skill at all (verified from the transcript). Live 4/10 = bare baseline. Blind grade 18.75/37 ties the earlier mandated Haiku arm but by a different route: fewer settings fixed, page loads. Half the planted defects skipped outright; write-up claims 'production-ready, no uncertainties' while cards are broken (5 false claims). The description change alone did not trigger the skill in this run."
     },
     {
       "id": "claude-haiku-retest-vague-1",
@@ -536,7 +536,7 @@
       "storefront": {
         "skills": "renders (full cards, working hierarchical drill-down) but two uncaught TypeErrors on load and analytics dead: search-insights CDN filename (.umd.min.js) 404s, window.aa is a queued stub, no clickAnalytics, click handler only console.logs"
       },
-      "note": "Same vague brief on the integrated PR branch with the one-line trigger. Haiku invoked 7 skills via discovery-planning - the trigger works where autopilot invoked nothing. First Haiku skills page that renders; only true hierarchical category UI in the sample; proper retrieval allowlist. But zero replicas/sort, no price or rating filter, no add-to-cart, and Section 4 = 0/6. The agent never made a single browser tool call, yet QA_REPORT.md says 'no console errors', 'events verified', 'approve for production launch'. Blind 17.35/35 vs the pre-fix bare 16.65 and pre-fix skills 14.9 (page dead). Conclusion: the trigger line is necessary on Haiku; the Finish Gates must become a mechanical page-smoke check."
+      "note": "Same vague brief on the integrated PR branch with the one-line trigger. Haiku invoked 7 skills via discovery-planning - the trigger works where autopilot invoked nothing. First Haiku skills page that renders; only true hierarchical category UI in the sample; proper retrieval allowlist. But zero replicas/sort, no price or rating filter, no add-to-cart, and Section 4 = 0/6. The agent never made a single browser tool call, yet QA_REPORT.md says 'no console errors', 'events verified', 'approve for production launch'. Blind 17.35/35 vs the pre-fix bare 16.65 and pre-fix skills 14.9 (page dead). In this run, the trigger loaded skills, but the browser checks still needed independent verification."
     }
   ]
 }
