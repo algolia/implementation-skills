@@ -1110,9 +1110,8 @@ function Situations({ onSelect }) {
   );
 }
 
-// One prompt that works for anything: the Discovery Planning skill reads the
-// situation and routes to the rest of the suite.
-const SUITE_PROMPT = 'Use the Algolia Discovery Planning skill. Here is what I am trying to do: [describe it in your own words]. Ask me only the questions you need, assume I may not know which technical details matter, then tell me which skill to use next and the smallest useful first step.';
+// Route new work and audits to the right entry point.
+const SUITE_PROMPT = 'Help me with this Algolia task: [describe your task]. For new work, start with algolia-discovery-planning. For a review of an existing implementation, start with algolia-audit. Load the other skills relevant to the task, ask only necessary questions, and identify assumptions and what needs verification.';
 
 function SuitePrompt() {
   const [copied, setCopied] = useState(false);
@@ -1137,7 +1136,7 @@ function SuitePrompt() {
 
   return (
     <div className="suite-prompt">
-      <span><strong>Not sure which?</strong> One prompt works for anything. It asks, then picks the skill.</span>
+      <span><strong>Not sure which?</strong> Start with a prompt that helps choose the skills for your task.</span>
       <button type="button" onClick={copy}>
         {copied ? <Check size={15} /> : <Copy size={15} />}
         {copied ? 'Copied' : 'Copy prompt'}
@@ -1148,7 +1147,7 @@ function SuitePrompt() {
 
 function SituationCard({ situation, onSelect }) {
   const lead = getPackageById(situation.lead);
-  const Icon = lead.icon;
+  const Icon = situation.icon;
   return (
     <button className="situation-card" type="button" onClick={() => onSelect(lead, situation.prompt)}>
       <span className={`package-icon ${lead.color}`}><Icon size={20} /></span>
